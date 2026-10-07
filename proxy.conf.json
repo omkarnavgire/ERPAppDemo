@@ -1,0 +1,10 @@
+{
+  "/lead-api": {
+    "target": "https://leadapis.ciitstudent.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/lead-api": "/api"
+    }
+  }
+}

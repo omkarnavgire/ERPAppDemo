@@ -1,0 +1,236 @@
+<div class="user-page">
+
+    <div class="user-header">
+        <div>
+            <h1>User Management</h1>
+            <p>Manage system users</p>
+        </div>
+    </div>
+
+    <div class="user-filter-card">
+
+        <div class="user-search">
+            <input
+                type="text"
+                [value]="searchText"
+                (input)="onSearch($event)"
+                placeholder="Search name, user ID, email, mobile..."
+            />
+        </div>
+
+        <div class="user-filter">
+            <select
+                [(ngModel)]="selectedBranch"
+                (change)="onFilterChange()"
+            >
+                <option value="">All Branches</option>
+
+                <option
+                    *ngFor="let branch of branchOptions"
+                    [value]="branch"
+                >
+                    {{branch}}
+                </option>
+            </select>
+        </div>
+
+        <div class="user-filter">
+            <select
+                [(ngModel)]="selectedRole"
+                (change)="onFilterChange()"
+            >
+                <option value="">All Roles</option>
+
+                <option
+                    *ngFor="let role of roleOptions"
+                    [value]="role"
+                >
+                    {{role}}
+                </option>
+            </select>
+        </div>
+
+        <div class="user-filter">
+            <select
+                [(ngModel)]="selectedStatus"
+                (change)="onFilterChange()"
+            >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+
+        <button
+            type="button"
+            class="user-clear-btn"
+            (click)="clearFilters()"
+        >
+            Clear
+        </button>
+
+    </div>
+
+    <div
+        class="user-error"
+        *ngIf="errorMessage"
+    >
+        {{errorMessage}}
+    </div>
+
+    <div
+        class="user-loading"
+        *ngIf="loading"
+    >
+        Loading users...
+    </div>
+
+    <div
+        class="user-list-card"
+        *ngIf="!loading"
+    >
+
+        <div class="user-table-wrapper">
+
+            <table class="user-table">
+
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Branch</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr
+                        *ngFor="let user of paginatedUsers"
+                    >
+
+                        <td>
+                            <span class="user-name">
+                                {{getUserName(user)}}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="user-id">
+                                {{getUserId(user)}}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{user.emailAddress||"-"}}
+                        </td>
+
+                        <td>
+                            {{user.mobileNumber||"-"}}
+                        </td>
+
+                        <td>
+                            {{user.branchName||"-"}}
+                        </td>
+
+                        <td>
+                            <span class="role-text">
+                                {{getRoleText(user)}}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span
+                                class="status-badge"
+                                [class.inactive]="!getStatus(user)"
+                            >
+                                {{getStatus(user)?"Active":"Inactive"}}
+                            </span>
+                        </td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="edit-btn"
+                                (click)="editUser(user)"
+                            >
+                                Edit
+                            </button>
+                        </td>
+
+                    </tr>
+
+                    <tr *ngIf="paginatedUsers.length===0">
+                        <td
+                            colspan="8"
+                            class="empty-row"
+                        >
+                            No users found.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div
+            class="user-table-footer"
+            *ngIf="filteredUsers.length>0"
+        >
+
+            <div class="record-info">
+                Showing
+                <strong>{{startRecord}}</strong>
+                -
+                <strong>{{endRecord}}</strong>
+                of
+                <strong>{{filteredUsers.length}}</strong>
+                users
+            </div>
+
+            <div
+                class="pagination"
+                *ngIf="totalPages>1"
+            >
+
+                <button
+                    type="button"
+                    class="page-btn"
+                    (click)="previousPage()"
+                    [disabled]="currentPage===1"
+                >
+                    Previous
+                </button>
+
+                <button
+                    type="button"
+                    class="page-btn"
+                    *ngFor="let page of pageNumbers"
+                    [class.active]="currentPage===page"
+                    (click)="goToPage(page)"
+                >
+                    {{page}}
+                </button>
+
+                <button
+                    type="button"
+                    class="page-btn"
+                    (click)="nextPage()"
+                    [disabled]="currentPage===totalPages"
+                >
+                    Next
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

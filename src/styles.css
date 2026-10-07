@@ -1,0 +1,560 @@
+/* You can add global styles to this file, and also import other style files */
+@import url("../node_modules/bootstrap/dist/css/bootstrap.min.css");
+
+/* ================================
+   CIIT GLOBAL THEME VARIABLES
+   ================================ */
+
+:root {
+    --ciit-bg: #f5f8f6;
+    --ciit-surface: #ffffff;
+    --ciit-border: #e2e9e5;
+
+    --ciit-text: #44534c;
+    --ciit-muted: #718078;
+    --ciit-light-text: #a0aaa5;
+
+    --ciit-primary: #059669;
+    --ciit-primary-hover: #eaf5f0;
+
+    --ciit-navbar: #0f2e22;
+    --ciit-navbar-text: #ffffff;
+
+    --ciit-logout: #7f1d1d;
+    --ciit-logout-hover: #dc2626;
+}
+
+
+/* ================================
+   GLOBAL
+   ================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+/* ================================
+   LINKS
+   ================================ */
+
+a {
+    text-decoration: none;
+}
+
+
+/* ================================
+   NAVBAR
+   ================================ */
+
+.ciit-navbar {
+    height: 72px;
+
+    background: var(--ciit-navbar);
+
+    padding: 0 28px;
+
+    box-shadow:
+        0 3px 18px rgba(0, 0, 0, 0.14);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+}
+
+
+/* ================================
+   BRAND
+   ================================ */
+
+.ciit-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0;
+    margin: 0;
+
+    cursor: pointer;
+}
+
+.ciit-brand-name {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    line-height: 1.1;
+}
+
+.ciit-title {
+    color: var(--ciit-navbar-text);
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    letter-spacing: .02em;
+}
+
+.ciit-logo-sub {
+    color: #9dc8b5;
+
+    font-size: 10px;
+
+    font-weight: 500;
+
+    letter-spacing: .08em;
+
+    text-transform: uppercase;
+
+    margin-top: 4px;
+}
+
+
+/* ================================
+   NAVBAR RIGHT
+   ================================ */
+
+.ciit-nav-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+/* ================================
+   EMPLOYEE NAME
+   ================================ */
+
+.ciit-user-name {
+    color: var(--ciit-navbar-text);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    padding: 8px 12px;
+}
+
+
+/* ================================
+   CHANGE PASSWORD
+   ================================ */
+
+.change-password-link {
+    color: #d6e8df !important;
+
+    border: 1px solid rgba(255, 255, 255, .10);
+
+    padding: 8px 13px !important;
+
+    border-radius: 6px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+.change-password-link:hover {
+    background: rgba(255, 255, 255, .10);
+
+    color: #ffffff !important;
+}
+
+
+/* ================================
+   LOGOUT
+   ================================ */
+
+.ciit-logout {
+    background: var(--ciit-logout);
+
+    color: #ffffff !important;
+
+    border: 1px solid #991b1b;
+
+    padding: 8px 15px !important;
+
+    border-radius: 6px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+.ciit-logout:hover {
+    background: var(--ciit-logout-hover) !important;
+
+    color: #ffffff !important;
+}
+
+
+/* ================================
+   MAIN PAGE
+   ================================ */
+
+.ciit-page {
+    min-height: calc(100vh - 72px);
+
+    padding: 24px;
+
+    background: var(--ciit-bg);
+}
+
+
+/* ================================
+   SIDEBAR
+   ================================ */
+
+.ciit-sidebar {
+    background: var(--ciit-surface);
+
+    border: 1px solid var(--ciit-border);
+
+    border-radius: 12px;
+
+    padding: 16px 12px;
+
+    box-shadow:
+        0 5px 22px rgba(15, 46, 34, .06);
+
+    position: sticky;
+
+    top: 96px;
+}
+
+
+/* ================================
+   SIDEBAR HEADER
+   ================================ */
+
+.ciit-sidebar-header {
+    padding: 4px 10px 14px;
+
+    border-bottom: 1px solid #edf1ef;
+
+    margin-bottom: 10px;
+}
+
+.ciit-sidebar-title {
+    color: var(--ciit-muted);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .10em;
+}
+
+.ciit-sidebar-subtitle {
+    color: var(--ciit-light-text);
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* ================================
+   SIDEBAR LIST
+   ================================ */
+
+.ciit-sidebar-list {
+    border: none;
+
+    padding: 0;
+
+    margin: 0;
+}
+
+.ciit-sidebar-list .list-group-item {
+    border: none;
+
+    background: transparent;
+
+    padding: 0;
+
+    margin-bottom: 4px;
+}
+
+
+/* ================================
+   SIDEBAR MENU LINK
+   ================================ */
+
+.ciit-sidebar-list a {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    color: var(--ciit-text);
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    padding: 10px 11px;
+
+    border-radius: 7px;
+
+    transition:
+        background .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+.ciit-sidebar-list a:hover {
+    background: var(--ciit-primary-hover);
+
+    color: #047857;
+
+    transform: translateX(2px);
+}
+
+
+/* ================================
+   ACTIVE MENU
+   ================================ */
+
+.ciit-sidebar-list a.active-link {
+    background: var(--ciit-primary);
+
+    color: #ffffff;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 4px 10px rgba(5, 150, 105, .20);
+}
+
+
+/* ================================
+   SIDEBAR ICON
+   ================================ */
+
+.ciit-sidebar-icon {
+    width: 20px;
+
+    height: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+
+    flex-shrink: 0;
+}
+
+
+/* ================================
+   CONTENT
+   ================================ */
+
+.ciit-content {
+    min-height: calc(100vh - 120px);
+
+    background: var(--ciit-surface);
+
+    border: 1px solid var(--ciit-border);
+
+    border-radius: 12px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 5px 25px rgba(15, 46, 34, .05);
+
+    overflow: hidden;
+}
+
+
+/* ================================
+   DARK THEME - READY FOR SETTINGS
+   ================================ */
+
+[data-theme="dark"] {
+    --ciit-bg: #111827;
+
+    --ciit-surface: #1f2937;
+
+    --ciit-border: #374151;
+
+    --ciit-text: #e5e7eb;
+
+    --ciit-muted: #9ca3af;
+
+    --ciit-light-text: #6b7280;
+
+    --ciit-primary: #059669;
+
+    --ciit-primary-hover: #064e3b;
+
+    --ciit-navbar: #071a13;
+
+    --ciit-navbar-text: #ffffff;
+}
+
+
+/* ================================
+   DARK THEME SIDEBAR
+   ================================ */
+
+[data-theme="dark"] .ciit-sidebar-list a:hover {
+    color: #6ee7b7;
+}
+
+[data-theme="dark"] .ciit-sidebar-header {
+    border-bottom-color: var(--ciit-border);
+}
+
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 991px) {
+
+    .ciit-navbar {
+        padding: 0 18px;
+    }
+
+    .ciit-page {
+        padding: 18px;
+    }
+
+    .ciit-sidebar {
+        position: static;
+
+        margin-bottom: 15px;
+    }
+
+    .ciit-content {
+        min-height: 70vh;
+    }
+}
+
+
+/* ================================
+   MOBILE
+   ================================ */
+
+@media (max-width: 576px) {
+
+    .ciit-navbar {
+        height: auto;
+
+        min-height: 68px;
+
+        padding: 10px 14px;
+    }
+
+    .ciit-nav-right {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 4px;
+
+        padding: 12px 0;
+    }
+
+    .ciit-user-name {
+        text-align: center;
+    }
+
+    .change-password-link,
+    .ciit-logout {
+        text-align: center;
+    }
+
+    .ciit-page {
+        padding: 12px;
+    }
+
+    .ciit-content {
+        padding: 16px;
+    }
+}
+
+
+
+:root {
+    --bg-main: #f5f8f6;
+    --bg-card: #ffffff;
+    --bg-sidebar: #ffffff;
+    --bg-input: #ffffff;
+    --bg-hover: #eaf5f0;
+    --text-main: #202a26;
+    --text-secondary: #718078;
+    --text-muted: #89928f;
+    --border: #e2e9e5;
+    --border-light: #e9edeb;
+    --primary: #059669;
+    --primary-dark: #047857;
+    --navbar: #0f2e22;
+    --shadow: rgba(15,46,34,.08);
+}
+
+html[data-theme="dark"] {
+    --bg-main: #111817;
+    --bg-card: #18211f;
+    --bg-sidebar: #151e1c;
+    --bg-input: #1c2724;
+    --bg-hover: #20332e;
+    --text-main: #f1f5f3;
+    --text-secondary: #a9b7b1;
+    --text-muted: #82918b;
+    --border: #293936;
+    --border-light: #263532;
+    --primary: #10b981;
+    --primary-dark: #059669;
+    --navbar: #09251c;
+    --shadow: rgba(0,0,0,.35);
+}
+
+html,
+body {
+    background: var(--bg-main);
+    color: var(--text-main);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+    background: var(--bg-main) !important;
+    color: var(--text-main) !important;
+}

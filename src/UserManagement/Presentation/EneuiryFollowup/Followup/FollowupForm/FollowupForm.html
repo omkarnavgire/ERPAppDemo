@@ -1,0 +1,398 @@
+<div class="followup-page">
+    <div class="followup-card">
+
+        <div class="followup-header">
+            <div>
+                <h2>{{isEditMode?'Edit Followup':'Enquiry Followup'}}</h2>
+                <p>Manage enquiry followup details</p>
+            </div>
+
+            <button type="button" class="back-btn" (click)="cancel()">
+                ← Back
+            </button>
+        </div>
+
+        <div *ngIf="errormessage" class="error-message">
+            {{errormessage}}
+        </div>
+
+        <div *ngIf="successmessage" class="success-message">
+            {{successmessage}}
+        </div>
+
+        <!-- ENQUIRY DETAILS -->
+
+        <section class="section-card enquiry-details-card">
+
+            <div class="section-title">
+                <div>
+                    <h3>Enquiry Details</h3>
+                    <p>Candidate enquiry information</p>
+                </div>
+
+                <span class="enquiry-id" *ngIf="enquiry">
+                    Enquiry #{{enquiry.enquiryId}}
+                </span>
+            </div>
+
+            <div *ngIf="loading" class="section-loading">
+                Loading enquiry details...
+            </div>
+
+            <div *ngIf="!loading&&enquiry" class="details-grid">
+
+                <div class="detail-item">
+                    <span>Candidate Name</span>
+                    <strong>{{enquiry.candidateName||'-'}}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Enquiry Date</span>
+                    <strong>
+                        {{enquiry.enquiryDate?(enquiry.enquiryDate|date:'dd-MM-yyyy'):'-'}}
+                    </strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Gender</span>
+                    <strong>{{enquiry.gender||'-'}}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Mobile Number</span>
+                    <strong>{{enquiry.mobileNumber||'-'}}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Email Address</span>
+                    <strong>{{enquiry.emailAddress||'-'}}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Qualification</span>
+                    <strong>
+                        {{enquiry.qualificationName||enquiry.qualification||'-'}}
+                    </strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Enquiry For</span>
+                    <strong>
+                        {{enquiry.enquiryFors||enquiry.enquiryFor||'-'}}
+                    </strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Lead Source</span>
+                    <strong>
+                        {{enquiry.sourceName||enquiry.leadSources||'-'}}
+                    </strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Interested Topics</span>
+                    <strong>{{enquiry.interestedTopics||'-'}}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Branch</span>
+                    <strong>{{enquiry.branchName||'-'}}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Status</span>
+                    <strong>{{enquiry.status||'-'}}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Local Address</span>
+                    <strong>{{enquiry.localAddress||'-'}}</strong>
+                </div>
+
+            </div>
+
+            <div *ngIf="!loading&&!enquiry" class="section-loading">
+                Enquiry details not found.
+            </div>
+
+        </section>
+
+        <!-- NEW FOLLOWUP -->
+
+        <section class="section-card accordion-card new-followup-card">
+
+            <button
+                type="button"
+                class="accordion-header"
+                (click)="toggleNewFollowup()"
+                [attr.aria-expanded]="newFollowupExpanded">
+
+                <div class="accordion-title">
+
+                    <div class="section-icon new-icon">
+                        +
+                    </div>
+
+                    <div>
+                        <h3>
+                            {{isEditMode?'Edit Followup':'New Followup'}}
+                        </h3>
+
+                        <p>
+                            {{isEditMode
+                                ?'Update followup details'
+                                :'Add a new followup for this enquiry'}}
+                        </p>
+                    </div>
+
+                </div>
+
+                <span class="expand-btn">
+                    {{newFollowupExpanded?'−':'+'}}
+                </span>
+
+            </button>
+
+            <div
+                class="accordion-content"
+                *ngIf="newFollowupExpanded">
+
+                <form
+                    [formGroup]="followupForm"
+                    (ngSubmit)="submit()">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label>
+                                Candidate Name <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                formControlName="candidateName"
+                                readonly>
+
+                            <small
+                                *ngIf="followupForm.get('candidateName')?.touched&&followupForm.get('candidateName')?.invalid">
+                                Candidate name is required.
+                            </small>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Followup By <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                formControlName="followUpBy"
+                                readonly>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Followup Date <span>*</span>
+                            </label>
+
+                            <input
+                                type="date"
+                                formControlName="followUpDate">
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Status <span>*</span>
+                            </label>
+
+                            <select formControlName="status">
+
+                                <option value="">
+                                    Select Status
+                                </option>
+
+                                <option
+                                    *ngFor="let status of followupStatuses"
+                                    [value]="status">
+                                    {{status}}
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Next Followup Date <span>*</span>
+                            </label>
+
+                            <input
+                                type="date"
+                                formControlName="nextFollowupDate">
+
+                        </div>
+
+                        <div class="form-group full-width">
+
+                            <label>
+                                Description <span>*</span>
+                            </label>
+
+                            <textarea
+                                formControlName="description"
+                                rows="5"
+                                placeholder="Enter followup description">
+                            </textarea>
+
+                            <small
+                                *ngIf="followupForm.get('description')?.touched&&followupForm.get('description')?.invalid">
+                                Followup description is required.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="cancel-btn"
+                            (click)="cancel()">
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="save-btn"
+                            [disabled]="submitting||loading">
+
+                            {{submitting
+                                ?(isEditMode?'Updating...':'Saving...')
+                                :(isEditMode?'Update Followup':'Save Followup')}}
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+        <!-- PREVIOUS FOLLOWUPS -->
+
+        <section class="section-card accordion-card previous-followup-card">
+
+            <button
+                type="button"
+                class="accordion-header"
+                (click)="togglePreviousFollowups()"
+                [attr.aria-expanded]="previousFollowupsExpanded">
+
+                <div class="accordion-title">
+
+                    <div class="section-icon history-icon">
+                        ◷
+                    </div>
+
+                    <div>
+                        <h3>Previous Followups</h3>
+                        <p>Followup history for this enquiry</p>
+                    </div>
+
+                </div>
+
+                <span class="expand-btn history-expand-btn">
+                    {{previousFollowupsExpanded?'−':'+'}}
+                </span>
+
+            </button>
+
+            <div
+                class="accordion-content"
+                *ngIf="previousFollowupsExpanded">
+
+                <div
+                    *ngIf="followupsLoading"
+                    class="section-loading">
+                    Loading previous followups...
+                </div>
+
+                <div
+                    *ngIf="!followupsLoading&&followups.length===0"
+                    class="empty-followups">
+                    No previous followups found.
+                </div>
+
+                <div
+                    *ngIf="!followupsLoading&&followups.length>0"
+                    class="followup-table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>SR</th>
+                                <th>Followup Date</th>
+                                <th>Followup By</th>
+                                <th>Status</th>
+                                <th>Next Followup</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr
+                                *ngFor="let followup of followups;let i=index">
+
+                                <td>
+                                    {{i+1}}
+                                </td>
+
+                                <td>
+                                    {{followup.followUpDate|date:'dd-MM-yyyy'}}
+                                </td>
+
+                                <td>
+                                    {{followup.followUpBy||'-'}}
+                                </td>
+
+                                <td>
+                                    <span class="status-badge">
+                                        {{followup.status||'-'}}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{followup.nextFollowupDate|date:'dd-MM-yyyy'}}
+                                </td>
+
+                                <td>
+                                    {{followup.description||'-'}}
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+</div>

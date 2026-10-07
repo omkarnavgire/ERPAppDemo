@@ -1,0 +1,119 @@
+<!-- Header -->
+<nav class="navbar navbar-expand-lg ciit-navbar">
+
+    <div class="container-fluid">
+
+        <a
+            class="navbar-brand ciit-brand"
+            routerLink="/main/dashboard">
+
+            <div class="ciit-brand-name">
+                <span class="ciit-title">
+                    CIIT
+                </span>
+
+                <span class="ciit-logo-sub">
+                    Training Institute
+                </span>
+            </div>
+
+        </a>
+
+
+        <div class="navbar-nav ms-auto ciit-nav-right">
+
+            <span class="ciit-user-name">
+                Hi, {{ employeeName }}
+            </span>
+
+            <!-- <a
+                class="nav-item nav-link change-password-link"
+                routerLink="/main/change-password">
+
+                Change Password
+
+            </a> -->
+
+            <a
+                class="nav-item nav-link ciit-logout"
+                (click)="logout()">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- Main Page -->
+<div class="ciit-page">
+
+    <div class="row g-3">
+
+
+        <!-- Sidebar -->
+        <div class="col-lg-2 col-md-3">
+
+            <div class="ciit-sidebar">
+
+                <div class="ciit-sidebar-header">
+
+                    <div class="ciit-sidebar-title">
+                        Navigation
+                    </div>
+
+                    <div class="ciit-sidebar-subtitle">
+                        Institute Management
+                    </div>
+
+                </div>
+
+
+                <ul class="list-group ciit-sidebar-list">
+
+                    @for (menu of visibleMenus; track menu.route) {
+
+                        <li class="list-group-item">
+
+                            <a
+                                [routerLink]="menu.route"
+                                routerLinkActive="active-link">
+
+                                <span class="ciit-sidebar-icon">
+                                    {{ menu.icon }}
+                                </span>
+
+                                {{ menu.label }}
+
+                            </a>
+
+                        </li>
+
+                    }
+
+                </ul>
+
+            </div>
+
+        </div>
+
+
+        <!-- Page Content -->
+        <div class="col-lg-10 col-md-9">
+
+            <div class="ciit-content">
+
+                <router-outlet></router-outlet>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>

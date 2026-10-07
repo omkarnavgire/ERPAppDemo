@@ -1,0 +1,178 @@
+<div class="settings-page">
+    <div class="settings-header">
+        <div>
+            <div class="settings-breadcrumb">
+                <span>Workspace</span>
+                <span>/</span>
+                <span>Settings</span>
+            </div>
+            <h1>Settings</h1>
+            <p>Manage your application preferences and workspace experience.</p>
+        </div>
+
+        <div class="settings-status">
+            <span class="status-dot"></span>
+            <span>Preferences saved</span>
+        </div>
+    </div>
+
+    <div class="settings-layout">
+        <aside class="settings-navigation">
+            <div class="navigation-title">SETTINGS</div>
+
+            <button class="settings-nav-item active">
+                <span class="nav-icon">◉</span>
+                <span>
+                    <strong>Appearance</strong>
+                    <small>Theme & display</small>
+                </span>
+            </button>
+
+            <button class="settings-nav-item">
+                <span class="nav-icon">▣</span>
+                <span>
+                    <strong>Workspace</strong>
+                    <small>Workspace preferences</small>
+                </span>
+            </button>
+
+            <button class="settings-nav-item">
+                <span class="nav-icon">🔔</span>
+                <span>
+                    <strong>Notifications</strong>
+                    <small>Alerts & updates</small>
+                </span>
+            </button>
+
+            <button class="settings-nav-item">
+                <span class="nav-icon">🔒</span>
+                <span>
+                    <strong>Security</strong>
+                    <small>Account security</small>
+                </span>
+            </button>
+        </aside>
+
+        <main class="settings-main">
+            <section class="settings-card appearance-card">
+                <div class="card-heading">
+                    <div class="card-heading-icon">◐</div>
+                    <div>
+                        <h2>Appearance</h2>
+                        <p>Customize how the CIIT Training Institute platform looks.</p>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="preference-row">
+                    <div class="preference-info">
+                        <h3>Interface theme</h3>
+                        <p>Select the appearance that works best for you.</p>
+                    </div>
+
+                    <div class="theme-options">
+                        <button
+                            type="button"
+                            class="theme-card"
+                            [class.active]="selectedTheme === 'light'"
+                            (click)="setTheme('light')">
+                            <div class="theme-preview light-preview">
+                                <div class="preview-top"></div>
+                                <div class="preview-body">
+                                    <div class="preview-sidebar"></div>
+                                    <div class="preview-content">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="theme-card-footer">
+                                <div>
+                                    <strong>Light</strong>
+                                    <small>Clean & bright</small>
+                                </div>
+
+                                @if (selectedTheme === 'light') {
+                                    <span class="selected-icon">✓</span>
+                                }
+                            </div>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="theme-card"
+                            [class.active]="selectedTheme === 'dark'"
+                            (click)="setTheme('dark')">
+                            <div class="theme-preview dark-preview">
+                                <div class="preview-top"></div>
+                                <div class="preview-body">
+                                    <div class="preview-sidebar"></div>
+                                    <div class="preview-content">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="theme-card-footer">
+                                <div>
+                                    <strong>Dark</strong>
+                                    <small>Comfortable & focused</small>
+                                </div>
+
+                                @if (selectedTheme === 'dark') {
+                                    <span class="selected-icon">✓</span>
+                                }
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-card">
+                <div class="card-heading">
+                    <div class="card-heading-icon">✦</div>
+                    <div>
+                        <h2>Interface preferences</h2>
+                        <p>Additional options for your application experience.</p>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="preference-list">
+                    <div class="preference-item">
+                        <div class="preference-item-icon">✓</div>
+                        <div>
+                            <h3>Personalized experience</h3>
+                            <p>Your preferences are stored locally and applied automatically.</p>
+                        </div>
+                        <span class="preference-badge">Enabled</span>
+                    </div>
+
+                    <div class="preference-item">
+                        <div class="preference-item-icon">◷</div>
+                        <div>
+                            <h3>Preference persistence</h3>
+                            <p>Your selected theme remains active when you return to the application.</p>
+                        </div>
+                        <span class="preference-badge">Active</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="settings-footer">
+                <div>
+                    <strong>CIIT Training Institute</strong>
+                    <span>Application preferences</span>
+                </div>
+
+                <span class="version-label">Settings v1.0</span>
+            </div>
+        </main>
+    </div>
+</div>

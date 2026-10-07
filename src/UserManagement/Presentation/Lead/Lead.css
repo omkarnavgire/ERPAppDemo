@@ -1,0 +1,706 @@
+/* =========================
+   Lead Page
+   ========================= */
+
+.lead-page {
+    padding: 24px;
+    min-height: 100%;
+    box-sizing: border-box;
+    background: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* =========================
+   Page Header
+   ========================= */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.page-header p {
+    margin: 5px 0 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* =========================
+   Header Buttons
+   ========================= */
+
+.add-btn,
+.export-btn {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.add-btn {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.add-btn:hover {
+    border-color: var(--primary-dark);
+    background: var(--primary-dark);
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-main);
+}
+
+.export-btn:hover {
+    border-color: var(--primary);
+    background: var(--bg-hover);
+}
+
+/* =========================
+   Export Menu
+   ========================= */
+
+.export-wrapper {
+    position: relative;
+}
+
+.export-menu {
+    position: absolute;
+    top: 46px;
+    right: 0;
+    z-index: 200;
+    width: 165px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-card);
+    box-shadow: 0 8px 24px var(--shadow);
+}
+
+.export-menu button {
+    display: block;
+    width: 100%;
+    padding: 11px 14px;
+    border: 0;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.export-menu button:hover {
+    background: var(--bg-hover);
+    color: var(--primary);
+}
+
+/* =========================
+   Filter Section
+   ========================= */
+
+.filter-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 18px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--bg-card);
+    box-shadow: 0 2px 7px var(--shadow);
+}
+
+.search-box {
+    flex: 1;
+    min-width: 220px;
+}
+
+.search-box input,
+.filter-card select {
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    outline: none;
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-size: 13px;
+}
+
+.filter-card select {
+    width: 180px;
+    cursor: pointer;
+}
+
+.search-box input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-box input:focus,
+.filter-card select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.08);
+}
+
+.clear-btn {
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.clear-btn:hover {
+    border-color: var(--primary);
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+/* =========================
+   Lead Table
+   ========================= */
+
+.table-card {
+    overflow: visible;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--bg-card);
+    box-shadow: 0 2px 7px var(--shadow);
+}
+
+.table-header {
+    display: flex;
+    align-items: center;
+    height: 52px;
+    box-sizing: border-box;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.table-header strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+}
+
+thead th {
+    position: relative;
+    height: 45px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-hover);
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+tbody td {
+    height: 48px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+tbody tr:hover {
+    background: var(--bg-hover);
+}
+
+td:first-child,
+td:nth-child(2) {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* =========================
+   Status
+   ========================= */
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: var(--bg-hover);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* =========================
+   Followup Button
+   ========================= */
+
+.followup-btn {
+    height: 30px;
+    padding: 0 11px;
+    border: 1px solid var(--primary);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.followup-btn:hover {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+/* =========================
+   Empty / Loading State
+   ========================= */
+
+.empty-row {
+    height: 80px !important;
+    color: var(--text-muted) !important;
+    text-align: center !important;
+}
+
+/* =========================
+   Date Filter Header
+   ========================= */
+
+.filter-header {
+    position: relative;
+}
+
+.filter-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.filter-title:hover {
+    color: var(--primary);
+}
+
+.filter-icon {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* =========================
+   Date Filter Popup
+   ========================= */
+
+.date-filter {
+    position: absolute;
+    top: 42px;
+    right: 0;
+    z-index: 500;
+    width: 235px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--bg-card);
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+.date-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 11px;
+}
+
+.date-filter-field label {
+    color: var(--text-main);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.date-filter-field input {
+    width: 100%;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    outline: none;
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-size: 12px;
+}
+
+.date-filter-field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.08);
+}
+
+.date-filter-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+    padding-top: 4px;
+}
+
+.date-clear-btn,
+.date-apply-btn {
+    height: 32px;
+    padding: 0 11px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.date-clear-btn {
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+}
+
+.date-clear-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.date-apply-btn {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.date-apply-btn:hover {
+    border-color: var(--primary-dark);
+    background: var(--primary-dark);
+}
+
+/* =========================
+   Add Lead Modal
+   ========================= */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.48);
+}
+
+.lead-modal {
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-card);
+    color: var(--text-main);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.modal-header p {
+    margin: 5px 0 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.close-btn {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+/* =========================
+   Lead Form
+   ========================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    padding: 22px 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group label {
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    outline: none;
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.form-group input,
+.form-group select {
+    height: 40px;
+    padding: 0 11px;
+}
+
+.form-group textarea {
+    min-height: 80px;
+    padding: 10px 11px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.08);
+}
+
+.form-group input:disabled {
+    opacity: 1;
+    cursor: not-allowed;
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* =========================
+   Training Type Radio
+   ========================= */
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    height: 40px;
+}
+
+.radio-option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 400 !important;
+    cursor: pointer;
+}
+
+.radio-option input {
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+/* =========================
+   Modal Actions
+   ========================= */
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 24px;
+    border-top: 1px solid var(--border);
+}
+
+.cancel-btn,
+.save-btn {
+    height: 40px;
+    padding: 0 17px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+}
+
+.cancel-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.save-btn {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.save-btn:hover {
+    border-color: var(--primary-dark);
+    background: var(--primary-dark);
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 850px) {
+    .filter-card {
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        flex-basis: 100%;
+    }
+
+    .filter-card select {
+        flex: 1;
+        width: auto;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .header-actions {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 600px) {
+    .lead-page {
+        padding: 15px;
+    }
+
+    .page-header {
+        flex-direction: column;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .add-btn,
+    .export-btn {
+        flex: 1;
+    }
+
+    .filter-card {
+        align-items: stretch;
+    }
+
+    .filter-card select,
+    .clear-btn {
+        width: 100%;
+        flex: 1;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        padding: 18px;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+    .lead-modal {
+        max-height: 94vh;
+    }
+
+    .modal-header {
+        padding: 17px 18px;
+    }
+
+    .modal-actions {
+        padding: 14px 18px;
+    }
+}

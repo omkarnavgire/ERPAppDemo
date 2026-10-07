@@ -1,0 +1,618 @@
+<div class="reports-page">
+
+    <div class="report-header">
+
+        <div>
+            <span class="eyebrow">BUSINESS INTELLIGENCE</span>
+            <h2>Reports</h2>
+            <p>Management view of leads, enquiries and follow-up activity.</p>
+        </div>
+
+        <button
+            class="refresh-btn"
+            type="button"
+            (click)="loadReports(true)">
+            ↻ Refresh
+        </button>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+        <label>
+            From
+            <input
+                type="date"
+                [(ngModel)]="dateFrom">
+        </label>
+
+
+        <label>
+            To
+            <input
+                type="date"
+                [(ngModel)]="dateTo">
+        </label>
+
+
+        <label>
+            Branch
+            <select [(ngModel)]="branchFilter">
+                <option
+                    *ngFor="let x of branches"
+                    [value]="x">
+                    {{x}}
+                </option>
+            </select>
+        </label>
+
+
+        <label>
+            Course
+            <select [(ngModel)]="courseFilter">
+                <option
+                    *ngFor="let x of courses"
+                    [value]="x">
+                    {{x}}
+                </option>
+            </select>
+        </label>
+
+
+        <label>
+            Counsellor
+            <select [(ngModel)]="counsellorFilter">
+                <option
+                    *ngFor="let x of counsellors"
+                    [value]="x">
+                    {{x}}
+                </option>
+            </select>
+        </label>
+
+
+        <button
+            type="button"
+            class="clear-btn"
+            (click)="clearFilters()">
+            Clear Filters
+        </button>
+
+
+        <button
+            type="button"
+            class="clear-btn"
+            (click)="setCurrentMonthFilter()">
+            Current Month
+        </button>
+
+    </div>
+
+
+    <div
+        *ngIf="loading"
+        class="state">
+        Loading business reports...
+    </div>
+
+
+    <div
+        *ngIf="errorMessage"
+        class="error">
+        {{errorMessage}}
+    </div>
+
+
+    <ng-container *ngIf="!loading">
+
+
+        <!-- 1. LEAD FOLLOW-UP REPORT -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h3>1. Lead Follow-up Report</h3>
+                    <p>Latest follow-up for each Lead within the selected period.</p>
+                </div>
+
+                <div class="section-actions">
+
+                    <button
+                        class="export-btn"
+                        type="button"
+                        (click)="exportLeadFollowupExcel()">
+                        Excel
+                    </button>
+
+                    <button
+                        class="export-btn"
+                        type="button"
+                        (click)="exportLeadFollowupPdf()">
+                        PDF
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-grid follow-kpis">
+
+                <div class="kpi">
+                    <span>Total Follow-ups</span>
+                    <strong>{{filteredLeadFollowups.length}}</strong>
+                </div>
+
+                <div class="kpi">
+                    <span>Completed</span>
+                    <strong>{{leadFollowupCompleted}}</strong>
+                </div>
+
+                <div class="kpi">
+                    <span>Pending</span>
+                    <strong>{{leadFollowupPending}}</strong>
+                </div>
+
+                <div class="kpi">
+                    <span>Overdue</span>
+                    <strong>{{leadFollowupOverdue}}</strong>
+                </div>
+
+                <div class="kpi">
+                    <span>Lost / Not Interested</span>
+                    <strong>{{leadFollowupLost}}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="follow-report-grid">
+
+                <div class="chart-panel">
+
+                    <h4>Lead Follow-up Status</h4>
+
+                    <div class="chart-flex">
+
+                        <div
+                            class="donut"
+                            [style.background]="leadFollowupPieStyle()">
+                        </div>
+
+                        <div class="legend">
+
+                            <div>
+                                <i class="dot completed"></i>
+                                Completed
+                                <b>{{leadFollowupCompleted}}</b>
+                            </div>
+
+                            <div>
+                                <i class="dot pending"></i>
+                                Pending
+                                <b>{{leadFollowupPending}}</b>
+                            </div>
+
+                            <div>
+                                <i class="dot overdue"></i>
+                                Overdue
+                                <b>{{leadFollowupOverdue}}</b>
+                            </div>
+
+                            <div>
+                                <i class="dot lost"></i>
+                                Lost / Not Interested
+                                <b>{{leadFollowupLost}}</b>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chart-panel">
+
+                    <h4>Lead Follow-up Graph</h4>
+
+                    <div class="bar-chart">
+
+                        <div
+                            class="chart-row"
+                            *ngFor="let r of leadFollowupChartRows">
+
+                            <span>{{r.label}}</span>
+
+                            <div class="chart-track">
+                                <b
+                                    [style.width.%]="r.value*100/maxLeadFollowupChartValue()">
+                                </b>
+                            </div>
+
+                            <strong>{{r.value}}</strong>
+
+                        </div>
+
+                        <div
+                            *ngIf="!leadFollowupChartRows.length"
+                            class="empty">
+                            No lead follow-up data.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-wrap report-table">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>SR</th>
+                            <th>Lead ID</th>
+                            <th>Candidate</th>
+                            <th>Counsellor</th>
+                            <th>Last Follow-up</th>
+                            <th>Status</th>
+                            <th>Last Follow-up Comment</th>
+                            <th>Next Follow-up</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr
+                            *ngFor="let f of latestLeadFollowups;let i=index">
+
+                            <td>{{i+1}}</td>
+
+                            <td>{{f.leadId}}</td>
+
+                            <td>
+                                <b>{{f.candidateName}}</b>
+                            </td>
+
+                            <td>{{f.followUpBy}}</td>
+
+                            <td>
+                                {{f.followUpDate|date:'dd-MMM-yyyy'}}
+                            </td>
+
+                            <td>{{f.status||'—'}}</td>
+
+                            <td class="comment-cell">
+                                {{f.description||'—'}}
+                            </td>
+
+                            <td>
+                                {{f.nextFollowupDate|date:'dd-MMM-yyyy'}}
+                            </td>
+
+                        </tr>
+
+
+                        <tr *ngIf="!latestLeadFollowups.length">
+
+                            <td
+                                colspan="8"
+                                class="empty">
+                                No Lead follow-up data for the selected filters.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- 2. ENQUIRY FOLLOW-UP REPORT -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h3>2. Enquiry Follow-up Report</h3>
+                    <p>Separate enquiry follow-up activity using the fields exposed by the current API.</p>
+                </div>
+
+                <div class="section-actions">
+
+                    <button
+                        class="export-btn"
+                        type="button"
+                        (click)="exportEnquiryFollowupExcel()">
+                        Excel
+                    </button>
+
+                    <button
+                        class="export-btn"
+                        type="button"
+                        (click)="exportEnquiryFollowupPdf()">
+                        PDF
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="kpi-grid follow-kpis">
+
+                <div class="kpi">
+                    <span>Total Recorded</span>
+                    <strong>{{enquiryFollowupRecorded}}</strong>
+                </div>
+
+                <div class="kpi">
+                    <span>Upcoming</span>
+                    <strong>{{enquiryFollowupUpcoming}}</strong>
+                </div>
+
+                <div class="kpi">
+                    <span>Past / Recorded</span>
+                    <strong>{{enquiryFollowupPast}}</strong>
+                </div>
+
+            </div>
+
+
+            <div class="table-wrap report-table">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>SR</th>
+                            <th>Candidate</th>
+                            <th>Counsellor</th>
+                            <th>Last Follow-up</th>
+                            <th>Last Follow-up Comment</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr
+                            *ngFor="let f of latestEnquiryFollowups;let i=index">
+
+                            <td>{{i+1}}</td>
+
+                            <td>
+                                <b>{{f.candidateName}}</b>
+                            </td>
+
+                            <td>{{f.followUpBy}}</td>
+
+                            <td>
+                                {{f.followUpDate|date:'dd-MMM-yyyy'}}
+                            </td>
+
+                            <td class="comment-cell">
+                                {{f.description||'—'}}
+                            </td>
+
+                        </tr>
+
+
+                        <tr *ngIf="!latestEnquiryFollowups.length">
+
+                            <td
+                                colspan="5"
+                                class="empty">
+                                No Enquiry follow-up data for the selected filters.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- 3. EXECUTIVE OVERVIEW -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h3>3. Executive Overview</h3>
+                    <p>Current business pipeline and activity.</p>
+                </div>
+
+            </div>
+
+
+            <div class="kpi-grid">
+
+                <div class="kpi">
+                    <span>Leads</span>
+                    <strong>{{filteredLeads.length}}</strong>
+                    <small>{{leadConversionRate}}% conversion</small>
+                </div>
+
+                <div class="kpi">
+                    <span>Enquiries</span>
+                    <strong>{{filteredEnquiries.length}}</strong>
+                    <small>{{enquiryConversionRate}}% conversion</small>
+                </div>
+
+                <div class="kpi">
+                    <span>Lead Follow-ups</span>
+                    <strong>{{filteredLeadFollowups.length}}</strong>
+                    <small>{{leadFollowupCompleted}} completed</small>
+                </div>
+
+                <div class="kpi">
+                    <span>Enquiry Follow-ups</span>
+                    <strong>{{filteredEnquiryFollowups.length}}</strong>
+                    <small>{{enquiryFollowupUpcoming}} upcoming</small>
+                </div>
+
+                <div class="kpi">
+                    <span>Lead Converted</span>
+                    <strong>{{leadConverted}}</strong>
+                    <small>{{leadLost}} lost / closed</small>
+                </div>
+
+                <div class="kpi">
+                    <span>Enquiry Converted</span>
+                    <strong>{{enquiryConverted}}</strong>
+                    <small>{{enquiryLost}} lost / closed</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- 4. LEAD SOURCE -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h3>4. Lead Source Performance</h3>
+                    <p>Volume and outcome by source.</p>
+                </div>
+
+            </div>
+
+
+            <div class="source-list">
+
+                <div
+                    class="source-row"
+                    *ngFor="let r of leadSourceRows">
+
+                    <div class="source-label">
+
+                        <b>{{r.name}}</b>
+
+                        <span>
+                            {{r.total}} leads ·
+                            {{r.converted}} converted ·
+                            {{r.lost}} lost/closed
+                        </span>
+
+                    </div>
+
+                    <div class="bar">
+
+                        <span
+                            [style.width.%]="r.total*100/maxSourceTotal()">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    *ngIf="!leadSourceRows.length"
+                    class="state small">
+                    No lead-source data for the selected filters.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- 5. COUNSELLOR ACTIVITY -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <div>
+                    <h3>5. Counsellor Activity</h3>
+                    <p>Follow-up workload across Lead and Enquiry workflows.</p>
+                </div>
+
+            </div>
+
+
+            <div class="table-wrap report-table">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>SR</th>
+                            <th>Counsellor</th>
+                            <th>Total Follow-ups</th>
+                            <th>Lead Completed</th>
+                            <th>Lead Lost</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr
+                            *ngFor="let r of counsellorRows;let i=index">
+
+                            <td>{{i+1}}</td>
+
+                            <td>
+                                <b>{{r.name}}</b>
+                            </td>
+
+                            <td>{{r.total}}</td>
+
+                            <td>{{r.completed}}</td>
+
+                            <td>{{r.lost}}</td>
+
+                        </tr>
+
+
+                        <tr *ngIf="!counsellorRows.length">
+
+                            <td
+                                colspan="5"
+                                class="empty">
+                                No follow-up data for the selected filters.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </ng-container>
+
+</div>

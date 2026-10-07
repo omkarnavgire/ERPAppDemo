@@ -1,0 +1,233 @@
+<div class="lead-page">
+    <div class="page-header">
+        <div>
+            <h2>Leads</h2>
+            <p>Manage and track your leads</p>
+        </div>
+
+        <div class="header-actions">
+            <div class="export-wrapper" *ngIf="canExport">
+                <button class="export-btn" type="button" (click)="toggleExportMenu()">
+                    Export
+                    <span>⌄</span>
+                </button>
+
+                <div class="export-menu" *ngIf="showExportMenu">
+                    <button type="button" (click)="exportExcel()">Export Excel</button>
+                    <button type="button" (click)="exportPdf()">Export PDF</button>
+                </div>
+            </div>
+
+            <button class="add-btn" type="button" (click)="openAddLead()" *ngIf="canCreate">
+                + Add Lead
+            </button>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <div class="search-box">
+            <input type="text" [(ngModel)]="searchText" (input)="applyFilters()"
+                placeholder="Search name, email or mobile">
+        </div>
+
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+            <option value="">All Status</option>
+            <option value="New">New</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Interested">Interested</option>
+            <option value="Converted to Enquiry">Converted to Enquiry</option>
+            <option value="Closed">Closed</option>
+        </select>
+
+        <select [(ngModel)]="trainingTypeFilter" (change)="applyFilters()">
+            <option value="">All Training Types</option>
+            <option value="Online">Online</option>
+            <option value="Offline">Offline</option>
+        </select>
+
+        <button class="clear-btn" type="button" (click)="clearFilters()">
+            Clear
+        </button>
+    </div>
+
+    <div class="table-card">
+        <div class="table-header">
+            <span>
+                Total Leads:
+                <strong>{{filteredLeads.length}}</strong>
+            </span>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>ID</th>
+                        <th>Candidate Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Training Type</th>
+                        <th>Status</th>
+
+                        <th class="filter-header">
+                            <div class="filter-title" (click)="toggleFilter('leadDate')">
+                                <span>Lead Date</span>
+                                <span class="filter-icon">⌄</span>
+                            </div>
+
+                            <div class="date-filter" *ngIf="openFilterColumn==='leadDate'"
+                                (click)="$event.stopPropagation()">
+
+                                <div class="date-filter-field">
+                                    <label>From Date</label>
+                                    <input type="date" [(ngModel)]="dateFrom">
+                                </div>
+
+                                <div class="date-filter-field">
+                                    <label>To Date</label>
+                                    <input type="date" [(ngModel)]="dateTo">
+                                </div>
+
+                                <div class="date-filter-actions">
+                                    <button type="button" class="date-clear-btn" (click)="clearDateFilter()">
+                                        Clear
+                                    </button>
+
+                                    <button type="button" class="date-apply-btn" (click)="applyDateFilter()">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </th>
+
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let lead of filteredLeads; let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{lead.leadId}}</td>
+                        <td>{{lead.candidateName}}</td>
+                        <td>{{lead.emailAddress}}</td>
+                        <td>{{lead.mobileNumber}}</td>
+                        <td>{{lead.trainingType}}</td>
+                        <td>
+                            <span class="status" [ngClass]="getStatusClass(lead.status)">
+                                {{lead.status}}
+                            </span>
+                        </td>
+                        <td>{{lead.leadDate | date:'dd-MM-yyyy'}}</td>
+                        <td>
+                            <button class="followup-btn" type="button" (click)="followup(lead)" *ngIf="canFollowup">
+                                Followup
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="!loading && filteredLeads.length===0">
+                        <td colspan="9" class="empty-row">
+                            No leads found
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="loading">
+                        <td colspan="9" class="empty-row">
+                            Loading leads...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showAddForm">
+    <div class="lead-modal">
+
+        <div class="modal-header">
+            <div>
+                <h3>Add Lead</h3>
+                <p>Create a new lead</p>
+            </div>
+
+            <button type="button" class="close-btn" (click)="closeAddLead()">
+                ×
+            </button>
+        </div>
+
+        <form (ngSubmit)="createLead()">
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Candidate Name</label>
+                    <input type="text" name="candidateName" [(ngModel)]="leadForm.candidateName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="emailAddress" [(ngModel)]="leadForm.emailAddress" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="text" name="mobileNumber" [(ngModel)]="leadForm.mobileNumber" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Training Type</label>
+
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="trainingType" value="Online" [(ngModel)]="leadForm.trainingType"
+                                required>
+                            <span>Online</span>
+                        </label>
+
+                        <label class="radio-option">
+                            <input type="radio" name="trainingType" value="Offline" [(ngModel)]="leadForm.trainingType">
+                            <span>Offline</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Lead Date</label>
+                    <input type="date" name="leadDate" [(ngModel)]="leadDateValue" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label>Lead Source</label>
+                    <select name="sourceId" [(ngModel)]="leadForm.sourceId" (change)="onLeadSourceChange()" required>
+
+                        <option [ngValue]="0">
+                            {{leadSourcesLoading ? 'Loading lead sources...' : 'Select Lead Source'}}
+                        </option>
+
+                        <option *ngFor="let source of leadSources" [ngValue]="source.sourceId">
+                            {{source.sourceName}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea name="description" [(ngModel)]="leadForm.description" rows="3">
+                    </textarea>
+                </div>
+
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn" (click)="closeAddLead()">
+                    Cancel
+                </button>
+
+                <button type="submit" class="save-btn">
+                    Save Lead
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

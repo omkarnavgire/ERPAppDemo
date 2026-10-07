@@ -1,0 +1,158 @@
+<div class="login-page">
+
+  <!-- Left Side -->
+  <div class="login-left">
+
+    <div class="brand">
+      <div class="brand-logo">CIIT</div>
+      <div>
+        <h2>CIIT TRAINIGN </h2>
+        <span>INSTITUTE</span>
+      </div>
+    </div>
+
+    <div class="welcome-content">
+      <h1>login to ciit institute<br>with confidence.</h1>
+
+      <p>
+        Learn Today. Build Your Career Tomorrow.
+Industry-focused IT training, practical learning and career support to help you turn your skills into real opportunities.
+      </p>
+
+      <div class="features">
+
+        <div class="feature">
+          <div class="feature-icon">✓</div>
+          <div>
+            <strong>Industry-Ready Skills</strong>
+            <span>Learn the latest IT technologies.</span>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">✓</div>
+          <div>
+            <strong>Practical Training</strong>
+            <span>Build real-world projects.</span>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">✓</div>
+          <div>
+            <strong>Career Support</strong>
+            <span>Get placement and interview guidance.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="left-footer">
+      © 2026 InvoicePro. All rights reserved.
+    </div>
+
+  </div>
+
+
+  <!-- Right Side -->
+  <div class="login-right">
+
+    <div class="login-card">
+
+      <div class="mobile-brand">
+        <div class="brand-logo">IB</div>
+        <h2>InvoicePro</h2>
+      </div>
+
+      <div class="login-header">
+        <h1>Welcome Back</h1>
+        <p>Sign in to continue to your account</p>
+      </div>
+
+
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="submit()">
+
+        <!-- Username -->
+        <div class="form-group">
+
+          <label for="username">Username</label>
+
+          <div class="input-wrapper">
+            <span class="input-icon">✉</span>
+
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              placeholder="Enter your username"
+            />
+          </div>
+
+        </div>
+
+
+        <!-- Password -->
+        <div class="form-group">
+
+          <div class="password-label">
+
+            <label for="password">Password</label>
+
+            <a routerLink="/forgot-password">Forgot Password?</a>
+
+          </div>
+
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              placeholder="Enter your password"
+            />
+
+          </div>
+
+        </div>
+
+        <!-- Error message -->
+        <div class="error-message" *ngIf="errormessage">
+          {{ errormessage }}
+        </div>
+
+
+        <!-- Login Button -->
+        <button type="submit" class="login-btn">
+
+          <span>Sign In</span>
+          <span class="arrow">→</span>
+
+        </button>
+
+      </form>
+
+
+      <div class="divider">
+        <span>Secure Login</span>
+      </div>
+
+
+      <div class="security-info">
+
+        <span class="security-icon">🔐</span>
+
+        <p>
+          Your connection is secure and your credentials
+          are protected.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

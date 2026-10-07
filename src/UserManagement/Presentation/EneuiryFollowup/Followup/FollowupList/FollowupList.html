@@ -1,0 +1,54 @@
+<div class="followup-list-page">
+    <div class="followup-list-card">
+        <div class="followup-header">
+            <div>
+                <h2>Enquiry Followups</h2>
+                <p>View and manage all enquiry followups</p>
+            </div>
+            <button type="button" class="back-btn" (click)="backToEnquiry()">Back to Enquiry</button>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" [(ngModel)]="searchText" (input)="search()" placeholder="Search followup...">
+            </div>
+            <button type="button" class="refresh-btn" (click)="loadFollowups()">Refresh</button>
+        </div>
+
+        <div *ngIf="errormessage" class="error-message">{{errormessage}}</div>
+
+        <div *ngIf="loading" class="loading-message">
+            Loading followups...
+        </div>
+
+        <div *ngIf="!loading" class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Followup ID</th>
+                        <th>Candidate Name</th>
+                        <th>Followup By</th>
+                        <th>Followup Date</th>
+                        <th>Followup Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let followup of filteredFollowups">
+                        <td>{{followup.followupId}}</td>
+                        <td>{{followup.candidateName}}</td>
+                        <td>{{followup.followUpBy}}</td>
+                        <td>{{followup.followUpDate | date:'dd-MM-yyyy'}}</td>
+                        <td>{{followup.status}}</td>
+                        <td>{{followup.description || '-'}}</td>
+                       
+                    </tr>
+
+                    <tr *ngIf="filteredFollowups.length===0">
+                        <td colspan="7" class="empty-message">No followups found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

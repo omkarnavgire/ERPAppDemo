@@ -1,0 +1,215 @@
+<div class="course-page">
+    <div class="page-header">
+        <div class="page-title">
+            <div class="page-icon">▣</div>
+            <div>
+                <h1>Training Course Management</h1>
+                <p>Manage courses, fees and installment configuration</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert success" *ngIf="successMessage">
+        <span>✓</span>
+        {{successMessage}}
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage&&!showCourseModal">
+        <span>!</span>
+        {{errorMessage}}
+    </div>
+
+    <section class="course-card list-card">
+        <div class="list-header">
+            <div class="list-title">
+                <div class="header-icon">☷</div>
+                <div>
+                    <h2>Course List</h2>
+                    <p>Manage all training courses</p>
+                </div>
+            </div>
+
+            <div class="list-actions">
+                <div class="search-box">
+                    <input type="text" [(ngModel)]="searchText" [ngModelOptions]="{standalone:true}" (input)="filterCourses()" placeholder="Search course name...">
+                    <span>⌕</span>
+                </div>
+
+                <button type="button" class="add-course-btn" (click)="openAddCourse()">
+                    <span>＋</span>
+                    Add New Course
+                </button>
+            </div>
+        </div>
+
+        <div class="list-body">
+            <div class="list-toolbar">
+                <div class="course-summary">
+                    <div class="summary-icon">☷</div>
+                    <div>
+                        <strong>{{filteredCourses.length}}</strong>
+                        <span>Total Courses</span>
+                    </div>
+                </div>
+
+                <button type="button" class="refresh-btn" (click)="loadCourses()">
+                    ↻ Refresh
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-number">SR</th>
+                            <th>Course Name</th>
+                            <th>Fees Amount (₹)</th>
+                            <th>Change Date</th>
+                            <th>Installment %</th>
+                            <th class="col-actions">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngIf="loading">
+                            <td colspan="6" class="table-message">
+                                <span class="loader"></span>
+                                Loading courses...
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="!loading&&filteredCourses.length===0">
+                            <td colspan="6" class="table-message">
+                                No courses found.
+                            </td>
+                        </tr>
+
+                        <tr *ngFor="let course of paginatedCourses;let i=index">
+                            <td class="row-number">{{startRecord+i}}</td>
+
+                            <td class="course-name">
+                                {{course.courseName}}
+                            </td>
+
+                            <td class="amount">
+                                <span *ngIf="course.feesAmount!==null">
+                                    ₹ {{course.feesAmount|number:'1.0-2'}}
+                                </span>
+                                <span *ngIf="course.feesAmount===null">—</span>
+                            </td>
+
+                            <td>
+                                {{displayDate(course.feesChangeDate)}}
+                            </td>
+
+                            <td>
+                                <span *ngIf="course.installmentPercentage!==null" class="percentage">
+                                    {{course.installmentPercentage}}%
+                                </span>
+                                <span *ngIf="course.installmentPercentage===null">—</span>
+                            </td>
+
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <button type="button" class="action edit" title="Edit Course" (click)="editCourse(course)">✎</button>
+                                    <button type="button" class="action delete" title="Delete Course" (click)="deleteCourse(course)">⌫</button>
+                                    <button type="button" class="action restore" title="Restore Course" (click)="restoreCourse(course)">↶</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer" *ngIf="!loading&&filteredCourses.length>0">
+                <div class="showing">
+                    Showing <strong>{{startRecord}}</strong> to <strong>{{endRecord}}</strong>
+                    of <strong>{{filteredCourses.length}}</strong> courses
+                </div>
+
+                <div class="pagination">
+                    <button type="button" class="page-nav" (click)="previousPage()" [disabled]="currentPage===1">
+                        ‹ Previous
+                    </button>
+
+                    <button type="button" *ngFor="let page of pageNumbers" [class.active]="page===currentPage" (click)="goToPage(page)">
+                        {{page}}
+                    </button>
+
+                    <button type="button" class="page-nav" (click)="nextPage()" [disabled]="currentPage===totalPages">
+                        Next ›
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal-backdrop" *ngIf="showCourseModal" (click)="closeCourseModal()">
+    <div class="course-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <div class="modal-icon">{{editingId!==null?'✎':'＋'}}</div>
+                <div>
+                    <h2>{{editingId!==null?'Update Course':'Add New Course'}}</h2>
+                    <p>{{editingId!==null?'Update course information':'Enter course information'}}</p>
+                </div>
+            </div>
+
+            <button type="button" class="modal-close" (click)="closeCourseModal()">×</button>
+        </div>
+
+        <form [formGroup]="courseForm" (ngSubmit)="submit()">
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="field field-full">
+                        <label>Course Name <span>*</span></label>
+                        <input type="text" formControlName="courseName" placeholder="Enter course name" [class.invalid]="isInvalid('courseName')">
+                        <small *ngIf="isInvalid('courseName')">Course name is required.</small>
+                    </div>
+
+                    <div class="field">
+                        <label>Fees Amount (₹) <span>*</span></label>
+                        <div class="input-prefix">
+                            <span>₹</span>
+                            <input type="number" formControlName="feesAmount" placeholder="Enter fees amount" min="0">
+                        </div>
+                        <small *ngIf="isInvalid('feesAmount')">Enter a valid fees amount.</small>
+                    </div>
+
+                    <div class="field">
+                        <label>Fees Change Date</label>
+                        <div class="input-prefix">
+                            <span>▣</span>
+                            <input type="date" formControlName="feesChangeDate">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Installment Percentage (%)</label>
+                        <div class="input-prefix">
+                            <span>%</span>
+                            <input type="number" formControlName="installmentPercentage" placeholder="Enter percentage" min="0" max="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-error" *ngIf="errorMessage">
+                    <span>!</span>
+                    {{errorMessage}}
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" (click)="closeCourseModal()" [disabled]="submitting">
+                    Cancel
+                </button>
+
+                <button type="submit" class="btn-primary" [disabled]="submitting">
+                    <span>{{editingId!==null?'✓':'＋'}}</span>
+                    {{submitting?(editingId!==null?'Updating...':'Saving...'):(editingId!==null?'Update Course':'Save Course')}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,148 @@
+<div class="lead-followup-page">
+    <div class="page-header">
+        <div>
+            <h2>Lead Followup</h2>
+            <p>Manage lead communication and followup history</p>
+        </div>
+        <button type="button" class="back-btn" (click)="backToLeads()">← Back to Leads</button>
+    </div>
+
+    <div class="lead-details-card">
+        <div class="section-header">
+            <div>
+                <h3>Lead Details</h3>
+                <p>Lead information</p>
+            </div>
+            <span class="lead-id">Lead #{{leadId}}</span>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Candidate Name</span>
+                <strong>{{lead?.candidateName||'--'}}</strong>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email Address</span>
+                <strong>{{lead?.emailAddress||'--'}}</strong>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Mobile Number</span>
+                <strong>{{lead?.mobileNumber||'--'}}</strong>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Training Type</span>
+                <strong>{{lead?.trainingType||'--'}}</strong>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Lead Status</span>
+                <strong>{{lead?.status||'--'}}</strong>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Lead Date</span>
+                <strong>{{lead?.leadDate?(lead.leadDate|date:'dd-MM-yyyy'):'--'}}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-card new-followup-card">
+        <button type="button" class="accordion-header new-followup-header" (click)="toggleNewFollowup()" [attr.aria-expanded]="newFollowupExpanded">
+            <div class="accordion-title">
+                <div class="section-icon new-icon">+</div>
+                <div>
+                    <h3>New Followup</h3>
+                    <p>Record the latest communication with this lead</p>
+                </div>
+            </div>
+            <span class="expand-btn">{{newFollowupExpanded?'−':'+'}}</span>
+        </button>
+
+        <div class="accordion-content" *ngIf="newFollowupExpanded">
+            <form (ngSubmit)="saveFollowup()">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Followup Date</label>
+                        <input type="datetime-local" name="followUpDate" [(ngModel)]="followupForm.followUpDate" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Followup By</label>
+                        <input type="text" name="followUpBy" [(ngModel)]="followupForm.followUpBy" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="status" [(ngModel)]="followupForm.status" required>
+                            <option value="">Select Status</option>
+                            <option value="Hot">Hot</option>
+                            <option value="Warm">Warm</option>
+                            <option value="Cold">Cold</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Next Followup Date</label>
+                        <input type="date" name="nextFollowupDate" [(ngModel)]="followupForm.nextFollowupDate">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Description</label>
+                        <textarea name="description" rows="4" [(ngModel)]="followupForm.description" placeholder="Enter followup details..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" (click)="backToLeads()">Cancel</button>
+                    <button type="submit" class="save-btn" [disabled]="saving">
+                        {{saving?'Saving...':'Save Followup'}}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="accordion-card followup-card">
+        <button type="button" class="accordion-header previous-followup-header" (click)="togglePreviousFollowups()" [attr.aria-expanded]="previousFollowupsExpanded">
+            <div class="accordion-title">
+                <div class="section-icon history-icon">◷</div>
+                <div>
+                    <h3>Previous Lead Followups</h3>
+                    <p>View complete followup communication history</p>
+                </div>
+            </div>
+            <span class="expand-btn">{{previousFollowupsExpanded?'−':'+'}}</span>
+        </button>
+
+        <div class="accordion-content" *ngIf="previousFollowupsExpanded">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sr No</th>
+                            <th>Followup Date</th>
+                            <th>Followup By</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Next Followup</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let followup of followups;let i=index">
+                            <td>{{i+1}}</td>
+                            <td>{{followup.followUpDate|date:'dd-MM-yyyy hh:mm a'}}</td>
+                            <td>{{followup.followUpBy}}</td>
+                            <td><span class="status-badge">{{followup.status}}</span></td>
+                            <td>{{followup.description}}</td>
+                            <td>{{followup.nextFollowupDate|date:'dd-MM-yyyy'}}</td>
+                        </tr>
+                        <tr *ngIf="!loading&&followups.length===0">
+                            <td colspan="6" class="empty-row">No previous followups found</td>
+                        </tr>
+                        <tr *ngIf="loading">
+                            <td colspan="6" class="empty-row">Loading followups...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

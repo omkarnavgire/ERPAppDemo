@@ -1,0 +1,144 @@
+<div class="profile-page">
+    <div class="profile-header">
+        <div>
+            <h2>My Profile</h2>
+            <p>View your personal and account information</p>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <div class="profile-top">
+            <div class="profile-avatar">
+                {{ employeeName.charAt(0).toUpperCase() || "U" }}
+            </div>
+
+            <div class="profile-heading">
+                <h3>{{ employeeName || "User" }}</h3>
+                <span>{{ role || "Employee" }}</span>
+            </div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <div class="profile-section">
+            <h4>Personal Information</h4>
+
+            <div class="profile-grid">
+                <div class="profile-field">
+                    <label>Employee Name</label>
+                    <div class="profile-value">
+                        {{ employeeName || "Not available" }}
+                    </div>
+                </div>
+
+                <div class="profile-field">
+                    <label>Employee Code</label>
+                    <div class="profile-value">
+                        {{ employeeCode || "Not available" }}
+                    </div>
+                </div>
+
+                <div class="profile-field">
+                    <label>Username</label>
+                    <div class="profile-value">
+                        {{ username || "Not available" }}
+                    </div>
+                </div>
+
+                <div class="profile-field">
+                    <label>Email Address</label>
+                    <div class="profile-value">
+                        {{ email || "Not available" }}
+                    </div>
+                </div>
+
+                <div class="profile-field">
+                    <label>Mobile Number</label>
+                    <div class="profile-value">
+                        {{ mobile || "Not available" }}
+                    </div>
+                </div>
+
+                <div class="profile-field">
+                    <label>Branch</label>
+                    <div class="profile-value">
+                        {{ branch || "Not available" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <div class="profile-section">
+            <div class="section-header">
+                <div>
+                    <h4>Access Information</h4>
+                    <p>Your assigned application access</p>
+                </div>
+            </div>
+
+            <div class="profile-grid">
+                <div class="profile-field">
+                    <label>Primary Role</label>
+                    <div class="profile-value">
+                        {{ role || "Not available" }}
+                    </div>
+                </div>
+
+                <div class="profile-field">
+                    <label>Assigned Roles</label>
+
+                    <div class="role-list">
+                        @if (roles.length > 0) {
+                            @for (userRole of roles; track userRole) {
+                                <span class="role-badge">
+                                    {{ userRole }}
+                                </span>
+                            }
+                        } @else {
+                            <span class="profile-value-text">
+                                Not available
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <div class="security-section">
+            <div class="security-header">
+                <div>
+                    <h4>Security & Privacy</h4>
+                    <p>Manage your account password and security settings</p>
+                </div>
+
+                <div class="security-icon">
+                    🔒
+                </div>
+            </div>
+
+            <div class="security-row">
+                <div class="security-info">
+                    <label>Password</label>
+
+                    <div class="password-display">
+                        <span>••••••••••••</span>
+                    </div>
+
+                    <small>
+                        Your password is securely protected and cannot be displayed.
+                    </small>
+                </div>
+
+                <a
+                    class="change-password-btn"
+                    routerLink="/main/change-password">
+                    Change Password
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

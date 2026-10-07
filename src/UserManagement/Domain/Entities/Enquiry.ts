@@ -1,0 +1,19 @@
+export interface Enquiry {
+    enquiryId:number;
+    enquiryDate:string;
+    candidateName:string;
+    gender:string;
+    localAddress:string;
+    emailAddress:string;
+    mobileNumber:string;
+    birthDate:string;
+    qualificationId:number;
+    qualification:string;
+    leadSources:string;
+    enquiryFors:string;
+    interestedTopics:string;
+    status:string;
+    branchId:number;
+    branchName?:string;
+    deletedAt?:string|null;
+}

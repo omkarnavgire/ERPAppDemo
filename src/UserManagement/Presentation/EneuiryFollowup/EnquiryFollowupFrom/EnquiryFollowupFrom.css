@@ -1,0 +1,168 @@
+.enquiry-form-page {
+  padding: 0 7px 30px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.back-link {
+  display: inline-block;
+  margin: 5px 0 16px 7px;
+  color: #0056d6;
+  text-decoration: none;
+  font-family: Arial, sans-serif;
+}
+
+.form-card {
+  max-width: 1270px;
+  margin: 0 auto;
+  border: 1px solid #d6d6d6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.form-title {
+  background: #f5f5f5;
+  border-bottom: 1px solid #d0d0d0;
+  padding: 8px 16px;
+}
+
+.form-title h1 {
+  margin: 0;
+  font-size: 27px;
+}
+
+.form-layout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
+  padding: 13px 16px 30px;
+}
+
+.left-section {
+  padding-right: 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group > label:first-child {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="date"],
+.form-group select {
+  width: 100%;
+  height: 33px;
+  box-sizing: border-box;
+  border: 1px solid #c7cfd8;
+  border-radius: 4px;
+  padding: 5px 11px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+  background: #fff;
+}
+
+.gender-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gender-group > label:first-child {
+  margin: 0 2px 0 0;
+}
+
+.radio-label {
+  display: flex !important;
+  align-items: center;
+  gap: 3px;
+  margin: 0 !important;
+}
+
+.right-section {
+  min-width: 0;
+}
+
+.check-card {
+  border: 1px solid #d6d6d6;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.check-title {
+  background: #f7f7f7;
+  border-bottom: 1px solid #d6d6d6;
+  padding: 10px 16px;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.check-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px 35px;
+  padding: 16px;
+}
+
+.check-grid label {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.check-grid input {
+  margin: 0;
+}
+
+.topics-card {
+  height: 292px;
+}
+
+.topics-scroll {
+  height: 240px;
+  overflow: auto;
+}
+
+.four-columns {
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+}
+
+.submit-btn {
+  width: 100%;
+  height: 38px;
+  border: none;
+  border-radius: 3px;
+  background: #1677f2;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .check-grid,
+  .four-columns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .check-grid,
+  .four-columns {
+    grid-template-columns: 1fr;
+  }
+}
