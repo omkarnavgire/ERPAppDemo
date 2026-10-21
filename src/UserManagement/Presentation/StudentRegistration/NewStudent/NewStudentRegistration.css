@@ -1,0 +1,593 @@
+
+/* ========================================
+   NEW STUDENT REGISTRATION
+   Modern Light / Dark Theme
+======================================== */
+
+.new-registration-page {
+    --registration-bg: var(--bg-main, #f4f7fb);
+    --registration-card: var(--bg-card, #ffffff);
+    --registration-text: var(--text-primary, #172033);
+    --registration-muted: var(--text-secondary, #64748b);
+    --registration-border: var(--border-color, #dce3ed);
+    --registration-primary: var(--primary-color, #2563eb);
+    --registration-hover: var(--primary-hover, #1d4ed8);
+    --registration-soft: var(--primary-light, #eaf1ff);
+    --registration-input: var(--input-bg, #ffffff);
+    --registration-shadow: var(--card-shadow, 0 3px 12px rgba(20, 40, 80, 0.05));
+
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 24px 32px 32px;
+    color: var(--registration-text);
+    background: var(--registration-bg);
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
+.new-registration-page *,
+.new-registration-page *::before,
+.new-registration-page *::after {
+    box-sizing: border-box;
+}
+
+/* Back Button */
+
+.new-registration-page .btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 38px;
+    margin-bottom: 18px;
+    padding: 9px 15px;
+    border: 1px solid var(--registration-border);
+    border-radius: 7px;
+    background: var(--registration-card);
+    color: var(--registration-text);
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.new-registration-page .btn-back:hover {
+    border-color: var(--registration-primary);
+    color: var(--registration-primary);
+}
+
+/* Page Header */
+
+.new-registration-page .registration-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    margin: 0 0 24px;
+    padding: 22px 24px;
+    border: 1px solid var(--registration-border);
+    border-radius: 12px;
+    background: var(--registration-card);
+    box-shadow: var(--registration-shadow);
+}
+
+.new-registration-page .header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    flex: 0 0 54px;
+    border-radius: 12px;
+    background: var(--registration-soft);
+    color: var(--registration-primary);
+    font-size: 25px;
+}
+
+.new-registration-page .header-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.new-registration-page .header-content h2,
+.new-registration-page .header-content h3 {
+    margin: 0 0 6px;
+    color: var(--registration-text);
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.new-registration-page .header-content p {
+    margin: 0;
+    color: var(--registration-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Four Cards */
+
+.new-registration-page .registration-section {
+    width: 100%;
+    margin: 0 0 24px;
+    overflow: hidden;
+    border: 1px solid var(--registration-border);
+    border-radius: 12px;
+    background: var(--registration-card);
+    box-shadow: var(--registration-shadow);
+}
+
+/* Card Heading */
+
+.new-registration-page .section-title {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin: 0;
+    padding: 17px 24px;
+    border-bottom: 1px solid var(--registration-border);
+    background: var(--registration-card);
+    color: var(--registration-text);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.new-registration-page .section-title > div {
+    min-width: 0;
+}
+
+.new-registration-page .section-title small {
+    display: block;
+    margin-top: 3px;
+    color: var(--registration-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+.new-registration-page .section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border: 1px solid var(--registration-border);
+    border-radius: 10px;
+    background: var(--registration-soft);
+    color: var(--registration-primary);
+    font-size: 19px;
+}
+
+/* Individual Card Icon Colors */
+
+.new-registration-page .qualification-icon {
+    background: #e2f8ec;
+    border-color: #b5e8cb;
+    color: #16834a;
+}
+
+.new-registration-page .course-icon {
+    background: #fff0d9;
+    border-color: #ffd49a;
+    color: #b86b08;
+}
+
+.new-registration-page .payment-icon {
+    background: #f0e7ff;
+    border-color: #d9c3ff;
+    color: #7845c4;
+}
+
+/* Card Body */
+
+.new-registration-page .section-body,
+.new-registration-page .registration-section .card-body {
+    padding: 24px;
+}
+
+/* Bootstrap Grid Spacing */
+
+.new-registration-page .section-body > .row {
+    margin-right: -12px;
+    margin-left: -12px;
+}
+
+.new-registration-page .section-body > .row > * {
+    min-width: 0;
+    padding-right: 12px;
+    padding-left: 12px;
+}
+
+/* Form Fields */
+
+.new-registration-page .mb-3 {
+    margin-bottom: 20px !important;
+    min-width: 0;
+}
+
+.new-registration-page label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--registration-text);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* Inputs, Selects and Textareas */
+
+.new-registration-page .form-control,
+.new-registration-page .form-select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 43px;
+    padding: 10px 12px;
+    border: 1px solid var(--registration-border);
+    border-radius: 7px;
+    background-color: var(--registration-input);
+    color: var(--registration-text);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    box-shadow: none;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.new-registration-page textarea.form-control {
+    min-height: 88px;
+    resize: vertical;
+}
+
+.new-registration-page .form-control::placeholder {
+    color: var(--registration-muted);
+    opacity: 0.8;
+}
+
+.new-registration-page .form-control:focus,
+.new-registration-page .form-select:focus {
+    border-color: var(--registration-primary);
+    box-shadow: 0 0 0 3px var(--registration-soft);
+}
+
+.new-registration-page .form-control:disabled,
+.new-registration-page .form-select:disabled,
+.new-registration-page .form-control[readonly] {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.new-registration-page .form-control[readonly] {
+    background: var(--registration-bg);
+}
+
+/* Date and Number Inputs */
+
+.new-registration-page input[type="date"],
+.new-registration-page input[type="number"],
+.new-registration-page input[type="email"],
+.new-registration-page input[type="tel"],
+.new-registration-page input[type="text"] {
+    max-width: 100%;
+}
+
+/* File Upload */
+
+.new-registration-page input[type="file"].form-control {
+    min-height: 43px;
+    padding: 7px;
+    font-size: 12px;
+}
+
+/* Radio and Checkbox */
+
+.new-registration-page input[type="radio"],
+.new-registration-page input[type="checkbox"] {
+    accent-color: var(--registration-primary);
+    cursor: pointer;
+}
+
+.new-registration-page .form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+}
+
+.new-registration-page .form-check-label {
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Course Fee Summary */
+
+.new-registration-page .fee-summary {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 2px;
+    padding: 16px;
+    border: 1px solid var(--registration-primary);
+    border-radius: 9px;
+    background: var(--registration-soft);
+}
+
+.new-registration-page .fee-summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 10px;
+    background: var(--registration-card);
+    color: var(--registration-primary);
+    font-size: 22px;
+}
+
+.new-registration-page .fee-summary-label {
+    margin-bottom: 4px;
+    color: var(--registration-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.new-registration-page .fee-summary-amount {
+    color: var(--registration-primary);
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+/* Alerts */
+
+.new-registration-page .alert {
+    margin: 0 0 20px;
+    padding: 13px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Buttons */
+
+.new-registration-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 18px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.new-registration-page .btn-primary {
+    border: 1px solid var(--registration-primary);
+    background: var(--registration-primary);
+    color: #ffffff;
+}
+
+.new-registration-page .btn-primary:hover {
+    border-color: var(--registration-hover);
+    background: var(--registration-hover);
+}
+
+.new-registration-page .btn-outline-secondary {
+    border: 1px solid var(--registration-border);
+    background: var(--registration-card);
+    color: var(--registration-text);
+}
+
+.new-registration-page .btn-outline-secondary:hover {
+    border-color: var(--registration-primary);
+    color: var(--registration-primary);
+}
+
+.new-registration-page .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Small Help Text */
+
+.new-registration-page .form-text,
+.new-registration-page small:not(.section-title small) {
+    color: var(--registration-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Bottom Action Buttons */
+
+.new-registration-page .registration-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 12px;
+}
+
+/* ========================================
+   DARK MODE
+   Add class="dark-theme" to an ancestor
+   only if that is how your app switches theme.
+======================================== */
+
+.dark-theme .new-registration-page,
+body.dark-mode .new-registration-page,
+body.dark-theme .new-registration-page {
+    --registration-bg: #0d1420;
+    --registration-card: #151f2d;
+    --registration-text: #f1f5f9;
+    --registration-muted: #a9b8ca;
+    --registration-border: #2b3b50;
+    --registration-primary: #3b82f6;
+    --registration-hover: #2563eb;
+    --registration-soft: #1b3355;
+    --registration-input: #1a2839;
+    --registration-shadow: 0 3px 14px rgba(0, 0, 0, 0.16);
+}
+
+.dark-theme .new-registration-page .qualification-icon,
+body.dark-mode .new-registration-page .qualification-icon,
+body.dark-theme .new-registration-page .qualification-icon {
+    background: #153c30;
+    border-color: #28684c;
+    color: #6ee7a8;
+}
+
+.dark-theme .new-registration-page .course-icon,
+body.dark-mode .new-registration-page .course-icon,
+body.dark-theme .new-registration-page .course-icon {
+    background: #49321b;
+    border-color: #765027;
+    color: #ffc777;
+}
+
+.dark-theme .new-registration-page .payment-icon,
+body.dark-mode .new-registration-page .payment-icon,
+body.dark-theme .new-registration-page .payment-icon {
+    background: #35244f;
+    border-color: #5d4386;
+    color: #d0b4ff;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 992px) {
+    .new-registration-page {
+        padding: 20px;
+    }
+
+    .new-registration-page .section-body,
+    .new-registration-page .registration-section .card-body {
+        padding: 20px;
+    }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 768px) {
+    .new-registration-page {
+        padding: 14px;
+    }
+
+    .new-registration-page .registration-header {
+        gap: 12px;
+        padding: 17px;
+    }
+
+    .new-registration-page .header-content h2,
+    .new-registration-page .header-content h3 {
+        font-size: 21px;
+    }
+
+    .new-registration-page .section-title {
+        padding: 15px 17px;
+        font-size: 16px;
+    }
+
+    .new-registration-page .section-body,
+    .new-registration-page .registration-section .card-body {
+        padding: 17px;
+    }
+
+    .new-registration-page .section-body > .row {
+        margin-right: -8px;
+        margin-left: -8px;
+    }
+
+    .new-registration-page .section-body > .row > * {
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .new-registration-page .registration-actions {
+        justify-content: stretch;
+    }
+
+    .new-registration-page .registration-actions .btn {
+        flex: 1 1 auto;
+    }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 480px) {
+    .new-registration-page {
+        padding: 10px;
+    }
+
+    .new-registration-page .registration-header {
+        align-items: flex-start;
+        padding: 14px;
+    }
+
+    .new-registration-page .header-icon {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+        font-size: 20px;
+    }
+
+    .new-registration-page .header-content h2,
+    .new-registration-page .header-content h3 {
+        font-size: 18px;
+    }
+
+    .new-registration-page .section-title {
+        gap: 10px;
+        padding: 13px;
+        font-size: 15px;
+    }
+
+    .new-registration-page .section-icon {
+        width: 35px;
+        height: 35px;
+        flex-basis: 35px;
+        font-size: 17px;
+    }
+
+    .new-registration-page .section-body,
+    .new-registration-page .registration-section .card-body {
+        padding: 13px;
+    }
+
+    .new-registration-page .fee-summary {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .new-registration-page .fee-summary-amount {
+        font-size: 22px;
+    }
+
+    .new-registration-page .registration-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .new-registration-page .registration-actions .btn {
+        width: 100%;
+    }
+}

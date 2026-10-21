@@ -23,9 +23,14 @@ import {TRAINING_COURSE_REPOSITORY} from "./Domain/Repositories/Token/trainingco
 import {TrainingCourseRepositoryImpl} from "./Infrastructure/Repositories/Trainingcourserepositoriesimpl";
 import {QUALIFICATION_REPOSITORY} from './Domain/Repositories/Token/qualificationrepositorytoken';
 import {Qualificationrepositoriesimpl} from './Infrastructure/Repositories/Qualificationrepositoriesimpl';
-
 import {LEAD_SOURCE_REPOSITORY} from './Domain/Repositories/Token/leadsourcerepositorytoken';
 import {LeadSourcerepositoriesimpl} from './Infrastructure/Repositories/LeadSourcerepositoriesimpl';
+import { BranchRepository } from "./Domain/Repositories/Branchrepositories";
+import { BranchRepositoryImpl } from "./Infrastructure/Repositories/Branchrepositoriesimple";
+import { STUDENT_REGISTRATION_REPOSITORY } from "src/Account/Domain/Repositories/Token/studentregistrationrepositorytoken";
+import { StudentRegistrationRepositoryImpl } from "src/Account/Infrastructure/Repositories/StudentRegistrationRepositoryImpl";
+
+
 
 export const appConfig:ApplicationConfig={
     providers:[
@@ -41,6 +46,8 @@ export const appConfig:ApplicationConfig={
         {provide:EnquiryRepository,useClass:EnquiryApi},
         {provide:LEAD_REPOSITORY,useClass:LeadRepositoriesImpl},
         {provide:LEAD_FOLLOWUP_REPOSITORY,useClass:LeadFollowupRepositoriesImpl},
-        {provide:TRAINING_COURSE_REPOSITORY,useClass:TrainingCourseRepositoryImpl}
+        {provide:TRAINING_COURSE_REPOSITORY,useClass:TrainingCourseRepositoryImpl},
+        {provide: STUDENT_REGISTRATION_REPOSITORY,useClass:StudentRegistrationRepositoryImpl},
+        { provide: BranchRepository, useClass: BranchRepositoryImpl },
     ]
 };

@@ -1,0 +1,107 @@
+
+<div class="existing-student-form">
+  <div class="registration-modal-header">
+    <div>
+      <h4>Register Existing Student</h4>
+      <p>Register this student for a new course</p>
+    </div>
+    <button type="button" class="modal-close" (click)="closeForm()">×</button>
+  </div>
+
+  <div class="registration-modal-body">
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+    <div *ngIf="student" class="student-summary">
+      <div><strong>Student ID</strong><span>{{ student.studentId }}</span></div>
+      <div><strong>Student Name</strong><span>{{ student.studentName }} {{ student.lastName }}</span></div>
+      <div><strong>Mobile</strong><span>{{ student.mobileNumber || '-' }}</span></div>
+      <div><strong>Email</strong><span>{{ student.emailAddress || '-' }}</span></div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Previously Registered Courses</label>
+      <div class="form-control existing-courses">
+        {{ student?.registeredCourses || 'No previous course details' }}
+      </div>
+    </div>
+
+    <form (ngSubmit)="registerCourse()">
+      <h3 class="section-title">New Course Details</h3>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">New Course *</label>
+          <select class="form-select" name="selectedCourseId" [(ngModel)]="selectedCourseId" (ngModelChange)="onCourseChange()" required>
+            <option [ngValue]="0">Select New Course</option>
+            <option *ngFor="let course of availableCourses" [ngValue]="course.courseId">
+              {{ course.courseName }}
+            </option>
+          </select>
+          <small *ngIf="dropdownLoading" class="text-muted">Loading courses...</small>
+          <small *ngIf="!dropdownLoading && courses.length > 0 && availableCourses.length === 0" class="text-muted">
+            This student is already registered for all available courses.
+          </small>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Discount Amount (₹)</label>
+          <input type="number" class="form-control" name="discount" [(ngModel)]="discount" (ngModelChange)="onDiscountChange()" min="0">
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Actual Course Fees (₹)</label>
+          <input type="number" class="form-control" [value]="actualFees" readonly>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Final Course Fees (₹)</label>
+          <input type="number" class="form-control" [value]="finalFees" readonly>
+        </div>
+      </div>
+
+      <hr>
+      <h3 class="section-title">Payment Details</h3>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Payment Amount (₹) *</label>
+          <input type="number" class="form-control" name="paymentAmount" [(ngModel)]="paymentForm.paymentAmount" min="0" required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Payment Date *</label>
+          <input type="date" class="form-control" name="paymentDate" [(ngModel)]="paymentForm.paymentDate" required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Payment Mode *</label>
+          <select class="form-select" name="paymentMode" [(ngModel)]="paymentForm.paymentMode" required>
+            <option value="">Select Payment Mode</option>
+            <option>Cash</option>
+            <option>UPI</option>
+            <option>Online</option>
+            <option>Card</option>
+            <option>Bank Transfer</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Lead ID</label>
+          <input type="number" class="form-control" name="leadId" [(ngModel)]="paymentForm.leadId">
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Payment Description</label>
+          <textarea class="form-control" name="paymentDescription" [(ngModel)]="paymentForm.paymentDescription" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="registration-modal-footer mt-4">
+        <button type="button" class="btn btn-outline-secondary" (click)="resetPaymentForm()">Reset</button>
+        <button type="button" class="btn btn-light border" (click)="closeForm()">Cancel</button>
+        <button type="submit" class="btn btn-success" [disabled]="submitting || dropdownLoading || availableCourses.length === 0">
+          {{ submitting ? 'Submitting...' : 'Register for Course' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

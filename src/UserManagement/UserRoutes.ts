@@ -20,6 +20,7 @@ import {LeadFollowupComponent} from "./Presentation/Lead/LeadFollowup/LeadFollow
 import {FunctionManagementComponent} from "./Presentation/FunctionManagement/FunctionManagementComponent";
 import {ReportsComponent} from "./Presentation/Reports/ReportsComponent";
 import {PERMISSIONS} from "./Core/Services/PermissionService";
+import { StudentRegistrationComponent } from "../Account/Presentation/StudentRegistration/StudentRegistrationComponent";
 
 export const routes:Routes=[
     {path:"login",component:LoginClass},
@@ -46,6 +47,9 @@ export const routes:Routes=[
             {path:"function-management",component:FunctionManagementComponent,data:{permission:PERMISSIONS.FUNCTION_MANAGEMENT_VIEW,roles:["Admin","Super User"]},canActivate:[authGuard]},
             {path:"reports",component:ReportsComponent,data:{permission:PERMISSIONS.REPORTS_VIEW,roles:["Admin","Super User"]},canActivate:[authGuard]},
             {path:"settings",component:SettingsComponent,canActivate:[authGuard]},
+            {path: "student-registration",component: StudentRegistrationComponent,canActivate: [authGuard]},
+            {path: "account/student-registration", loadComponent: () => import("../Account/Presentation/StudentRegistration/StudentRegistrationComponent").then(m => m.StudentRegistrationComponent), canActivate: [authGuard]},
+            {path: 'main/student-registration/add',component: StudentRegistrationComponent},
             {path:"",redirectTo:"dashboard",pathMatch:"full"}
         ]
     },

@@ -1,0 +1,213 @@
+
+<div class="container-fluid py-4 student-registration-page">
+
+  <!-- STUDENT REGISTRATION LIST PAGE -->
+  <div *ngIf="!showForm">
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+          <div>
+            <h2 class="mb-2">Student Registration</h2>
+            <p class="text-muted mb-0">
+              Manage students, registrations, courses and payments.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="openNewStudentForm()">
+            <i class="bi bi-person-plus me-1"></i>
+            + Register New Student
+          </button>
+        </div>
+
+        <div *ngIf="successMessage" class="alert alert-success alert-dismissible">
+          {{ successMessage }}
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="successMessage = ''">
+          </button>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible">
+          {{ errorMessage }}
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="errorMessage = ''">
+          </button>
+        </div>
+
+        <!-- STUDENT REGISTRATION TABLE -->
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Student Registrations</h5>
+
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              (click)="loadRegistrations()"
+              [disabled]="loading">
+              {{ loading ? 'Loading...' : 'Refresh' }}
+            </button>
+          </div>
+
+          <div class="card-body">
+
+            <div class="row g-3 mb-3">
+              <div class="col-lg-4 col-md-6">
+                <label class="form-label">Search Student</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="searchText"
+                  [(ngModel)]="searchText"
+                  placeholder="Name, mobile, email or registration code">
+              </div>
+
+              <div class="col-lg-4 col-md-6">
+                <label class="form-label">Filter by Registered Course</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="courseSearch"
+                  [(ngModel)]="courseSearch"
+                  placeholder="Enter course name">
+              </div>
+
+              <div class="col-lg-4 d-flex align-items-end">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="searchText = ''; courseSearch = ''">
+                  Clear Search
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="loading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2">Loading student registrations...</p>
+            </div>
+
+            <div *ngIf="!loading" class="table-responsive">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Sr.</th>
+                    <th>Student ID</th>
+                    <th>Registration Code</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Course</th>
+                    <th>Payment Amount</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr
+                    *ngFor="let registration of filteredRegistrations; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ registration.studentId }}</td>
+                    <td>{{ registration.registrationCode || '-' }}</td>
+                    <td>
+                      {{ registration.studentName }}
+                      {{ registration.lastName }}
+                    </td>
+                    <td>{{ registration.emailAddress || '-' }}</td>
+                    <td>{{ registration.mobileNumber || '-' }}</td>
+                    <td>{{ registration.courseName || '-' }}</td>
+                    <td>
+                      {{ registration.paymentAmount | number:'1.2-2' }}
+                    </td>
+                    <td>
+                      <button
+                        *ngIf="students.find(s => s.studentId === registration.studentId) as student"
+                        type="button"
+                        class="btn btn-success btn-sm"
+                        (click)="registerExistingStudent(student)">
+                        Register
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="filteredRegistrations.length === 0">
+                    <td colspan="9" class="text-center text-muted py-4">
+                      No registrations found.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NORMAL NEW STUDENT REGISTRATION PAGE -->
+  <div *ngIf="showForm" class="new-registration-page">
+
+    <div class="mb-3">
+      <button
+        type="button"
+        class="btn btn-link text-decoration-none p-0"
+        (click)="closeNewStudentForm()">
+        <i class="bi bi-arrow-left me-1"></i>
+        All Student Registrations
+      </button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h3 class="mb-1">Student Registration Form</h3>
+        <p class="text-muted mb-0">
+          Enter student personal, education, course and payment details.
+        </p>
+      </div>
+
+      <div class="card-body p-4">
+        <app-new-student-registration
+          (closed)="closeNewStudentForm()"
+          (saved)="onNewStudentSaved()">
+        </app-new-student-registration>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EXISTING STUDENT COURSE REGISTRATION MODAL -->
+  <div
+    *ngIf="showExistingCourseForm && selectedStudent"
+    class="registration-modal-overlay"
+    (click)="closeExistingCourseForm()">
+
+    <div
+      class="registration-modal existing-course-modal"
+      role="dialog"
+      aria-modal="true"
+      (click)="$event.stopPropagation()">
+
+      <app-existing-student-registration
+        [student]="selectedStudent"
+        (closed)="closeExistingCourseForm()"
+        (saved)="onExistingStudentSaved()">
+      </app-existing-student-registration>
+
+    </div>
+  </div>
+
+</div>

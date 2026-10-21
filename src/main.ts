@@ -4,5 +4,6 @@ import { App } from './UserManagement/app';
 // import { App } from './app/app';
 // import { MainClass } from './UserManagement/Maincomponent';
 import { appConfig } from './UserManagement/app.config';
+import { StudentRegistrationComponent } from './Account/Presentation/StudentRegistration/StudentRegistrationComponent';
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));
