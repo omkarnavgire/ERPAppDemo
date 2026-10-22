@@ -1,83 +1,90 @@
 
-<div class="new-registration-page">
+<div class="new-registration-page student-registration-page">
 
-  <!-- Page Header -->
-  <button type="button" class="btn-back mb-3"
-          (click)="closed.emit()">
-    <i class="bi bi-arrow-left"></i>
-    Back to Students
+  <!-- Page Navigation -->
+ <div class="registration-topbar">
+  <button
+    type="button"
+    class="btn-back"
+    (click)="backToStudents()">
+    <i class="bi bi-arrow-left-circle-fill"></i>
+    <span>Back to Students</span>
   </button>
+</div>
 
-  <div class="registration-header">
+  <!-- Main Registration Header -->
+  <header class="registration-header">
     <div class="header-icon">
-      <i class="bi bi-person-plus-fill"></i>
+      <i class="bi bi-person-vcard-fill"></i>
     </div>
+
     <div class="header-content">
       <h2>New Student Registration</h2>
       <p>Fill in the details to register a new student.</p>
     </div>
+
+    <div class="header-status">
+      <i class="bi bi-shield-check"></i>
+      <span>Registration Form</span>
+    </div>
+  </header>
+
+  <!-- Error and Success Messages -->
+  <div *ngIf="errorMessage" class="alert alert-danger registration-alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ errorMessage }}</span>
   </div>
 
-  <!-- Messages -->
-  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-    {{ errorMessage }}
-  </div>
-
-  <div *ngIf="successMessage" class="alert alert-success" role="alert">
-    {{ successMessage }}
+  <div *ngIf="successMessage" class="alert alert-success registration-alert">
+    <i class="bi bi-check-circle-fill"></i>
+    <span>{{ successMessage }}</span>
   </div>
 
   <form (ngSubmit)="registerStudent()">
 
-    <!-- 1. PERSONAL INFORMATION -->
+    <!-- 1. Personal Information -->
     <section class="registration-section">
+
       <div class="section-title">
-        <span class="section-icon">
+        <span class="section-icon personal-icon">
           <i class="bi bi-person-fill"></i>
         </span>
-        <div>
-          <div>1. Personal Information</div>
-          <small>Enter the student's personal details</small>
+
+        <div class="section-heading">
+          <h3>1. Personal Information</h3>
+          <p>Enter the student's personal details</p>
         </div>
+
+        <span class="section-step">01</span>
       </div>
 
       <div class="section-body">
         <div class="row">
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="studentName">First Name *</label>
-            <input id="studentName" type="text"
-                   class="form-control"
-                   name="studentName"
-                   [(ngModel)]="studentForm.studentName"
-                   placeholder="Enter first name"
-                   required>
+            <label for="studentName">First Name <span>*</span></label>
+            <input id="studentName" type="text" class="form-control"
+              name="studentName" [(ngModel)]="studentForm.studentName"
+              placeholder="Enter first name" required>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="lastName">Last Name</label>
-            <input id="lastName" type="text"
-                   class="form-control"
-                   name="lastName"
-                   [(ngModel)]="studentForm.lastName"
-                   placeholder="Enter last name">
+            <input id="lastName" type="text" class="form-control"
+              name="lastName" [(ngModel)]="studentForm.lastName"
+              placeholder="Enter last name">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="birthDate">Date of Birth *</label>
-            <input id="birthDate" type="date"
-                   class="form-control"
-                   name="birthDate"
-                   [(ngModel)]="studentForm.birthDate"
-                   required>
+            <label for="birthDate">Date of Birth <span>*</span></label>
+            <input id="birthDate" type="date" class="form-control"
+              name="birthDate" [(ngModel)]="studentForm.birthDate" required>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="gender">Gender *</label>
-            <select id="gender" class="form-select"
-                    name="gender"
-                    [(ngModel)]="studentForm.gender"
-                    required>
+            <label for="gender">Gender <span>*</span></label>
+            <select id="gender" class="form-select" name="gender"
+              [(ngModel)]="studentForm.gender" required>
               <option value="">Select gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -87,124 +94,107 @@
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="emailAddress">Email Address</label>
-            <input id="emailAddress" type="email"
-                   class="form-control"
-                   name="emailAddress"
-                   [(ngModel)]="studentForm.emailAddress"
-                   placeholder="Enter email address">
+            <input id="emailAddress" type="email" class="form-control"
+              name="emailAddress" [(ngModel)]="studentForm.emailAddress"
+              placeholder="Enter email address">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="mobileNumber">Mobile Number *</label>
-            <input id="mobileNumber" type="tel"
-                   class="form-control"
-                   name="mobileNumber"
-                   [(ngModel)]="studentForm.mobileNumber"
-                   (ngModelChange)="onMobileChange()"
-                   placeholder="Enter mobile number"
-                   required>
+            <label for="mobileNumber">Mobile Number <span>*</span></label>
+            <input id="mobileNumber" type="tel" class="form-control"
+              name="mobileNumber" [(ngModel)]="studentForm.mobileNumber"
+              (ngModelChange)="onMobileChange()"
+              placeholder="Enter mobile number" required>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="whatsappNumber">WhatsApp Number</label>
-            <input id="whatsappNumber" type="tel"
-                   class="form-control"
-                   name="whatsappNumber"
-                   [(ngModel)]="studentForm.whatsappNumber"
-                   (ngModelChange)="onWhatsappChange()"
-                   placeholder="Enter WhatsApp number">
+            <input id="whatsappNumber" type="tel" class="form-control"
+              name="whatsappNumber" [(ngModel)]="studentForm.whatsappNumber"
+              (ngModelChange)="onWhatsappChange()"
+              placeholder="Enter WhatsApp number">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="parentName">Parent Name</label>
-            <input id="parentName" type="text"
-                   class="form-control"
-                   name="parentName"
-                   [(ngModel)]="studentForm.parentName"
-                   placeholder="Enter parent name">
+            <input id="parentName" type="text" class="form-control"
+              name="parentName" [(ngModel)]="studentForm.parentName"
+              placeholder="Enter parent name">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="parentNumber">Parent Mobile Number</label>
-            <input id="parentNumber" type="tel"
-                   class="form-control"
-                   name="parentNumber"
-                   [(ngModel)]="studentForm.parentNumber"
-                   (ngModelChange)="onParentNumberChange()"
-                   placeholder="Enter parent mobile number">
+            <input id="parentNumber" type="tel" class="form-control"
+              name="parentNumber" [(ngModel)]="studentForm.parentNumber"
+              (ngModelChange)="onParentNumberChange()"
+              placeholder="Enter parent mobile number">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="aadharCardNumber">Aadhaar Number</label>
-            <input id="aadharCardNumber" type="text"
-                   class="form-control"
-                   name="aadharCardNumber"
-                   [(ngModel)]="studentForm.aadharCardNumber"
-                   (ngModelChange)="onAadharNumberChange()"
-                   maxlength="12"
-                   placeholder="Enter Aadhaar number">
+            <input id="aadharCardNumber" type="text" class="form-control"
+              name="aadharCardNumber"
+              [(ngModel)]="studentForm.aadharCardNumber"
+              (ngModelChange)="onAadharNumberChange()"
+              maxlength="12" placeholder="Enter Aadhaar number">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="aadharCardPhoto">Aadhaar Card Photo</label>
-            <input id="aadharCardPhoto" type="file"
-                   class="form-control"
-                   accept="image/*,.pdf"
-                   (change)="onAadharFileSelected($event)">
+            <input id="aadharCardPhoto" type="file" class="form-control"
+              accept="image/*,.pdf" (change)="onAadharFileSelected($event)">
             <small class="form-text">
+              <i class="bi bi-cloud-arrow-up"></i>
               Upload the Aadhaar document.
             </small>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="localAddress">Local Address</label>
-            <textarea id="localAddress"
-                      class="form-control"
-                      name="localAddress"
-                      [(ngModel)]="studentForm.localAddress"
-                      rows="2"
-                      placeholder="Enter local address"></textarea>
+            <textarea id="localAddress" class="form-control"
+              name="localAddress" [(ngModel)]="studentForm.localAddress"
+              rows="2" placeholder="Enter local address"></textarea>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentAddress">Permanent Address</label>
-            <textarea id="permanentAddress"
-                      class="form-control"
-                      name="permanentAddress"
-                      [(ngModel)]="studentForm.permanentAddress"
-                      rows="2"
-                      placeholder="Enter permanent address"></textarea>
+            <textarea id="permanentAddress" class="form-control"
+              name="permanentAddress"
+              [(ngModel)]="studentForm.permanentAddress"
+              rows="2" placeholder="Enter permanent address"></textarea>
           </div>
 
         </div>
       </div>
     </section>
 
-    <!-- 2. QUALIFICATION DETAILS -->
+    <!-- 2. Qualification Details -->
     <section class="registration-section">
+
       <div class="section-title">
         <span class="section-icon qualification-icon">
           <i class="bi bi-mortarboard-fill"></i>
         </span>
-        <div>
-          <div>2. Qualification Details</div>
-          <small>Enter educational qualification details</small>
+
+        <div class="section-heading">
+          <h3>2. Qualification Details</h3>
+          <p>Enter educational qualification details</p>
         </div>
+
+        <span class="section-step">02</span>
       </div>
 
       <div class="section-body">
         <div class="row">
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="qualification">Qualification *</label>
-            <select id="qualification"
-                    class="form-select"
-                    name="qualification"
-                    [(ngModel)]="studentForm.qualification"
-                    required>
+            <label for="qualification">Qualification <span>*</span></label>
+            <select id="qualification" class="form-select"
+              name="qualification" [(ngModel)]="studentForm.qualification"
+              required>
               <option value="">Select qualification</option>
               <option *ngFor="let qualification of qualifications"
-                      [value]="qualification.qualification">
+                [value]="qualification.qualification">
                 {{ qualification.qualification }}
               </option>
             </select>
@@ -212,28 +202,22 @@
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="university">University / Board</label>
-            <input id="university" type="text"
-                   class="form-control"
-                   name="university"
-                   [(ngModel)]="studentForm.university"
-                   placeholder="Enter university or board">
+            <input id="university" type="text" class="form-control"
+              name="university" [(ngModel)]="studentForm.university"
+              placeholder="Enter university or board">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="passingYear">Passing Year</label>
-            <input id="passingYear" type="number"
-                   class="form-control"
-                   name="passingYear"
-                   [(ngModel)]="studentForm.passingYear"
-                   min="1900"
-                   placeholder="Enter passing year">
+            <input id="passingYear" type="number" class="form-control"
+              name="passingYear" [(ngModel)]="studentForm.passingYear"
+              min="1900" placeholder="Enter passing year">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="medium">Medium</label>
-            <select id="medium" class="form-select"
-                    name="medium"
-                    [(ngModel)]="studentForm.medium">
+            <select id="medium" class="form-select" name="medium"
+              [(ngModel)]="studentForm.medium">
               <option value="">Select medium</option>
               <option value="English">English</option>
               <option value="Marathi">Marathi</option>
@@ -244,68 +228,62 @@
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="percentage">Percentage / CGPA</label>
-            <input id="percentage" type="number"
-                   class="form-control"
-                   name="percentage"
-                   [(ngModel)]="studentForm.percentage"
-                   min="0"
-                   max="100"
-                   step="0.01"
-                   placeholder="Enter percentage">
+            <input id="percentage" type="number" class="form-control"
+              name="percentage" [(ngModel)]="studentForm.percentage"
+              min="0" max="100" step="0.01"
+              placeholder="Enter percentage or CGPA">
           </div>
 
         </div>
       </div>
     </section>
 
-    <!-- 3. COURSE REGISTRATION -->
+    <!-- 3. Course Registration -->
     <section class="registration-section">
+
       <div class="section-title">
         <span class="section-icon course-icon">
-          <i class="bi bi-book-half"></i>
+          <i class="bi bi-journal-bookmark-fill"></i>
         </span>
-        <div>
-          <div>3. Course Registration</div>
-          <small>Select the branch and course</small>
+
+        <div class="section-heading">
+          <h3>3. Course Registration</h3>
+          <p>Select the branch and course</p>
         </div>
+
+        <span class="section-step">03</span>
       </div>
 
       <div class="section-body">
         <div class="row">
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="branchId">Branch *</label>
-            <select id="branchId" class="form-select"
-                    name="branchId"
-                    [(ngModel)]="studentForm.branchId"
-                    required>
+            <label for="branchId">Branch <span>*</span></label>
+            <select id="branchId" class="form-select" name="branchId"
+              [(ngModel)]="studentForm.branchId" required>
               <option [ngValue]="0">Select branch</option>
               <option *ngFor="let branch of branches"
-                      [ngValue]="branch.branchId">
+                [ngValue]="branch.branchId">
                 {{ branch.branchName }}
               </option>
             </select>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="registrationDate">Registration Date *</label>
-            <input id="registrationDate" type="date"
-                   class="form-control"
-                   name="registrationDate"
-                   [(ngModel)]="studentForm.registrationDate"
-                   required>
+            <label for="registrationDate">Registration Date <span>*</span></label>
+            <input id="registrationDate" type="date" class="form-control"
+              name="registrationDate"
+              [(ngModel)]="studentForm.registrationDate" required>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
-            <label for="selectedCourseId">Course *</label>
+            <label for="selectedCourseId">Course <span>*</span></label>
             <select id="selectedCourseId" class="form-select"
-                    name="selectedCourseId"
-                    [(ngModel)]="selectedCourseId"
-                    (ngModelChange)="onCourseChange()"
-                    required>
+              name="selectedCourseId" [(ngModel)]="selectedCourseId"
+              (ngModelChange)="onCourseChange()" required>
               <option [ngValue]="0">Select course</option>
               <option *ngFor="let course of courses"
-                      [ngValue]="course.courseId">
+                [ngValue]="course.courseId">
                 {{ course.courseName }}
               </option>
             </select>
@@ -313,45 +291,63 @@
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="actualFees">Course Fees (₹)</label>
-            <input id="actualFees" type="number"
-                   class="form-control"
-                   name="actualFees"
-                   [ngModel]="actualFees"
-                   readonly>
+            <div class="input-icon-wrapper">
+              <i class="bi bi-currency-rupee"></i>
+              <input id="actualFees" type="number" class="form-control"
+                name="actualFees" [ngModel]="actualFees" readonly>
+            </div>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="discount">Discount (₹)</label>
-            <input id="discount" type="number"
-                   class="form-control"
-                   name="discount"
-                   [(ngModel)]="discount"
-                   (ngModelChange)="onDiscountChange()"
-                   min="0"
-                   placeholder="Enter discount amount">
+            <div class="input-icon-wrapper">
+              <i class="bi bi-tag-fill"></i>
+              <input id="discount" type="number" class="form-control"
+                name="discount" [(ngModel)]="discount"
+                (ngModelChange)="onDiscountChange()" min="0"
+                placeholder="Enter discount amount">
+            </div>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentStatus">Registration Status</label>
             <select id="currentStatus" class="form-select"
-                    name="currentStatus"
-                    [(ngModel)]="studentForm.currentStatus">
+              name="currentStatus" [(ngModel)]="studentForm.currentStatus">
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
           </div>
 
-          <div class="col-12">
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="leadId">Lead ID</label>
+            <div class="input-icon-wrapper">
+              <i class="bi bi-person-lines-fill"></i>
+              <input id="leadId" type="number" class="form-control"
+                name="leadId" [(ngModel)]="studentForm.leadId"
+                min="1" placeholder="Enter Lead ID">
+            </div>
+            <small class="form-text">
+              Enter the existing Lead ID, if available.
+            </small>
+          </div>
+
+          <div class="col-md-6 col-lg-8 mb-3">
             <div class="fee-summary">
               <div class="fee-summary-icon">
                 <i class="bi bi-calculator-fill"></i>
               </div>
-              <div>
-                <div class="fee-summary-label">Final Course Fees</div>
-                <div class="fee-summary-amount">
+
+              <div class="fee-summary-content">
+                <span class="fee-summary-label">Final Course Fees</span>
+                <strong class="fee-summary-amount">
                   ₹ {{ finalFees | number:'1.2-2' }}
-                </div>
+                </strong>
+                <small class="fee-summary-note">
+                  Course fees minus discount
+                </small>
               </div>
+
+              <i class="bi bi-check-circle-fill fee-summary-check"></i>
             </div>
           </div>
 
@@ -359,16 +355,20 @@
       </div>
     </section>
 
-    <!-- 4. PAYMENT DETAILS -->
+    <!-- 4. Payment Details -->
     <section class="registration-section">
+
       <div class="section-title">
         <span class="section-icon payment-icon">
           <i class="bi bi-wallet2"></i>
         </span>
-        <div>
-          <div>4. Payment Details</div>
-          <small>Enter the initial payment information</small>
+
+        <div class="section-heading">
+          <h3>4. Payment Details</h3>
+          <p>Enter the initial payment information</p>
         </div>
+
+        <span class="section-step">04</span>
       </div>
 
       <div class="section-body">
@@ -376,28 +376,24 @@
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="paymentDate">Payment Date</label>
-            <input id="paymentDate" type="date"
-                   class="form-control"
-                   name="paymentDate"
-                   [(ngModel)]="studentForm.paymentDate">
+            <input id="paymentDate" type="date" class="form-control"
+              name="paymentDate" [(ngModel)]="studentForm.paymentDate">
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="paymentAmount">Payment Amount (₹)</label>
-            <input id="paymentAmount" type="number"
-                   class="form-control"
-                   name="paymentAmount"
-                   [(ngModel)]="studentForm.paymentAmount"
-                   min="0"
-                   step="0.01"
-                   placeholder="Enter payment amount">
+            <div class="input-icon-wrapper">
+              <i class="bi bi-currency-rupee"></i>
+              <input id="paymentAmount" type="number" class="form-control"
+                name="paymentAmount" [(ngModel)]="studentForm.paymentAmount"
+                min="0" step="0.01" placeholder="Enter payment amount">
+            </div>
           </div>
 
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="paymentMode">Payment Mode</label>
             <select id="paymentMode" class="form-select"
-                    name="paymentMode"
-                    [(ngModel)]="studentForm.paymentMode">
+              name="paymentMode" [(ngModel)]="studentForm.paymentMode">
               <option value="">Select payment mode</option>
               <option value="Cash">Cash</option>
               <option value="UPI">UPI</option>
@@ -409,12 +405,10 @@
 
           <div class="col-12 mb-3">
             <label for="paymentDescription">Payment Description</label>
-            <textarea id="paymentDescription"
-                      class="form-control"
-                      name="paymentDescription"
-                      [(ngModel)]="studentForm.paymentDescription"
-                      rows="3"
-                      placeholder="Enter payment details or remarks"></textarea>
+            <textarea id="paymentDescription" class="form-control"
+              name="paymentDescription"
+              [(ngModel)]="studentForm.paymentDescription"
+              rows="3" placeholder="Enter payment details or remarks"></textarea>
           </div>
 
         </div>
@@ -423,27 +417,28 @@
 
     <!-- Form Actions -->
     <div class="registration-actions">
-      <button type="button"
-              class="btn btn-outline-secondary"
-              (click)="resetForm()"
-              [disabled]="submitting">
+      <div class="form-note">
+        <i class="bi bi-info-circle-fill"></i>
+        Fields marked with * are required.
+      </div>
+
+      <button type="button" class="btn btn-outline-secondary"
+        (click)="resetForm()" [disabled]="submitting">
         <i class="bi bi-arrow-counterclockwise"></i>
         Reset Form
       </button>
 
-      <button type="button"
-              class="btn btn-outline-secondary"
-              (click)="closed.emit()"
-              [disabled]="submitting">
+      <button type="button" class="btn btn-outline-secondary"
+        (click)="closed.emit()" [disabled]="submitting">
+        <i class="bi bi-x-circle"></i>
         Cancel
       </button>
 
-      <button type="submit"
-              class="btn btn-primary"
-              [disabled]="submitting">
+      <button type="submit" class="btn btn-primary"
+        [disabled]="submitting">
         <span *ngIf="submitting"
-              class="spinner-border spinner-border-sm"
-              role="status"></span>
+          class="spinner-border spinner-border-sm"
+          role="status" aria-hidden="true"></span>
         <i *ngIf="!submitting" class="bi bi-person-plus-fill"></i>
         {{ submitting ? 'Registering...' : 'Register Student' }}
       </button>

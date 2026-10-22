@@ -15,7 +15,8 @@ export const routes: Routes = [
     component: DashboardComponent,
     children: [
       { path: 'profile', component: ProfileComponent },
-      { path: 'settings', component: SettingsComponent }
+      { path: 'settings', component: SettingsComponent },
+      
     ]
   },
 ];

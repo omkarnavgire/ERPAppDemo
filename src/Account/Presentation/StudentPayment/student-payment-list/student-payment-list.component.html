@@ -1,0 +1,351 @@
+
+<div class="payment-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h2>Student Payments</h2>
+      <p>Manage payments, view receipts and track collections.</p>
+    </div>
+
+    <button
+      type="button"
+      class="primary-btn"
+      disabled
+      title="Create Payment form will be connected next"
+    >
+      + Create Payment
+    </button>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-card">
+    <span>Total Collected (Filtered)</span>
+    <h2>{{ totalAmount | currency:'INR':'symbol':'1.2-2' }}</h2>
+    <small>{{ filteredPayments.length }} payment(s)</small>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-card">
+    <div class="filter-grid">
+      <div class="field">
+        <label for="paymentSearch">Search</label>
+        <input
+          id="paymentSearch"
+          type="text"
+          [(ngModel)]="searchText"
+          (ngModelChange)="applyFilters()"
+          placeholder="Payment ID, student, registration..."
+        />
+      </div>
+
+      <div class="field">
+        <label for="fromDate">From Date</label>
+        <input
+          id="fromDate"
+          type="date"
+          [(ngModel)]="fromDate"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="toDate">To Date</label>
+        <input
+          id="toDate"
+          type="date"
+          [(ngModel)]="toDate"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="paymentMode">Payment Mode</label>
+        <select
+          id="paymentMode"
+          [(ngModel)]="selectedPaymentMode"
+          (ngModelChange)="applyFilters()"
+        >
+          <option value="">All Modes</option>
+          <option value="Cash">Cash</option>
+          <option value="UPI">UPI</option>
+          <option value="Bank Transfer">Bank Transfer</option>
+          <option value="Card">Card</option>
+          <option value="Cheque">Cheque</option>
+        </select>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="secondary-btn"
+      (click)="clearFilters()"
+    >
+      Clear Filters
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="message">
+    Loading payments...
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+
+    <button type="button" (click)="loadPayments()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Payment Table -->
+  <div class="table-card" *ngIf="!loading">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Payment ID</th>
+            <th>Date</th>
+            <th>Registration</th>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Payment Mode</th>
+            <th class="amount">Amount</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let payment of filteredPayments">
+            <td>#{{ payment.paymentId }}</td>
+
+            <td>
+              {{ payment.paymentDate | date:'dd MMM yyyy' }}
+            </td>
+
+            <td>
+              {{ payment.registrationCode || payment.registrationId }}
+            </td>
+
+            <td>
+              <strong>
+                {{ payment.studentName || 'N/A' }}
+                {{ payment.lastName || '' }}
+              </strong>
+
+              <small *ngIf="payment.emailAddress">
+                {{ payment.emailAddress }}
+              </small>
+            </td>
+
+            <td>
+              {{ payment.courseName || 'N/A' }}
+            </td>
+
+            <td>
+              <span class="mode-badge">
+                {{ payment.paymentMode || 'N/A' }}
+              </span>
+            </td>
+
+            <td class="amount">
+              {{ payment.paymentAmount | currency:'INR':'symbol':'1.2-2' }}
+            </td>
+
+            <td>
+              <button
+                type="button"
+                class="action-btn"
+                (click)="viewPayment(payment)"
+              >
+                View Receipt
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredPayments.length === 0">
+            <td colspan="8" class="empty-state">
+              No payments found.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Receipt Loading -->
+  <div *ngIf="receiptLoading" class="message">
+    Loading payment receipt...
+  </div>
+
+  <!-- Receipt Modal -->
+  <div
+    class="receipt-overlay"
+    *ngIf="selectedPayment as payment"
+    (click)="closeReceipt()"
+  >
+    <section
+      class="receipt-modal"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Receipt Header -->
+      <div class="receipt-header">
+        <div>
+          <h2>Payment Receipt</h2>
+          <p>CIIT Stack Lab</p>
+        </div>
+
+        <button
+          type="button"
+          class="receipt-close"
+          aria-label="Close receipt"
+          (click)="closeReceipt()"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Receipt Number -->
+      <div class="receipt-number">
+        <span>Receipt Number</span>
+        <strong>#{{ payment.paymentId }}</strong>
+      </div>
+
+      <!-- Student Details -->
+      <div class="receipt-section">
+        <h3>Student Details</h3>
+
+        <div class="receipt-row">
+          <span>Student Name</span>
+          <strong>
+            {{ payment.studentName || 'N/A' }}
+            {{ payment.lastName || '' }}
+          </strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Email</span>
+          <strong>{{ payment.emailAddress || 'N/A' }}</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Mobile Number</span>
+          <strong>{{ payment.mobileNumber || 'N/A' }}</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Registration ID</span>
+          <strong>
+            {{ payment.registrationCode || payment.registrationId }}
+          </strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Branch</span>
+          <strong>{{ payment.branchName || 'N/A' }}</strong>
+        </div>
+      </div>
+
+      <!-- Course Details -->
+      <div class="receipt-section">
+        <h3>Course Details</h3>
+
+        <div class="receipt-row">
+          <span>Course</span>
+          <strong>{{ payment.courseName || 'N/A' }}</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Course Fees</span>
+          <strong>
+            {{ (payment.courseFees || 0) | currency:'INR':'symbol':'1.2-2' }}
+          </strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Discount</span>
+          <strong>
+            {{ (payment.discount || 0) | currency:'INR':'symbol':'1.2-2' }}
+          </strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Final Fees</span>
+          <strong>
+            {{ getReceiptFinalFees(payment) | currency:'INR':'symbol':'1.2-2' }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- Payment Details -->
+      <div class="receipt-section">
+        <h3>Payment Details</h3>
+
+        <div class="receipt-row">
+          <span>Payment Date</span>
+          <strong>
+            {{ payment.paymentDate | date:'dd MMM yyyy' }}
+          </strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Payment Mode</span>
+          <strong>{{ payment.paymentMode || 'N/A' }}</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Description</span>
+          <strong>{{ payment.paymentDescription || 'N/A' }}</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>This Payment</span>
+          <strong>
+            {{ payment.paymentAmount | currency:'INR':'symbol':'1.2-2' }}
+          </strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Total Paid</span>
+          <strong>
+            {{ getReceiptTotalPaid(payment) | currency:'INR':'symbol':'1.2-2' }}
+          </strong>
+        </div>
+
+        <div class="receipt-row balance-row">
+          <span>Remaining Balance</span>
+          <strong>
+            {{ getReceiptBalance(payment) | currency:'INR':'symbol':'1.2-2' }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- Receipt Actions -->
+      <div class="receipt-actions">
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="closeReceipt()"
+        >
+          Close
+        </button>
+
+        <button
+          type="button"
+          class="primary-btn"
+          (click)="printReceipt()"
+        >
+          Print Receipt
+        </button>
+
+        <button
+          type="button"
+          class="primary-btn"
+          (click)="downloadReceiptPdf()"
+        >
+          Download PDF
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

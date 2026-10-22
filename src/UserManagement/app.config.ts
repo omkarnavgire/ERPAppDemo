@@ -29,6 +29,8 @@ import { BranchRepository } from "./Domain/Repositories/Branchrepositories";
 import { BranchRepositoryImpl } from "./Infrastructure/Repositories/Branchrepositoriesimple";
 import { STUDENT_REGISTRATION_REPOSITORY } from "src/Account/Domain/Repositories/Token/studentregistrationrepositorytoken";
 import { StudentRegistrationRepositoryImpl } from "src/Account/Infrastructure/Repositories/StudentRegistrationRepositoryImpl";
+import { STUDENT_PAYMENT_REPOSITORY } from "src/Account/Domain/Repositories/Token/studentpaymentrepositrytoken";
+import { StudentPaymentRepositoryImpl } from "src/Account/Infrastructure/Repositories/StudentPaymentRepositoryImpl";
 
 
 
@@ -48,6 +50,7 @@ export const appConfig:ApplicationConfig={
         {provide:LEAD_FOLLOWUP_REPOSITORY,useClass:LeadFollowupRepositoriesImpl},
         {provide:TRAINING_COURSE_REPOSITORY,useClass:TrainingCourseRepositoryImpl},
         {provide: STUDENT_REGISTRATION_REPOSITORY,useClass:StudentRegistrationRepositoryImpl},
+        {provide: STUDENT_PAYMENT_REPOSITORY,useClass:StudentPaymentRepositoryImpl},
         { provide: BranchRepository, useClass: BranchRepositoryImpl },
     ]
 };

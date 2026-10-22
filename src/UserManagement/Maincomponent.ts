@@ -39,26 +39,15 @@ export class MainClass implements OnInit {
         { label: "Lead", route: "/main/lead", icon: "◉", permission: PERMISSIONS.LEAD_VIEW },
         { label: "Enquiry", route: "/main/enquiry", icon: "✎", permission: PERMISSIONS.ENQUIRY_VIEW },
         { label: "Course", route: "/main/course", icon: "📚", permission: PERMISSIONS.COURSE_VIEW },
+        { label: "Student Registration", route: "/main/student-registration", icon: "🎓", roles: ["Accountant", "Admin", "Super User"] },
         {
-            label: "Student Registration",
-            route: "/main/student-registration",
-            icon: "🎓",
+            label: "Student Payments",
+            route: "/main/student-payments",
+            icon: "₹",
             roles: ["Accountant", "Admin", "Super User"]
         },
-        {
-            label: "Function Management",
-            route: "/main/function-management",
-            icon: "⚙",
-            permission: PERMISSIONS.FUNCTION_MANAGEMENT_VIEW,
-            roles: ["Admin", "Super User"]
-        },
-        {
-            label: "Reports",
-            route: "/main/reports",
-            icon: "▤",
-            permission: PERMISSIONS.REPORTS_VIEW,
-            roles: ["Admin", "Super User", "Accountant"]
-        },
+        { label: "Function Management", route: "/main/function-management", icon: "⚙", permission: PERMISSIONS.FUNCTION_MANAGEMENT_VIEW, roles: ["Admin", "Super User"] },
+        { label: "Reports", route: "/main/reports", icon: "▤", permission: PERMISSIONS.REPORTS_VIEW, roles: ["Admin", "Super User", "Accountant"] },
         { label: "Profile", route: "/main/profile", icon: "⚬" },
         { label: "Settings", route: "/main/settings", icon: "⚙" }
     ];

@@ -2,6 +2,8 @@
 import { Component, EventEmitter, OnInit, Output, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
+
 import { StudentRegistrationRequest } from "../../../Domain/DTOs/StudentRegistrationRequest";
 import { StudentRegistrationApi } from "../../../Infrastructure/Api/StudentRegistrationApi";
 import { GetAllBranches } from "src/UserManagement/Application/Branch/GetAllBranches";
@@ -23,6 +25,7 @@ export class NewStudentRegistration implements OnInit {
   private branchApp = inject(GetAllBranches);
   private qualificationApp = inject(QualificationApplication);
   private courseApp = inject(TrainingCourseApplication);
+  private router = inject(Router);
 
   @Output() saved = new EventEmitter<void>();
   @Output() closed = new EventEmitter<void>();
@@ -81,10 +84,12 @@ export class NewStudentRegistration implements OnInit {
     });
 
     this.dropdownLoading = true;
+
     this.courseApp.getAll().subscribe({
       next: data => {
         this.courses = (Array.isArray(data) ? data : [])
           .filter(c => Number(c.courseId) > 0);
+
         this.dropdownLoading = false;
       },
       error: error => {
@@ -97,11 +102,15 @@ export class NewStudentRegistration implements OnInit {
 
   private today(): string {
     const d = new Date();
+
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   }
 
   onCourseChange(): void {
-    const course = this.courses.find(c => Number(c.courseId) === Number(this.selectedCourseId));
+    const course = this.courses.find(
+      c => Number(c.courseId) === Number(this.selectedCourseId)
+    );
+
     this.actualFees = Number(course?.feesAmount) || 0;
     this.calculateFees();
   }
@@ -116,27 +125,38 @@ export class NewStudentRegistration implements OnInit {
   }
 
   onMobileChange(): void {
-    this.studentForm.mobileNumber = this.studentForm.mobileNumber.replace(/\D/g, "").slice(0, 10);
+    this.studentForm.mobileNumber =
+      this.studentForm.mobileNumber.replace(/\D/g, "").slice(0, 10);
   }
 
   onWhatsappChange(): void {
-    this.studentForm.whatsappNumber = this.studentForm.whatsappNumber.replace(/\D/g, "").slice(0, 10);
+    this.studentForm.whatsappNumber =
+      this.studentForm.whatsappNumber.replace(/\D/g, "").slice(0, 10);
   }
 
   onParentNumberChange(): void {
-    this.studentForm.parentNumber = this.studentForm.parentNumber.replace(/\D/g, "").slice(0, 10);
+    this.studentForm.parentNumber =
+      this.studentForm.parentNumber.replace(/\D/g, "").slice(0, 10);
   }
 
   onAadharNumberChange(): void {
-    this.studentForm.aadharCardNumber = this.studentForm.aadharCardNumber.replace(/\D/g, "").slice(0, 12);
+    this.studentForm.aadharCardNumber =
+      this.studentForm.aadharCardNumber.replace(/\D/g, "").slice(0, 12);
   }
 
   onAadharFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
+
     if (!file) return;
 
-    const allowed = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+    const allowed = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
     if (!allowed.includes(file.type) || file.size > 5 * 1024 * 1024) {
       this.errorMessage = "Select a PDF, JPG, PNG or WEBP file up to 5 MB.";
       input.value = "";
@@ -144,13 +164,18 @@ export class NewStudentRegistration implements OnInit {
     }
 
     const reader = new FileReader();
+
     reader.onload = () => {
       if (typeof reader.result === "string") {
         this.studentForm.aadharCardPhoto = reader.result;
         this.errorMessage = "";
       }
     };
-    reader.onerror = () => this.errorMessage = "Unable to read Aadhaar document.";
+
+    reader.onerror = () => {
+      this.errorMessage = "Unable to read Aadhaar document.";
+    };
+
     reader.readAsDataURL(file);
   }
 
@@ -183,6 +208,7 @@ export class NewStudentRegistration implements OnInit {
       paymentMode: "",
       paymentDescription: ""
     };
+
     this.selectedCourseId = 0;
     this.discount = 0;
     this.actualFees = 0;
@@ -191,8 +217,12 @@ export class NewStudentRegistration implements OnInit {
     this.successMessage = "";
   }
 
+  backToStudents(): void {
+    this.router.navigate(["/main/student-registration"]);
+  }
+
   closeForm(): void {
-    this.closed.emit();
+    this.backToStudents();
   }
 
   registerStudent(): void {
@@ -205,44 +235,59 @@ export class NewStudentRegistration implements OnInit {
       this.errorMessage = "Enter first name and last name.";
       return;
     }
+
     if (!f.gender || !f.birthDate || !f.registrationDate || !f.paymentDate) {
       this.errorMessage = "Complete all required date and gender fields.";
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.emailAddress.trim())) {
+
+    if (
+      f.emailAddress.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.emailAddress.trim())
+    ) {
       this.errorMessage = "Enter a valid email address.";
       return;
     }
+
     if (!/^\d{10}$/.test(f.mobileNumber)) {
       this.errorMessage = "Mobile number must contain 10 digits.";
       return;
     }
+
     if (f.whatsappNumber && !/^\d{10}$/.test(f.whatsappNumber)) {
       this.errorMessage = "WhatsApp number must contain 10 digits.";
       return;
     }
+
     if (f.parentNumber && !/^\d{10}$/.test(f.parentNumber)) {
       this.errorMessage = "Parent number must contain 10 digits.";
       return;
     }
+
     if (f.aadharCardNumber && !/^\d{12}$/.test(f.aadharCardNumber)) {
       this.errorMessage = "Aadhaar number must contain 12 digits.";
       return;
     }
+
     if (Number(f.branchId) <= 0 || Number(this.selectedCourseId) <= 0) {
       this.errorMessage = "Select branch and course.";
       return;
     }
+
     if (this.discount > this.actualFees) {
       this.errorMessage = "Discount cannot be greater than course fees.";
       return;
     }
+
     if (!f.paymentMode || Number(f.paymentAmount) < 0) {
       this.errorMessage = "Enter valid payment details.";
       return;
     }
 
-    const leadId = f.leadId === null || String(f.leadId).trim() === "" ? null : Number(f.leadId);
+    const leadId =
+      f.leadId === null || String(f.leadId).trim() === ""
+        ? null
+        : Number(f.leadId);
 
     const request: StudentRegistrationRequest = {
       ...f,
@@ -256,22 +301,34 @@ export class NewStudentRegistration implements OnInit {
     };
 
     this.submitting = true;
+
     this.api.registerStudent(request).subscribe({
       next: response => {
         console.log("New student registration success:", response);
+
         this.submitting = false;
         this.successMessage = "Student registered successfully!";
+
         window.alert(this.successMessage);
+
         this.resetForm();
         this.saved.emit();
       },
       error: error => {
         console.error("New student registration error:", error);
+
         this.submitting = false;
+
         const errors = error?.error?.errors;
+
         this.errorMessage = errors
-          ? Object.entries(errors).map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : value}`).join(" | ")
-          : error?.error?.message || `Registration failed. HTTP status: ${error?.status ?? "Unknown"}.`;
+          ? Object.entries(errors)
+              .map(([key, value]) =>
+                `${key}: ${Array.isArray(value) ? value.join(", ") : value}`
+              )
+              .join(" | ")
+          : error?.error?.message ||
+            `Registration failed. HTTP status: ${error?.status ?? "Unknown"}.`;
       }
     });
   }

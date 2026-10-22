@@ -1,5 +1,5 @@
-
 import { Component, OnInit, inject } from "@angular/core";
+import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { StudentRegistrationApi } from "../../Infrastructure/Api/StudentRegistrationApi";
@@ -47,6 +47,7 @@ interface ExistingStudent {
 })
 export class StudentRegistrationComponent implements OnInit {
   private registrationApi = inject(StudentRegistrationApi);
+  private router = inject(Router);
 
   registrations: RegistrationRow[] = [];
   students: ExistingStudent[] = [];
@@ -175,13 +176,14 @@ export class StudentRegistrationComponent implements OnInit {
     });
   }
 
-  openNewStudentForm(): void {
-    this.showExistingCourseForm = false;
-    this.selectedStudent = null;
-    this.errorMessage = "";
-    this.successMessage = "";
-    this.showForm = true;
-  }
+openNewStudentForm(): void {
+  this.showExistingCourseForm = false;
+  this.selectedStudent = null;
+  this.errorMessage = "";
+  this.successMessage = "";
+
+  this.router.navigate(["/main/student-registration/new"]);
+}
 
   closeNewStudentForm(): void {
     this.showForm = false;

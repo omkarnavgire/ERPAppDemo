@@ -305,3 +305,124 @@
 }
 
 }
+
+/* Student Registration Form Header - Light and Dark Theme */
+
+.student-registration-page .registration-form-card {
+  overflow: hidden;
+  background: var(--bg-card, #182421) !important;
+  border: 1px solid var(--border, #2b4039) !important;
+  border-radius: 12px;
+}
+
+/* Header background and text */
+.student-registration-page .registration-form-header {
+  background: var(--bg-card, #182421) !important;
+  color: var(--text-main, #edf5f1) !important;
+  border-bottom: 1px solid var(--border, #2b4039) !important;
+  padding: 22px 24px !important;
+}
+
+.student-registration-page .registration-form-heading {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.student-registration-page .registration-form-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--primary, #10b981);
+  color: #ffffff !important;
+}
+
+.student-registration-page .registration-form-icon i {
+  color: #ffffff !important;
+  font-size: 23px;
+}
+
+.student-registration-page .registration-form-header h3 {
+  color: var(--text-main, #edf5f1) !important;
+  font-size: 23px;
+  font-weight: 750;
+}
+
+.student-registration-page .registration-form-header p {
+  color: var(--text-secondary, #a2b4ad) !important;
+  font-size: 14px;
+}
+
+/* Keep form body consistent with the active theme */
+.student-registration-page .registration-form-card > .card-body {
+  background: var(--bg-card, #182421) !important;
+  color: var(--text-main, #edf5f1) !important;
+}
+
+/* Dark theme */
+[data-theme="dark"] .student-registration-page .registration-form-header,
+.dark-theme .student-registration-page .registration-form-header,
+body.dark-mode .student-registration-page .registration-form-header {
+  background: #182421 !important;
+  color: #edf5f1 !important;
+}
+
+[data-theme="dark"] .student-registration-page .registration-form-header h3,
+.dark-theme .student-registration-page .registration-form-header h3,
+body.dark-mode .student-registration-page .registration-form-header h3 {
+  color: #edf5f1 !important;
+}
+
+[data-theme="dark"] .student-registration-page .registration-form-header p,
+.dark-theme .student-registration-page .registration-form-header p,
+body.dark-mode .student-registration-page .registration-form-header p {
+  color: #a2b4ad !important;
+}
+
+/* Light theme */
+[data-theme="light"] .student-registration-page .registration-form-header,
+.light-theme .student-registration-page .registration-form-header,
+body.light-mode .student-registration-page .registration-form-header {
+  background: #ffffff !important;
+  color: #172033 !important;
+}
+
+[data-theme="light"] .student-registration-page .registration-form-header h3,
+.light-theme .student-registration-page .registration-form-header h3,
+body.light-mode .student-registration-page .registration-form-header h3 {
+  color: #172033 !important;
+}
+
+[data-theme="light"] .student-registration-page .registration-form-header p,
+.light-theme .student-registration-page .registration-form-header p,
+body.light-mode .student-registration-page .registration-form-header p {
+  color: #64748b !important;
+}
+
+@media (max-width: 576px) {
+  .student-registration-page .registration-form-header {
+    padding: 16px !important;
+  }
+
+  .student-registration-page .registration-form-heading {
+    align-items: flex-start;
+    gap: 11px;
+  }
+
+  .student-registration-page .registration-form-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .student-registration-page .registration-form-header h3 {
+    font-size: 18px;
+  }
+
+  .student-registration-page .registration-form-header p {
+    font-size: 12px;
+  }
+}
