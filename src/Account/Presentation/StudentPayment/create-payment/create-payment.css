@@ -1,0 +1,647 @@
+
+/* ========================================
+   Create Student Payment - Main Container
+======================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  color: #1e293b;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.payment-form-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+  box-sizing: border-box;
+}
+
+/* ========================================
+   Header
+======================================== */
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 26px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.payment-header h2 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+.payment-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.btn-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 23px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* ========================================
+   Form Sections
+======================================== */
+
+.form-section {
+  margin-bottom: 26px;
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.form-section > h3 {
+  margin: 0 0 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #edf2f7;
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* ========================================
+   Form Groups and Labels
+======================================== */
+
+.form-group {
+  min-width: 0;
+  margin-bottom: 20px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.required {
+  color: #dc2626;
+}
+
+/* ========================================
+   Inputs, Selects and Textarea
+======================================== */
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  outline: none;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+.form-control:hover:not(:disabled) {
+  border-color: #94a3b8;
+}
+
+.form-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.form-control:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+select.form-control {
+  cursor: pointer;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ========================================
+   Searchable Student Dropdown
+======================================== */
+
+.student-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.student-dropdown-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.student-dropdown-button > span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.student-dropdown-button:disabled {
+  cursor: not-allowed;
+}
+
+.placeholder-text {
+  color: #94a3b8;
+}
+
+.dropdown-arrow {
+  flex: 0 0 auto;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.student-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  max-height: 290px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 9px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+  box-sizing: border-box;
+}
+
+.student-dropdown-search {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin-bottom: 8px;
+  background: #ffffff;
+}
+
+.student-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #1e293b;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.student-option:hover,
+.student-option:focus-visible {
+  outline: none;
+  background: #eff6ff;
+}
+
+.student-option-name {
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.student-option small {
+  color: #64748b;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.dropdown-message {
+  padding: 15px 10px;
+  color: #64748b;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ========================================
+   Fee Summary Card
+======================================== */
+
+.fee-summary {
+  margin-top: 24px;
+  overflow: hidden;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #f8fbff;
+}
+
+.fee-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 19px 22px;
+  border-bottom: 1px solid #dbeafe;
+  background: #eff6ff;
+}
+
+.summary-caption {
+  display: block;
+  margin-bottom: 5px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.fee-summary-header h4 {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Payment Status Badges */
+
+.payment-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.status-paid {
+  border-color: #bbf7d0;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pending {
+  border-color: #fed7aa;
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.status-error {
+  border-color: #fecaca;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Fee Summary Rows */
+
+.fee-summary-content {
+  padding: 8px 22px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 45px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row span {
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.summary-row strong {
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.discount-row strong {
+  color: #15803d;
+}
+
+.balance-row {
+  margin-top: 4px;
+  padding: 16px 0;
+  border-top: 1px solid #cbd5e1;
+}
+
+.balance-row span {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.balance-row strong {
+  color: #b45309;
+  font-size: 20px;
+}
+
+/* ========================================
+   Loading State
+======================================== */
+
+.info-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 13px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: payment-spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes payment-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   Error and Success Messages
+======================================== */
+
+.error-message {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.error-message strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.error-message p {
+  margin: 0;
+}
+
+.error-text {
+  display: block;
+  margin-top: 6px;
+  color: #dc2626;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.success-inline {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #166534;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   Form Action Buttons
+======================================== */
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.form-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 125px;
+  min-height: 43px;
+  padding: 11px 20px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-actions .btn-primary {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.form-actions .btn-primary:hover:not(:disabled) {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.2);
+}
+
+.form-actions .btn-secondary {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+}
+
+.form-actions .btn-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.form-actions .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ========================================
+   Responsive Layout
+======================================== */
+
+@media (max-width: 768px) {
+  .payment-form-container {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .payment-header h2 {
+    font-size: 23px;
+  }
+
+  .form-section {
+    padding: 17px;
+  }
+
+  .fee-summary-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .fee-summary-content {
+    padding: 8px 16px;
+  }
+
+  .summary-row {
+    gap: 12px;
+  }
+
+  .summary-row span {
+    font-size: 13px;
+  }
+
+  .summary-row strong {
+    font-size: 13px;
+  }
+
+  .balance-row strong {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-form-container {
+    padding: 14px;
+  }
+
+  .payment-header h2 {
+    font-size: 20px;
+  }
+
+  .payment-header p {
+    font-size: 12px;
+  }
+
+  .form-section {
+    padding: 13px;
+    margin-bottom: 18px;
+  }
+
+  .form-section > h3 {
+    font-size: 15px;
+  }
+
+  .summary-row {
+    align-items: flex-start;
+  }
+
+  .summary-row span {
+    max-width: 60%;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}

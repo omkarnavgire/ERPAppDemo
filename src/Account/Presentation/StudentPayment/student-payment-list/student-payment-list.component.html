@@ -1,5 +1,5 @@
-
 <div class="payment-page">
+
   <!-- Page Header -->
   <div class="page-header">
     <div>
@@ -7,12 +7,7 @@
       <p>Manage payments, view receipts and track collections.</p>
     </div>
 
-    <button
-      type="button"
-      class="primary-btn"
-      disabled
-      title="Create Payment form will be connected next"
-    >
+    <button type="button" class="btn btn-primary" routerLink="/main/student-payments/create">
       + Create Payment
     </button>
   </div>
@@ -27,44 +22,26 @@
   <!-- Filters -->
   <div class="filter-card">
     <div class="filter-grid">
+
       <div class="field">
         <label for="paymentSearch">Search</label>
-        <input
-          id="paymentSearch"
-          type="text"
-          [(ngModel)]="searchText"
-          (ngModelChange)="applyFilters()"
-          placeholder="Payment ID, student, registration..."
-        />
+        <input id="paymentSearch" type="text" [(ngModel)]="searchText" (ngModelChange)="applyFilters()"
+          placeholder="Payment ID, student, registration..." />
       </div>
 
       <div class="field">
         <label for="fromDate">From Date</label>
-        <input
-          id="fromDate"
-          type="date"
-          [(ngModel)]="fromDate"
-          (ngModelChange)="applyFilters()"
-        />
+        <input id="fromDate" type="date" [(ngModel)]="fromDate" (ngModelChange)="applyFilters()" />
       </div>
 
       <div class="field">
         <label for="toDate">To Date</label>
-        <input
-          id="toDate"
-          type="date"
-          [(ngModel)]="toDate"
-          (ngModelChange)="applyFilters()"
-        />
+        <input id="toDate" type="date" [(ngModel)]="toDate" (ngModelChange)="applyFilters()" />
       </div>
 
       <div class="field">
         <label for="paymentMode">Payment Mode</label>
-        <select
-          id="paymentMode"
-          [(ngModel)]="selectedPaymentMode"
-          (ngModelChange)="applyFilters()"
-        >
+        <select id="paymentMode" [(ngModel)]="selectedPaymentMode" (ngModelChange)="applyFilters()">
           <option value="">All Modes</option>
           <option value="Cash">Cash</option>
           <option value="UPI">UPI</option>
@@ -73,13 +50,10 @@
           <option value="Cheque">Cheque</option>
         </select>
       </div>
+
     </div>
 
-    <button
-      type="button"
-      class="secondary-btn"
-      (click)="clearFilters()"
-    >
+    <button type="button" class="secondary-btn" (click)="clearFilters()">
       Clear Filters
     </button>
   </div>
@@ -117,6 +91,7 @@
 
         <tbody>
           <tr *ngFor="let payment of filteredPayments">
+
             <td>#{{ payment.paymentId }}</td>
 
             <td>
@@ -153,14 +128,11 @@
             </td>
 
             <td>
-              <button
-                type="button"
-                class="action-btn"
-                (click)="viewPayment(payment)"
-              >
+              <button type="button" class="action-btn" (click)="viewPayment(payment)">
                 View Receipt
               </button>
             </td>
+
           </tr>
 
           <tr *ngIf="filteredPayments.length === 0">
@@ -179,15 +151,10 @@
   </div>
 
   <!-- Receipt Modal -->
-  <div
-    class="receipt-overlay"
-    *ngIf="selectedPayment as payment"
-    (click)="closeReceipt()"
-  >
-    <section
-      class="receipt-modal"
-      (click)="$event.stopPropagation()"
-    >
+  <div class="receipt-overlay" *ngIf="selectedPayment as payment" (click)="closeReceipt()">
+
+    <section class="receipt-modal" (click)="$event.stopPropagation()">
+
       <!-- Receipt Header -->
       <div class="receipt-header">
         <div>
@@ -195,12 +162,7 @@
           <p>CIIT Stack Lab</p>
         </div>
 
-        <button
-          type="button"
-          class="receipt-close"
-          aria-label="Close receipt"
-          (click)="closeReceipt()"
-        >
+        <button type="button" class="receipt-close" aria-label="Close receipt" (click)="closeReceipt()">
           ✕
         </button>
       </div>
@@ -322,30 +284,31 @@
 
       <!-- Receipt Actions -->
       <div class="receipt-actions">
-        <button
-          type="button"
-          class="secondary-btn"
-          (click)="closeReceipt()"
-        >
+        <button type="button" class="secondary-btn" (click)="closeReceipt()">
           Close
         </button>
 
-        <button
-          type="button"
-          class="primary-btn"
-          (click)="printReceipt()"
-        >
+        <button type="button" class="primary-btn" (click)="printReceipt()">
           Print Receipt
         </button>
 
-        <button
-          type="button"
-          class="primary-btn"
-          (click)="downloadReceiptPdf()"
-        >
+        <button type="button" class="primary-btn" (click)="downloadReceiptPdf()">
           Download PDF
         </button>
       </div>
+
     </section>
   </div>
+
+  <!-- Create Payment Modal
+  <div class="payment-modal-backdrop" *ngIf="showCreatePayment" (click)="closeCreatePayment()">
+
+    <section class="payment-modal-content" (click)="$event.stopPropagation()">
+
+      <app-create-payment (cancel)="closeCreatePayment()" (paymentSaved)="onPaymentSaved()">
+      </app-create-payment>
+
+    </section>
+  </div> -->
+
 </div>

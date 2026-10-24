@@ -5,11 +5,16 @@ import { FormsModule } from '@angular/forms';
 
 import { StudentPayment } from '../../../Domain/Entities/StudentPayment';
 import { StudentPaymentService } from '../../../Application/StudentPayment/StudentPaymentService';
+import { CreatePaymentComponent } from '../create-payment/create-payment';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-student-payment-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule ],
   templateUrl: './student-payment-list.component.html',
   styleUrls: ['./student-payment-list.component.css']
 })
@@ -29,6 +34,9 @@ export class StudentPaymentListComponent implements OnInit {
   selectedPayment: StudentPayment | null = null;
   receiptLoading = false;
 
+  // Create Payment Modal
+  showCreatePayment = false;
+
   constructor(
     private readonly paymentService: StudentPaymentService
   ) {}
@@ -37,6 +45,24 @@ export class StudentPaymentListComponent implements OnInit {
     this.loadPayments();
   }
 
+  // Open Create Payment Modal
+  openCreatePayment(): void {
+    this.showCreatePayment = true;
+    this.errorMessage = '';
+  }
+
+  // Close Create Payment Modal
+  closeCreatePayment(): void {
+    this.showCreatePayment = false;
+  }
+
+  // Called after payment is successfully saved
+  onPaymentSaved(): void {
+    this.showCreatePayment = false;
+    this.loadPayments();
+  }
+
+  // Load All Payments
   loadPayments(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -57,13 +83,16 @@ export class StudentPaymentListComponent implements OnInit {
       },
       error: (error) => {
         console.error('Unable to load payments:', error);
+
         this.errorMessage =
           'Unable to load payments. Please try again.';
+
         this.loading = false;
       }
     });
   }
 
+  // Apply Search, Date and Payment Mode Filters
   applyFilters(): void {
     const search = this.searchText.trim().toLowerCase();
 
@@ -100,7 +129,9 @@ export class StudentPaymentListComponent implements OnInit {
     });
   }
 
-  private toDateKey(value: string | Date | null | undefined): string {
+  private toDateKey(
+    value: string | Date | null | undefined
+  ): string {
     if (!value) {
       return '';
     }
@@ -118,6 +149,7 @@ export class StudentPaymentListComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  // Clear Filters
   clearFilters(): void {
     this.searchText = '';
     this.fromDate = '';
@@ -127,6 +159,7 @@ export class StudentPaymentListComponent implements OnInit {
     this.applyFilters();
   }
 
+  // Total Amount of Filtered Payments
   get totalAmount(): number {
     return this.filteredPayments.reduce(
       (total, payment) =>
@@ -135,6 +168,7 @@ export class StudentPaymentListComponent implements OnInit {
     );
   }
 
+  // View Payment Receipt
   viewPayment(payment: StudentPayment): void {
     this.receiptLoading = true;
 
@@ -155,18 +189,19 @@ export class StudentPaymentListComponent implements OnInit {
       error: (error) => {
         console.error('Unable to load payment details:', error);
 
-        // List madhil details available astil tar receipt preview dakhva.
         this.selectedPayment = payment;
         this.receiptLoading = false;
       }
     });
   }
 
+  // Close Receipt
   closeReceipt(): void {
     this.selectedPayment = null;
     this.receiptLoading = false;
   }
 
+  // Calculate Final Fees
   getReceiptFinalFees(payment: StudentPayment): number {
     if (payment.finalFees != null) {
       return this.toNumber(payment.finalFees);
@@ -179,15 +214,16 @@ export class StudentPaymentListComponent implements OnInit {
     );
   }
 
+  // Calculate Total Paid
   getReceiptTotalPaid(payment: StudentPayment): number {
     if (payment.totalPaid != null) {
       return this.toNumber(payment.totalPaid);
     }
 
-    // API totalPaid det nasel tar fakt current payment available aahe.
     return this.toNumber(payment.paymentAmount);
   }
 
+  // Calculate Remaining Balance
   getReceiptBalance(payment: StudentPayment): number {
     if (payment.remainingBalance != null) {
       return this.toNumber(payment.remainingBalance);
@@ -200,6 +236,7 @@ export class StudentPaymentListComponent implements OnInit {
     );
   }
 
+  // Print Receipt
   printReceipt(): void {
     if (!this.selectedPayment) {
       return;
@@ -208,6 +245,7 @@ export class StudentPaymentListComponent implements OnInit {
     window.print();
   }
 
+  // Download Receipt PDF
   async downloadReceiptPdf(): Promise<void> {
     const payment = this.selectedPayment;
 
@@ -234,13 +272,22 @@ export class StudentPaymentListComponent implements OnInit {
         ['Course', payment.courseName || 'N/A'],
         ['Course Fees', this.formatRupees(payment.courseFees)],
         ['Discount', this.formatRupees(payment.discount)],
-        ['Final Fees', this.formatRupees(this.getReceiptFinalFees(payment))],
+        [
+          'Final Fees',
+          this.formatRupees(this.getReceiptFinalFees(payment))
+        ],
         ['Payment Date', this.formatDate(payment.paymentDate)],
         ['Payment Mode', payment.paymentMode || 'N/A'],
         ['Description', payment.paymentDescription || 'N/A'],
         ['This Payment', this.formatRupees(payment.paymentAmount)],
-        ['Total Paid', this.formatRupees(this.getReceiptTotalPaid(payment))],
-        ['Remaining Balance', this.formatRupees(this.getReceiptBalance(payment))]
+        [
+          'Total Paid',
+          this.formatRupees(this.getReceiptTotalPaid(payment))
+        ],
+        [
+          'Remaining Balance',
+          this.formatRupees(this.getReceiptBalance(payment))
+        ]
       ];
 
       doc.setFontSize(18);
@@ -274,6 +321,7 @@ export class StudentPaymentListComponent implements OnInit {
       doc.save(`Payment-Receipt-${payment.paymentId}.pdf`);
     } catch (error) {
       console.error('Unable to generate receipt PDF:', error);
+
       this.errorMessage =
         'Unable to generate PDF. Check whether jspdf is installed.';
     }
@@ -288,7 +336,9 @@ export class StudentPaymentListComponent implements OnInit {
     return `Rs. ${this.toNumber(value).toFixed(2)}`;
   }
 
-  private formatDate(value: string | Date | null | undefined): string {
+  private formatDate(
+    value: string | Date | null | undefined
+  ): string {
     if (!value) {
       return 'N/A';
     }
