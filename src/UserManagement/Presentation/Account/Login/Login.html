@@ -1,158 +1,342 @@
+
 <div class="login-page">
+  <main class="login-shell" aria-labelledby="login-title">
 
-  <!-- Left Side -->
-  <div class="login-left">
+    <!-- CIIT branding panel -->
+    <section class="brand-panel" aria-label="CIIT Stack Lab">
+      <div class="brand-lockup">
+        <div class="brand-logo" aria-hidden="true">CIIT</div>
 
-    <div class="brand">
-      <div class="brand-logo">CIIT</div>
-      <div>
-        <h2>CIIT TRAINIGN </h2>
-        <span>INSTITUTE</span>
-      </div>
-    </div>
-
-    <div class="welcome-content">
-      <h1>login to ciit institute<br>with confidence.</h1>
-
-      <p>
-        Learn Today. Build Your Career Tomorrow.
-Industry-focused IT training, practical learning and career support to help you turn your skills into real opportunities.
-      </p>
-
-      <div class="features">
-
-        <div class="feature">
-          <div class="feature-icon">✓</div>
-          <div>
-            <strong>Industry-Ready Skills</strong>
-            <span>Learn the latest IT technologies.</span>
-          </div>
+        <div class="brand-name">
+          <strong>CIIT Training Institute</strong>
+          <span>INSTITUTE</span>
         </div>
-
-        <div class="feature">
-          <div class="feature-icon">✓</div>
-          <div>
-            <strong>Practical Training</strong>
-            <span>Build real-world projects.</span>
-          </div>
-        </div>
-
-        <div class="feature">
-          <div class="feature-icon">✓</div>
-          <div>
-            <strong>Career Support</strong>
-            <span>Get placement and interview guidance.</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="left-footer">
-      © 2026 InvoicePro. All rights reserved.
-    </div>
-
-  </div>
-
-
-  <!-- Right Side -->
-  <div class="login-right">
-
-    <div class="login-card">
-
-      <div class="mobile-brand">
-        <div class="brand-logo">IB</div>
-        <h2>InvoicePro</h2>
       </div>
 
-      <div class="login-header">
-        <h1>Welcome Back</h1>
-        <p>Sign in to continue to your account</p>
-      </div>
+      <div class="brand-message">
+        <span class="eyebrow">LEARN · BUILD · GROW</span>
 
-
-      <!-- Login Form -->
-      <form [formGroup]="loginForm" (ngSubmit)="submit()">
-
-        <!-- Username -->
-        <div class="form-group">
-
-          <label for="username">Username</label>
-
-          <div class="input-wrapper">
-            <span class="input-icon">✉</span>
-
-            <input
-              id="username"
-              type="text"
-              formControlName="username"
-              placeholder="Enter your username"
-            />
-          </div>
-
-        </div>
-
-
-        <!-- Password -->
-        <div class="form-group">
-
-          <div class="password-label">
-
-            <label for="password">Password</label>
-
-            <a routerLink="/forgot-password">Forgot Password?</a>
-
-          </div>
-
-          <div class="input-wrapper">
-            <span class="input-icon">🔒</span>
-
-            <input
-              id="password"
-              type="password"
-              formControlName="password"
-              placeholder="Enter your password"
-            />
-
-          </div>
-
-        </div>
-
-        <!-- Error message -->
-        <div class="error-message" *ngIf="errormessage">
-          {{ errormessage }}
-        </div>
-
-
-        <!-- Login Button -->
-        <button type="submit" class="login-btn">
-
-          <span>Sign In</span>
-          <span class="arrow">→</span>
-
-        </button>
-
-      </form>
-
-
-      <div class="divider">
-        <span>Secure Login</span>
-      </div>
-
-
-      <div class="security-info">
-
-        <span class="security-icon">🔐</span>
+        <h2>Build your future<br>with confidence.</h2>
 
         <p>
-          Your connection is secure and your credentials
-          are protected.
+          Learn today. Build your career tomorrow. Get practical IT
+          training and the skills to turn your goals into real opportunities.
         </p>
 
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-check" aria-hidden="true">✓</span>
+            <div>
+              <strong>Industry-ready skills</strong>
+              <span>Learn the latest IT technologies.</span>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-check" aria-hidden="true">✓</span>
+            <div>
+              <strong>Practical training</strong>
+              <span>Build skills through real projects.</span>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-check" aria-hidden="true">✓</span>
+            <div>
+              <strong>Career support</strong>
+              <span>Prepare for interviews and opportunities.</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-    </div>
+      <div class="brand-footer">
+        © 2026 CIIT Training Institute. All rights reserved.
+      </div>
+    </section>
 
-  </div>
+    <!-- Login panel -->
+    <section class="form-panel" aria-label="Sign in">
+      <div class="login-card">
 
+        <div class="mobile-brand-lockup">
+          <div class="brand-logo" aria-hidden="true">CIIT</div>
+          <div class="brand-name">
+            <strong>CIIT Training Institute</strong>
+            <span>INSTITUTE</span>
+          </div>
+        </div>
+
+        <div class="login-heading">
+          <div class="welcome-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3.5 19 6v5.2c0 4.5-3 7.7-7 9.3-4-1.6-7-4.8-7-9.3V6l7-2.5Z"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linejoin="round"
+              />
+              <path
+                d="m8.7 12 2.1 2.1 4.6-4.7"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <h1 id="login-title">Welcome back</h1>
+          <p>Sign in to continue to your account.</p>
+        </div>
+
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="submit()"
+          novalidate
+        >
+          <!-- Username -->
+          <div class="form-group">
+            <label for="username">Username</label>
+
+            <div
+              class="input-wrapper"
+              [class.input-invalid]="
+                loginForm.controls.username.invalid &&
+                loginForm.controls.username.touched
+              "
+            >
+              <svg class="field-icon" viewBox="0 0 24 24" fill="none"
+                   aria-hidden="true">
+                <circle
+                  cx="12" cy="8" r="3.5"
+                  stroke="currentColor" stroke-width="1.7"
+                />
+                <path
+                  d="M5 20c.5-3.5 3.2-5.5 7-5.5s6.5 2 7 5.5"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+              </svg>
+
+              <input
+                id="username"
+                type="text"
+                formControlName="username"
+                placeholder="Enter your username"
+                autocomplete="username"
+                [attr.aria-invalid]="
+                  loginForm.controls.username.invalid &&
+                  loginForm.controls.username.touched
+                "
+                aria-describedby="username-error"
+              />
+            </div>
+
+            <small
+              id="username-error"
+              class="field-error"
+              *ngIf="
+                loginForm.controls.username.hasError('required') &&
+                loginForm.controls.username.touched
+              "
+            >
+              Please enter your username.
+            </small>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="password">Password</label>
+              <a routerLink="/forgot-password">Forgot password?</a>
+            </div>
+
+            <div
+              class="input-wrapper"
+              [class.input-invalid]="
+                loginForm.controls.password.invalid &&
+                loginForm.controls.password.touched
+              "
+            >
+              <svg class="field-icon" viewBox="0 0 24 24" fill="none"
+                   aria-hidden="true">
+                <rect
+                  x="5" y="10" width="14" height="10" rx="2"
+                  stroke="currentColor" stroke-width="1.7"
+                />
+                <path
+                  d="M8 10V7a4 4 0 0 1 8 0v3"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+                <circle cx="12" cy="15" r="1" fill="currentColor"/>
+              </svg>
+
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                [attr.aria-invalid]="
+                  loginForm.controls.password.invalid &&
+                  loginForm.controls.password.touched
+                "
+                aria-describedby="password-error"
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="showPassword = !showPassword"
+                [attr.aria-label]="
+                  showPassword ? 'Hide password' : 'Show password'
+                "
+                [attr.aria-pressed]="showPassword"
+              >
+                <svg *ngIf="!showPassword" viewBox="0 0 24 24"
+                     fill="none" aria-hidden="true">
+                  <path
+                    d="M2.5 12s3.3-6 9.5-6 9.5 6 9.5 6-3.3 6-9.5 6-9.5-6-9.5-6Z"
+                    stroke="currentColor" stroke-width="1.7"
+                  />
+                  <circle
+                    cx="12" cy="12" r="2.7"
+                    stroke="currentColor" stroke-width="1.7"
+                  />
+                </svg>
+
+                <svg *ngIf="showPassword" viewBox="0 0 24 24"
+                     fill="none" aria-hidden="true">
+                  <path
+                    d="m3 3 18 18M10.6 6.2A10.5 10.5 0 0 1 12 6c6.2 0 9.5 6 9.5 6a15 15 0 0 1-3 3.5M6.2 6.8C3.8 8.4 2.5 12 2.5 12s3.3 6 9.5 6c1.2 0 2.3-.2 3.3-.6"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <small
+              id="password-error"
+              class="field-error"
+              *ngIf="
+                loginForm.controls.password.hasError('required') &&
+                loginForm.controls.password.touched
+              "
+            >
+              Please enter your password.
+            </small>
+          </div>
+
+          <!-- Remember username -->
+          <div class="form-options">
+            <label class="remember-option">
+              <input
+                type="checkbox"
+                [checked]="rememberMe"
+                (change)="rememberMe = $any($event.target).checked"
+              />
+              <span class="custom-checkbox" aria-hidden="true"></span>
+              <span>Remember username</span>
+            </label>
+          </div>
+
+          <!-- API error -->
+          <div
+            class="error-message"
+            *ngIf="errormessage"
+            role="alert"
+            aria-live="polite"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle
+                cx="12" cy="12" r="9"
+                stroke="currentColor" stroke-width="1.8"
+              />
+              <path
+                d="M12 7v5m0 3h.01"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span>{{ errormessage }}</span>
+          </div>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="login-btn"
+            [disabled]="isLoading"
+          >
+            <span
+              class="button-spinner"
+              *ngIf="isLoading"
+              aria-hidden="true"
+            ></span>
+
+            <span>{{ isLoading ? 'Signing in...' : 'Sign in' }}</span>
+
+            <svg
+              *ngIf="!isLoading"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 12h14m-6-6 6 6-6 6"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+
+        <!-- Security note -->
+        <div class="secure-note">
+          <span class="secure-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect
+                x="5" y="10" width="14" height="10" rx="2"
+                stroke="currentColor" stroke-width="1.7"
+              />
+              <path
+                d="M8 10V7a4 4 0 0 1 8 0v3"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+              <path
+                d="m9.5 15 1.7 1.7 3.5-3.6"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+
+          <span>
+            <strong>Secure login</strong>
+            <small>
+              Your credentials are protected by a secure connection.
+            </small>
+          </span>
+        </div>
+
+        <p class="card-footer">
+          Need help accessing your account? Contact your administrator.
+        </p>
+      </div>
+    </section>
+
+  </main>
 </div>

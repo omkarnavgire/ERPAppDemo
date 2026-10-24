@@ -34,7 +34,7 @@ export class MainClass implements OnInit {
 
     menus: SidebarMenu[] = [
         { label: "Dashboard", route: "/main/dashboard", icon: "▣", permission: PERMISSIONS.DASHBOARD_VIEW },
-        { label: "User", route: "/main/user", icon: "♙", permission: PERMISSIONS.USER_VIEW },
+        { label: "Employee Registration", route: "/main/user", icon: "♙", permission: PERMISSIONS.USER_VIEW },
         { label: "Employee", route: "/main/employee", icon: "◈", permission: PERMISSIONS.EMPLOYEE_VIEW },
         { label: "Lead", route: "/main/lead", icon: "◉", permission: PERMISSIONS.LEAD_VIEW },
         { label: "Enquiry", route: "/main/enquiry", icon: "✎", permission: PERMISSIONS.ENQUIRY_VIEW },
