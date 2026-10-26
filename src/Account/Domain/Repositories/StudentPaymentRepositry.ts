@@ -14,6 +14,8 @@ export abstract class StudentPaymentRepository {
     paymentId: number
   ): Observable<StudentPayment>;
 
+  abstract downloadInvoice(registrationId: number, paymentId: number): Observable<Blob>;
+
   abstract updatePayment(
     paymentId: number,
     request: StudentPaymentRequest

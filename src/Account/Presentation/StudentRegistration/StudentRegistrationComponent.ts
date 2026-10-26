@@ -1,9 +1,11 @@
+
 import { Component, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { catchError, finalize, of, timeout } from "rxjs";
+
 import { StudentRegistrationApi } from "../../Infrastructure/Api/StudentRegistrationApi";
-import { NewStudentRegistration } from "./NewStudent/NewStudentRegistration";
 import {
   ExistingStudentRegistration,
   ExistingStudentRegistrationData
@@ -39,13 +41,13 @@ interface ExistingStudent {
   imports: [
     CommonModule,
     FormsModule,
-    NewStudentRegistration,
     ExistingStudentRegistration
   ],
   templateUrl: "./StudentRegistration.html",
   styleUrl: "./StudentRegistration.css"
 })
 export class StudentRegistrationComponent implements OnInit {
+
   private registrationApi = inject(StudentRegistrationApi);
   private router = inject(Router);
 
@@ -68,54 +70,98 @@ export class StudentRegistrationComponent implements OnInit {
     this.loadRegistrations();
   }
 
+clearSearch(): void {
+  this.searchText = "";
+  this.courseSearch = "";
+
+  // Refresh the displayed list after clearing filters
+  this.registrations = [...this.registrations];
+}
+
   loadRegistrations(): void {
+    if (this.loading) {
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = "";
 
-    this.registrationApi.getRegistrations().subscribe({
-      next: (response: any) => {
-        const rows: any[] = Array.isArray(response?.data)
-          ? response.data
-          : Array.isArray(response)
-            ? response
+    const startTime = performance.now();
+
+    this.registrationApi.getRegistrations()
+      .pipe(
+        timeout(20000),
+        finalize(() => {
+          this.loading = false;
+
+          console.log(
+            `Student registrations request completed in ${
+              (performance.now() - startTime).toFixed(0)
+            } ms`
+          );
+        })
+      )
+      .subscribe({
+        next: (response: any) => {
+          const rows: any[] = Array.isArray(response) ? response
+            : Array.isArray(response?.data) ? response.data
+            : Array.isArray(response?.result) ? response.result
+            : Array.isArray(response?.$values) ? response.$values
+            : Array.isArray(response?.data?.$values) ? response.data.$values
             : [];
 
-        this.registrations = rows.map((item: any) => ({
-          registrationId: Number(
-            item.registration_Id ?? item.registrationId ?? 0
-          ),
-          studentId: Number(item.student_Id ?? item.studentId ?? 0),
-          studentName: item.student_Name ?? item.studentName ?? "",
-          lastName: item.last_Name ?? item.lastName ?? "",
-          mobileNumber: String(
-            item.mobile_Number ?? item.mobileNumber ?? ""
-          ),
-          emailAddress: item.email_Address ?? item.emailAddress ?? "",
-          registrationCode:
-            item.registration_Code ?? item.registrationCode ?? "",
-          courseId: Number(item.course_Id ?? item.courseId ?? 0),
-          courseName: item.course_Name ?? item.courseName ?? "",
-          paymentAmount: Number(
-            item.payment_Amount ?? item.paymentAmount ?? 0
-          ),
-          currentStatus: item.current_Status ?? item.currentStatus ?? ""
-        }));
+          this.registrations = rows.map((item: any) => ({
+            registrationId: Number(
+              item.registration_Id ?? item.registrationId ?? item.registrationID ?? 0
+            ),
+            studentId: Number(
+              item.student_Id ?? item.studentId ?? item.studentID ?? 0
+            ),
+            studentName:
+              item.student_Name ?? item.studentName ?? item.candidateName ?? "",
+            lastName:
+              item.last_Name ?? item.lastName ?? "",
+            mobileNumber: String(
+              item.mobile_Number ?? item.mobileNumber ?? item.mobile ?? ""
+            ),
+            emailAddress:
+              item.email_Address ?? item.emailAddress ?? item.email ?? "",
+            registrationCode:
+              item.registration_Code ?? item.registrationCode ?? "",
+            courseId: Number(
+              item.course_Id ?? item.courseId ?? item.courseID ?? 0
+            ),
+            courseName:
+              item.course_Name ?? item.courseName ?? "",
+            paymentAmount: Number(
+              item.payment_Amount ?? item.paymentAmount ?? 0
+            ),
+            currentStatus:
+              item.current_Status ?? item.currentStatus ?? ""
+          }));
 
-        this.buildUniqueStudents();
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error("Load Registrations Error:", error);
-        this.registrations = [];
-        this.students = [];
-        this.errorMessage = "Unable to load student registrations.";
-        this.loading = false;
-      }
-    });
+          this.buildUniqueStudents();
+
+          console.log(
+            `Loaded ${this.registrations.length} registrations and ${this.students.length} unique students`
+          );
+        },
+
+        error: (error) => {
+          console.error("Load Registrations Error:", error);
+
+          this.registrations = [];
+          this.students = [];
+
+          this.errorMessage =
+            "Unable to load student registrations. Please try again.";
+        }
+      });
   }
 
   private buildUniqueStudents(): void {
     const studentMap = new Map<number, ExistingStudent>();
+    const courseSets = new Map<number, Set<string>>();
 
     for (const registration of this.registrations) {
       if (!registration.studentId) {
@@ -136,18 +182,21 @@ export class StudentRegistrationComponent implements OnInit {
         };
 
         studentMap.set(registration.studentId, student);
+        courseSets.set(registration.studentId, new Set<string>());
       }
 
       student.registrations.push(registration);
+
+      if (registration.courseName) {
+        courseSets.get(registration.studentId)?.add(
+          registration.courseName
+        );
+      }
     }
 
-    for (const student of studentMap.values()) {
+    for (const [studentId, student] of studentMap) {
       student.registeredCourses = [
-        ...new Set(
-          student.registrations
-            .map(registration => registration.courseName)
-            .filter(courseName => !!courseName)
-        )
+        ...(courseSets.get(studentId) ?? [])
       ].join(", ");
     }
 
@@ -158,32 +207,35 @@ export class StudentRegistrationComponent implements OnInit {
     const search = this.searchText.trim().toLowerCase();
     const course = this.courseSearch.trim().toLowerCase();
 
-    return this.registrations.filter(registration => {
-      const name =
-        `${registration.studentName} ${registration.lastName}`.toLowerCase();
+    if (!search && !course) {
+      return this.registrations;
+    }
 
+    return this.registrations.filter(registration => {
       const matchesSearch =
         !search ||
-        name.includes(search) ||
+        `${registration.studentName} ${registration.lastName}`
+          .toLowerCase().includes(search) ||
         registration.mobileNumber.toLowerCase().includes(search) ||
         registration.emailAddress.toLowerCase().includes(search) ||
         registration.registrationCode.toLowerCase().includes(search);
 
       const matchesCourse =
-        !course || registration.courseName.toLowerCase().includes(course);
+        !course ||
+        registration.courseName.toLowerCase().includes(course);
 
       return matchesSearch && matchesCourse;
     });
   }
 
-openNewStudentForm(): void {
-  this.showExistingCourseForm = false;
-  this.selectedStudent = null;
-  this.errorMessage = "";
-  this.successMessage = "";
+  openNewStudentForm(): void {
+    this.showExistingCourseForm = false;
+    this.selectedStudent = null;
+    this.errorMessage = "";
+    this.successMessage = "";
 
-  this.router.navigate(["/main/student-registration/new"]);
-}
+    this.router.navigate(["/main/student-registration/new"]);
+  }
 
   closeNewStudentForm(): void {
     this.showForm = false;
@@ -215,16 +267,24 @@ openNewStudentForm(): void {
   onNewStudentSaved(): void {
     this.showForm = false;
     this.errorMessage = "";
-    this.successMessage = "Student registration completed successfully.";
+    this.successMessage =
+      "Student registration completed successfully.";
+
     this.loadRegistrations();
   }
-
+trackByRegistrationId(
+  index: number,
+  registration: RegistrationRow
+): number {
+  return registration.registrationId || index;
+}
   onExistingStudentSaved(): void {
     this.showExistingCourseForm = false;
     this.selectedStudent = null;
     this.errorMessage = "";
     this.successMessage =
       "Existing student registered for the new course successfully.";
+
     this.loadRegistrations();
   }
 }

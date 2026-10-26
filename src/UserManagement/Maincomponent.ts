@@ -19,7 +19,8 @@ interface SidebarMenu {
     selector: "app-main-layout",
     standalone: true,
     imports: [RouterOutlet, RouterLink, RouterLinkActive],
-    templateUrl: "./Maincomponent.html"
+    templateUrl: "./Maincomponent.html",
+    styleUrls: ["./Maincomponent.css"]
 })
 export class MainClass implements OnInit {
     private router = inject(Router);
@@ -34,18 +35,13 @@ export class MainClass implements OnInit {
 
     menus: SidebarMenu[] = [
         { label: "Dashboard", route: "/main/dashboard", icon: "▣", permission: PERMISSIONS.DASHBOARD_VIEW },
-        { label: "Employee Registration", route: "/main/user", icon: "♙", permission: PERMISSIONS.USER_VIEW },
-        { label: "Employee", route: "/main/employee", icon: "◈", permission: PERMISSIONS.EMPLOYEE_VIEW },
-        { label: "Lead", route: "/main/lead", icon: "◉", permission: PERMISSIONS.LEAD_VIEW },
-        { label: "Enquiry", route: "/main/enquiry", icon: "✎", permission: PERMISSIONS.ENQUIRY_VIEW },
-        { label: "Course", route: "/main/course", icon: "📚", permission: PERMISSIONS.COURSE_VIEW },
+        { label: "Employee", route: "/main/user", icon: "♙", permission: PERMISSIONS.USER_VIEW, roles: ["Admin", "Super User"] },
+        { label: "Employee Registration", route: "/main/employee", icon: "◈", permission: PERMISSIONS.EMPLOYEE_VIEW, roles: ["Admin", "Super User"] },
+        { label: "Lead", route: "/main/lead", icon: "◉", permission: PERMISSIONS.LEAD_VIEW, roles: ["Super User", "Admin", "Counsellor"] },
+        { label: "Enquiry", route: "/main/enquiry", icon: "✎", permission: PERMISSIONS.ENQUIRY_VIEW, roles: ["Super User", "Admin", "Counsellor"] },
+        { label: "Course", route: "/main/course", icon: "📚", permission: PERMISSIONS.COURSE_VIEW, roles: ["Super User", "Admin", "Counsellor"] },
         { label: "Student Registration", route: "/main/student-registration", icon: "🎓", roles: ["Accountant", "Admin", "Super User"] },
-        {
-            label: "Student Payments",
-            route: "/main/student-payments",
-            icon: "₹",
-            roles: ["Accountant", "Admin", "Super User"]
-        },
+        { label: "Student Payments", route: "/main/student-payments", icon: "₹", roles: ["Accountant", "Admin", "Super User"] },
         { label: "Function Management", route: "/main/function-management", icon: "⚙", permission: PERMISSIONS.FUNCTION_MANAGEMENT_VIEW, roles: ["Admin", "Super User"] },
         { label: "Reports", route: "/main/reports", icon: "▤", permission: PERMISSIONS.REPORTS_VIEW, roles: ["Admin", "Super User", "Accountant"] },
         { label: "Profile", route: "/main/profile", icon: "⚬" },
@@ -65,7 +61,6 @@ export class MainClass implements OnInit {
         }
 
         const username = localStorage.getItem("username");
-
         if (!username) {
             this.router.navigate(["/login"]);
             return;
@@ -73,12 +68,8 @@ export class MainClass implements OnInit {
 
         this.getAllUsersUsecase.execute().subscribe({
             next: (response: any) => {
-                const users: User[] = Array.isArray(response)
-                    ? response
-                    : response?.data ?? [];
-
+                const users: User[] = Array.isArray(response) ? response : response?.data ?? [];
                 const u = username.trim().toLowerCase();
-
                 const current = users.find(x =>
                     x.employeeCode?.trim().toLowerCase() === u ||
                     x.userName?.trim().toLowerCase() === u ||
@@ -98,16 +89,8 @@ export class MainClass implements OnInit {
     private refreshUserSessionInBackground(): void {
         this.getAllUsersUsecase.execute().subscribe({
             next: (response: any) => {
-                const users: User[] = Array.isArray(response)
-                    ? response
-                    : response?.data ?? [];
-
-                const username = (
-                    this.session.username ||
-                    localStorage.getItem("username") ||
-                    ""
-                ).trim().toLowerCase();
-
+                const users: User[] = Array.isArray(response) ? response : response?.data ?? [];
+                const username = (this.session.username || localStorage.getItem("username") || "").trim().toLowerCase();
                 const current = users.find(x =>
                     x.employeeCode?.trim().toLowerCase() === username ||
                     x.userName?.trim().toLowerCase() === username ||
@@ -126,22 +109,24 @@ export class MainClass implements OnInit {
 
     private setUserData(): void {
         this.employeeName = this.session.employeeName;
-        this.roleName = this.session.roleName;
+
+        this.roleName =
+            this.session.roleName ||
+            this.session.roles.find(role => role?.trim()) ||
+            this.session.currentUser?.roleName ||
+            this.session.currentUser?.role ||
+            "";
     }
 
     private setVisibleMenus(): void {
         this.visibleMenus = this.menus.filter(menu => {
-            if (menu.roles?.length && !this.session.hasAnyRole(menu.roles)) {
-                return false;
-            }
-
-            if (!menu.permission) {
-                return true;
-            }
-
+            if (menu.roles?.length && !this.session.hasAnyRole(menu.roles)) return false;
+            if (!menu.permission) return true;
             return this.permissions.hasPermission(menu.permission);
         });
     }
+
+
 
     logout(): void {
         this.logoutUsecase.execute();

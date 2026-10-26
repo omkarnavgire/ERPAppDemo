@@ -31,6 +31,10 @@ export class StudentPaymentRepositoryImpl
     return this.api.getPaymentById(paymentId);
   }
 
+  downloadInvoice(registrationId: number, paymentId: number): Observable<Blob> {
+    return this.api.downloadInvoice(registrationId, paymentId);
+  }
+
   updatePayment(
     paymentId: number,
     request: StudentPaymentRequest

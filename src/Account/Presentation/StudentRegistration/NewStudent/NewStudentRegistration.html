@@ -40,6 +40,29 @@
     <span>{{ successMessage }}</span>
   </div>
 
+  <section class="registration-section enquiry-prefill-section">
+    <div class="section-title">
+      <span class="section-icon personal-icon"><i class="bi bi-person-lines-fill"></i></span>
+      <div class="section-heading">
+        <h3>Enquiry Details</h3>
+        <p>Select an existing enquiry to auto-fill available student information.</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <label for="enquirySelect">Select Enquiry</label>
+      <select id="enquirySelect" class="form-select" name="selectedEnquiryId"
+        [(ngModel)]="selectedEnquiryId" (ngModelChange)="onEnquirySelected()">
+        <option value="">{{ enquiriesLoading ? 'Loading enquiries...' : 'Select enquiry (optional)' }}</option>
+        <option *ngFor="let enquiry of enquiries" [value]="valueOf(enquiry, 'enquiryId', 'enquiry_Id', 'id')">
+          {{ valueOf(enquiry, 'candidateName', 'candidate_Name', 'studentName', 'name') || 'Unnamed enquiry' }}
+          — {{ valueOf(enquiry, 'mobileNumber', 'mobile_Number', 'mobile', 'phone') || 'No mobile' }}
+        </option>
+      </select>
+      <small class="text-muted" *ngIf="enquiriesLoading">Loading enquiries from the lead system…</small>
+      <small class="text-muted" *ngIf="!enquiriesLoading && enquiries.length === 0">No enquiries returned. You can still fill in the form manually.</small>
+    </div>
+  </section>
+
   <form (ngSubmit)="registerStudent()">
 
     <!-- 1. Personal Information -->
@@ -318,19 +341,6 @@
             </select>
           </div>
 
-          <div class="col-md-6 col-lg-4 mb-3">
-            <label for="leadId">Lead ID</label>
-            <div class="input-icon-wrapper">
-              <i class="bi bi-person-lines-fill"></i>
-              <input id="leadId" type="number" class="form-control"
-                name="leadId" [(ngModel)]="studentForm.leadId"
-                min="1" placeholder="Enter Lead ID">
-            </div>
-            <small class="form-text">
-              Enter the existing Lead ID, if available.
-            </small>
-          </div>
-
           <div class="col-md-6 col-lg-8 mb-3">
             <div class="fee-summary">
               <div class="fee-summary-icon">
@@ -440,9 +450,64 @@
           class="spinner-border spinner-border-sm"
           role="status" aria-hidden="true"></span>
         <i *ngIf="!submitting" class="bi bi-person-plus-fill"></i>
-        {{ submitting ? 'Registering...' : 'Register Student' }}
+        {{ submitting ? 'Registering...' : 'Register' }}
       </button>
     </div>
 
   </form>
+
+
+<!-- Post-registration receipt dialog: show the backend-generated PDF immediately. -->
+<div class="receipt-dialog-backdrop" *ngIf="showPostRegistrationReceipt" role="dialog" aria-modal="true" aria-labelledby="postRegistrationReceiptTitle">
+  <section class="receipt-dialog">
+    <header class="receipt-dialog-header">
+      <div class="receipt-dialog-heading">
+        <span class="receipt-dialog-icon"><i class="bi bi-receipt-cutoff"></i></span>
+        <div>
+          <h2 id="postRegistrationReceiptTitle">Student Registered Successfully</h2>
+          <p>Payment receipt · Review, print or download a copy</p>
+        </div>
+      </div>
+      <button type="button" class="receipt-dialog-close" aria-label="Close receipt" (click)="closePostRegistrationReceipt()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+
+    <div class="receipt-dialog-body">
+      <div class="receipt-success-note"><i class="bi bi-check-circle-fill"></i> Registration completed successfully.</div>
+
+      <div class="receipt-loading-state" *ngIf="receiptLoading">
+        <span class="spinner-border" role="status" aria-hidden="true"></span>
+        <strong>Preparing payment receipt…</strong>
+        <small>Please wait while we retrieve the receipt from the server.</small>
+      </div>
+
+      <div class="receipt-error-state" *ngIf="receiptError && !receiptLoading">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>{{ receiptError }}</span>
+      </div>
+
+      <iframe *ngIf="receiptSafeUrl && !receiptLoading" class="receipt-pdf-frame" [src]="receiptSafeUrl" title="Payment receipt PDF"></iframe>
+
+      <div class="receipt-empty-state" *ngIf="!receiptLoading && !receiptSafeUrl && !receiptError">
+        <i class="bi bi-receipt"></i>
+        <span>Receipt is not available yet.</span>
+      </div>
+    </div>
+
+    <footer class="receipt-dialog-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="closePostRegistrationReceipt()">
+        <i class="bi bi-x-circle"></i> Close
+      </button>
+      <div class="receipt-dialog-actions">
+        <button type="button" class="btn btn-outline-primary" (click)="printPostRegistrationReceipt()" [disabled]="!receiptPdfUrl">
+          <i class="bi bi-printer-fill"></i> Print Receipt
+        </button>
+        <button type="button" class="btn btn-primary" (click)="downloadPostRegistrationReceipt()" [disabled]="!receiptPdfUrl || receiptDownloading">
+          <i class="bi bi-download"></i> {{ receiptDownloading ? 'Preparing…' : 'Download PDF' }}
+        </button>
+      </div>
+    </footer>
+  </section>
+</div>
 </div>

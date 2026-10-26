@@ -1,119 +1,90 @@
 <!-- Header -->
 <nav class="navbar navbar-expand-lg ciit-navbar">
-
     <div class="container-fluid">
 
-        <a
-            class="navbar-brand ciit-brand"
-            routerLink="/main/dashboard">
-
+        <!-- CIIT Brand -->
+        <a class="navbar-brand ciit-brand" routerLink="/main/dashboard">
             <div class="ciit-brand-name">
-                <span class="ciit-title">
-                    CIIT
-                </span>
-
-                <span class="ciit-logo-sub">
-                    Training Institute
-                </span>
+                <span class="ciit-title">CIIT</span>
+                <span class="ciit-logo-sub">Training Institute</span>
             </div>
-
         </a>
 
-
+        <!-- Header Actions -->
         <div class="navbar-nav ms-auto ciit-nav-right">
-
-            <span class="ciit-user-name">
-                Hi, {{ employeeName }}
-            </span>
-
-            <!-- <a
-                class="nav-item nav-link change-password-link"
-                routerLink="/main/change-password">
-
-                Change Password
-
-            </a> -->
-
-            <a
-                class="nav-item nav-link ciit-logout"
-                (click)="logout()">
-
+            <a class="nav-item nav-link ciit-logout" (click)="logout()" role="button">
+                <!-- <i class="bi bi-box-arrow-right me-2"></i> -->
                 Logout
-
             </a>
-
         </div>
 
     </div>
-
 </nav>
-
 
 <!-- Main Page -->
 <div class="ciit-page">
-
     <div class="row g-3">
-
 
         <!-- Sidebar -->
         <div class="col-lg-2 col-md-3">
-
             <div class="ciit-sidebar">
 
-                <div class="ciit-sidebar-header">
 
-                    <div class="ciit-sidebar-title">
-                        Navigation
+                <!-- Professional User Profile -->
+                <div class="sidebar-user-profile">
+                    <div class="profile-avatar">
+                        <i class="bi bi-person-fill"></i>
                     </div>
 
-                    <div class="ciit-sidebar-subtitle">
-                        Institute Management
-                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name" [title]="employeeName">
+                            {{ employeeName || 'User' }}
+                        </div>
 
+                        <div class="profile-role">
+                            <i class="bi bi-shield-check"></i>
+                            <span>{{ roleName || 'User' }}</span>
+                        </div>
+                    </div>
                 </div>
 
 
+                <!-- Sidebar Heading -->
+                <!-- <div class="ciit-sidebar-header">
+                    <div class="sidebar-heading">
+                        <i class="bi bi-grid me-2"></i>
+                        NAVIGATION
+                    </div>
+                    <small>Institute Management</small>
+                </div> -->
+
+                <!-- Navigation Menu -->
                 <ul class="list-group ciit-sidebar-list">
-
                     @for (menu of visibleMenus; track menu.route) {
+                    <li class="list-group-item">
+                        <a [routerLink]="menu.route" routerLinkActive="active-link">
 
-                        <li class="list-group-item">
+                            <span class="ciit-sidebar-icon">
+                                {{ menu.icon }}
+                            </span>
 
-                            <a
-                                [routerLink]="menu.route"
-                                routerLinkActive="active-link">
-
-                                <span class="ciit-sidebar-icon">
-                                    {{ menu.icon }}
-                                </span>
-
+                            <span class="ciit-menu-label">
                                 {{ menu.label }}
-
-                            </a>
-
-                        </li>
-
+                            </span>
+                        </a>
+                    </li>
                     }
-
                 </ul>
 
             </div>
-
         </div>
-
 
         <!-- Page Content -->
         <div class="col-lg-10 col-md-9">
-
             <div class="ciit-content">
-
                 <router-outlet></router-outlet>
-
             </div>
-
         </div>
 
-
     </div>
-
 </div>

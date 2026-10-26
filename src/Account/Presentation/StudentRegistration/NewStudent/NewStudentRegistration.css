@@ -847,3 +847,66 @@ body.light-mode .student-registration-page > .card > .card-header p {
     color: #64748b !important;
 }
 
+
+/* Professional post-registration receipt dialog */
+.receipt-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(15, 23, 42, .68);
+  backdrop-filter: blur(4px);
+}
+.receipt-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(1040px, 100%);
+  max-height: min(92vh, 980px);
+  overflow: hidden;
+  background: var(--bg-card, #fff);
+  color: var(--text-main, #172033);
+  border: 1px solid var(--border, #dbe3ed);
+  border-radius: 18px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .3);
+}
+.receipt-dialog-header, .receipt-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+.receipt-dialog-heading { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.receipt-dialog-icon {
+  display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px;
+  color: #047857; background: #d1fae5; border-radius: 14px; font-size: 22px;
+}
+.receipt-dialog-heading h2 { margin: 0 0 4px; font-size: 1.1rem; font-weight: 750; }
+.receipt-dialog-heading p { margin: 0; color: var(--text-secondary, #64748b); font-size: .88rem; }
+.receipt-dialog-close { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px; border: 0; border-radius: 10px; background: transparent; color: inherit; }
+.receipt-dialog-close:hover { background: var(--bg-hover, #f1f5f9); }
+.receipt-dialog-body { min-height: 250px; padding: 16px 22px; overflow: auto; }
+.receipt-success-note { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding: 10px 12px; color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; font-size: .9rem; }
+.receipt-loading-state, .receipt-empty-state { display: flex; min-height: 260px; align-items: center; justify-content: center; flex-direction: column; gap: 12px; color: var(--text-secondary, #64748b); text-align: center; }
+.receipt-loading-state strong { color: var(--text-main, #172033); }
+.receipt-loading-state small { max-width: 400px; }
+.receipt-error-state { display: flex; align-items: flex-start; gap: 10px; padding: 14px; border-radius: 10px; color: #9a3412; background: #fff7ed; border: 1px solid #fed7aa; }
+.receipt-pdf-frame { display: block; width: 100%; height: min(62vh, 680px); border: 1px solid var(--border, #dbe3ed); border-radius: 10px; background: #f8fafc; }
+.receipt-empty-state { font-size: 1.05rem; }
+.receipt-empty-state i { font-size: 2rem; }
+.receipt-dialog-footer { border-top: 1px solid var(--border, #e2e8f0); border-bottom: 0; }
+.receipt-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; }
+@media (max-width: 640px) {
+  .receipt-dialog-backdrop { padding: 8px; }
+  .receipt-dialog { max-height: 96vh; border-radius: 14px; }
+  .receipt-dialog-header, .receipt-dialog-footer { padding: 14px; }
+  .receipt-dialog-body { padding: 12px; }
+  .receipt-dialog-footer { align-items: stretch; flex-direction: column-reverse; }
+  .receipt-dialog-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .receipt-dialog-actions .btn { white-space: nowrap; padding-inline: 8px; }
+  .receipt-pdf-frame { height: 55vh; }
+}

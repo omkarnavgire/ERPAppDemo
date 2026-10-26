@@ -88,14 +88,21 @@
             placeholder="Enter course name">
         </div>
 
-        <div class="col-md-2 d-flex align-items-end">
+        <!-- <div class="col-md-2 d-flex align-items-end">
           <button
             type="button"
             class="btn btn-outline-secondary"
             (click)="searchText = ''; courseSearch = ''">
             Clear Search
           </button>
-        </div>
+        </div> -->
+
+        <button
+  type="button"
+  class="btn btn-outline-secondary"
+  (click)="clearSearch()">
+  Clear Search
+</button>
 
       </div>
 

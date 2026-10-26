@@ -408,3 +408,10 @@ table {
     display: none !important;
   }
 }
+
+
+.student-receipts-modal { max-width: 900px; }
+.receipt-course-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.receipt-course-option { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 14px; text-align: left; }
+.receipt-course-option.active { border-color: var(--primary, #198754); background: rgba(25, 135, 84, .10); }
+.receipt-course-option small { opacity: .75; }

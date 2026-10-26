@@ -1,0 +1,81 @@
+
+/* ===== Sidebar User Profile ===== */
+.sidebar-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    margin: 0 0 16px;
+    background: linear-gradient(135deg, #f0f8f4, #ffffff);
+    border: 1px solid #e0eee7;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(20, 60, 45, 0.05);
+}
+
+.profile-avatar {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #078f69;
+    color: #ffffff;
+    border-radius: 12px;
+    font-size: 25px;
+}
+
+.profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-name {
+    color: #173b30;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.profile-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    padding: 4px 9px;
+    background: #e1f5eb;
+    color: #087653;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* ===== Sidebar Navigation ===== */
+.ciit-sidebar-header {
+    padding: 0 10px 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #edf0ee;
+}
+
+.ciit-sidebar-list {
+    margin-top: 10px;
+}
+
+.ciit-sidebar-list .list-group-item a {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 767.98px) {
+    .sidebar-user-profile {
+        padding: 12px;
+    }
+
+    .profile-avatar {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        font-size: 23px;
+    }
+}

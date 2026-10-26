@@ -80,6 +80,7 @@
           <tr>
             <th>Payment ID</th>
             <th>Date</th>
+            <th>Student ID</th>
             <th>Registration</th>
             <th>Student</th>
             <th>Course</th>
@@ -97,6 +98,8 @@
             <td>
               {{ payment.paymentDate | date:'dd MMM yyyy' }}
             </td>
+
+            <td>{{ payment.studentId || 'N/A' }}</td>
 
             <td>
               {{ payment.registrationCode || payment.registrationId }}
@@ -128,21 +131,67 @@
             </td>
 
             <td>
-              <button type="button" class="action-btn" (click)="viewPayment(payment)">
-                View Receipt
+              <button type="button" class="action-btn" (click)="openStudentReceipts(payment)">
+                Receipt
               </button>
             </td>
 
           </tr>
 
           <tr *ngIf="filteredPayments.length === 0">
-            <td colspan="8" class="empty-state">
+            <td colspan="9" class="empty-state">
               No payments found.
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- Student receipts grouped by student and course -->
+  <div class="receipt-overlay" *ngIf="showStudentReceipts" (click)="closeStudentReceipts()">
+    <section class="receipt-modal student-receipts-modal" (click)="$event.stopPropagation()">
+      <div class="receipt-header">
+        <div>
+          <h2>Student Receipts</h2>
+          <p>Student ID: {{ receiptListStudent?.studentId || 'N/A' }} — {{ receiptListStudent?.studentName || '' }} {{ receiptListStudent?.lastName || '' }}</p>
+        </div>
+        <button type="button" class="receipt-close" (click)="closeStudentReceipts()" aria-label="Close receipts">✕</button>
+      </div>
+
+      <div *ngIf="receiptCourses.length > 1" class="receipt-section">
+        <h3>Select Course</h3>
+        <div class="receipt-course-options">
+          <button type="button" class="secondary-btn receipt-course-option"
+            *ngFor="let course of receiptCourses"
+            [class.active]="selectedReceiptCourse?.courseId === course.courseId && selectedReceiptCourse.courseName === course.courseName"
+            (click)="selectReceiptCourse(course)">
+            <strong>{{ course.courseName }}</strong>
+            <small>{{ course.payments.length }} receipt(s)</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="receipt-section" *ngIf="selectedReceiptCourse as course">
+        <h3>{{ course.courseName }} — Receipts</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Receipt No.</th><th>Date</th><th>Payment Mode</th><th>Amount</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let receipt of course.payments">
+                <td>#{{ receipt.paymentId }}</td>
+                <td>{{ receipt.paymentDate | date:'dd MMM yyyy' }}</td>
+                <td>{{ receipt.paymentMode || 'N/A' }}</td>
+                <td>{{ receipt.paymentAmount | currency:'INR':'symbol':'1.2-2' }}</td>
+                <td><button type="button" class="action-btn" (click)="viewPayment(receipt)">View / Download</button></td>
+              </tr>
+              <tr *ngIf="course.payments.length === 0"><td colspan="5">No receipts found for this course.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div *ngIf="receiptCourses.length === 0" class="message">No receipts found for this student.</div>
+    </section>
   </div>
 
   <!-- Receipt Loading -->
@@ -292,8 +341,8 @@
           Print Receipt
         </button>
 
-        <button type="button" class="primary-btn" (click)="downloadReceiptPdf()">
-          Download PDF
+        <button type="button" class="primary-btn" [disabled]="downloadingReceipt" (click)="downloadReceiptPdf()">
+          {{ downloadingReceipt ? 'Downloading...' : 'Download Backend PDF' }}
         </button>
       </div>
 

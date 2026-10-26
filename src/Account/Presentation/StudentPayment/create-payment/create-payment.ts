@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, timeout } from 'rxjs/operators';
 
 import { StudentRegistrationApi } from '../../../Infrastructure/Api/StudentRegistrationApi';
 import { StudentPaymentService } from '../../../Application/StudentPayment/StudentPaymentService';
@@ -80,7 +80,7 @@ export class CreatePaymentComponent implements OnInit {
     forkJoin({
       registrations: this.registrationApi.getRegistrations(),
       payments: this.paymentService.getAllPayments()
-    }).subscribe({
+    }).pipe(timeout(20000)).subscribe({
       next: ({ registrations, payments }) => {
         const rows = this.getArray(registrations);
         this.allPayments = this.getArray(payments);
@@ -173,80 +173,65 @@ export class CreatePaymentComponent implements OnInit {
   }
 
   private loadRegistrationFees(): void {
-    const registrations = this.students.flatMap(
-      student => student.registrations
-    );
-
+    const registrations = this.students.flatMap(student => student.registrations);
     if (!registrations.length) {
       this.loadingStudents = false;
       return;
     }
 
-    forkJoin(
-      registrations.map(registration =>
-        this.registrationApi
-          .getCourseFees(registration.courseId, registration.discount)
-          .pipe(
-            map(response => ({
-              registration,
-              response,
-              error: false
-            })),
-            catchError(error => {
-              console.error(
-                'Unable to load fee for registration:',
-                registration.registrationId,
-                error
-              );
+    // Calculate payment history immediately; call the fee API only when the list API
+    // did not provide fee totals. This prevents N unnecessary requests on first load.
+    for (const registration of registrations) {
+      const registrationPayments = this.allPayments.filter(payment =>
+        Number(payment.registrationId) === Number(registration.registrationId) &&
+        payment.isPaid !== false && payment.isPaid !== 0
+      );
+      registration.totalPaid = registrationPayments.reduce(
+        (total: number, payment: any) => total + this.toNumber(payment.paymentAmount), 0
+      );
+      if (registration.courseFees > 0) {
+        registration.finalFees = Math.max(registration.courseFees - this.toNumber(registration.discount), 0);
+        registration.remainingBalance = Math.max(registration.finalFees - registration.totalPaid, 0);
+        registration.feeLoaded = true;
+        registration.feeError = false;
+        registration.fullyPaid = registration.remainingBalance <= 0;
+      }
+    }
 
-              return of({
-                registration,
-                response: null,
-                error: true
-              });
-            })
-          )
+    const missingFees = registrations.filter(registration => !(registration.courseFees > 0));
+    if (!missingFees.length) {
+      this.loadingStudents = false;
+      return;
+    }
+
+    forkJoin(missingFees.map(registration =>
+      this.registrationApi.getCourseFees(registration.courseId, registration.discount).pipe(
+        timeout(10000),
+        map(response => ({ registration, response, error: false })),
+        catchError(error => {
+          console.warn('Fee details unavailable for registration:', registration.registrationId, error);
+          return of({ registration, response: null, error: true });
+        })
       )
-    ).subscribe(results => {
+    )).subscribe(results => {
       for (const result of results) {
         const registration = result.registration;
-
-        const registrationPayments = this.allPayments.filter(
-          payment =>
-            Number(payment.registrationId) ===
-              Number(registration.registrationId) &&
-            payment.isPaid !== false &&
-            payment.isPaid !== 0
-        );
-
-        registration.totalPaid = registrationPayments.reduce(
-          (total: number, payment: any) =>
-            total + this.toNumber(payment.paymentAmount),
-          0
-        );
-
-        const feeData = result.response?.data;
-
+        const feeData = (result.response as any)?.data ?? result.response;
         if (feeData && !result.error) {
-          registration.courseFees = this.toNumber(feeData.actualFees);
-          registration.discount = this.toNumber(feeData.discount);
-          registration.finalFees = this.toNumber(feeData.finalFees);
+          registration.courseFees = this.toNumber(feeData.actualFees ?? feeData.courseFees);
+          registration.discount = this.toNumber(feeData.discount ?? registration.discount);
+          registration.finalFees = this.toNumber(feeData.finalFees ?? Math.max(registration.courseFees - registration.discount, 0));
+          registration.remainingBalance = Math.max(registration.finalFees - registration.totalPaid, 0);
           registration.feeLoaded = true;
           registration.feeError = false;
-
-          registration.remainingBalance = Math.max(
-            registration.finalFees - registration.totalPaid,
-            0
-          );
-
-          registration.fullyPaid =
-            registration.remainingBalance <= 0;
+          registration.fullyPaid = registration.remainingBalance <= 0;
         } else {
           registration.feeLoaded = false;
           registration.feeError = true;
+          registration.finalFees = Math.max(registration.courseFees - registration.discount, 0);
+          registration.remainingBalance = Math.max(registration.finalFees - registration.totalPaid, 0);
         }
       }
-
       this.loadingStudents = false;
     });
   }

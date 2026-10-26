@@ -134,8 +134,8 @@ export class UserSessionService{
 
         if(r==="accountant"){
             return [
-                PERMISSIONS.DASHBOARD_VIEW,
-                PERMISSIONS.ENQUIRY_VIEW
+                PERMISSIONS.DASHBOARD_VIEW
+              
             ];
         }
 
