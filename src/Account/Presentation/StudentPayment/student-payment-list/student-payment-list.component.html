@@ -199,153 +199,29 @@
     Loading payment receipt...
   </div>
 
-  <!-- Receipt Modal -->
+  <!-- Backend PDF Receipt Viewer: preview, print and download use the same PDF returned by the API. -->
   <div class="receipt-overlay" *ngIf="selectedPayment as payment" (click)="closeReceipt()">
-
-    <section class="receipt-modal" (click)="$event.stopPropagation()">
-
-      <!-- Receipt Header -->
+    <section class="receipt-modal backend-pdf-receipt-modal" (click)="$event.stopPropagation()">
       <div class="receipt-header">
         <div>
           <h2>Payment Receipt</h2>
-          <p>CIIT Stack Lab</p>
+          <p>{{ payment.studentName || 'Student' }} · Receipt #{{ payment.paymentId }}</p>
         </div>
-
-        <button type="button" class="receipt-close" aria-label="Close receipt" (click)="closeReceipt()">
-          ✕
-        </button>
+        <button type="button" class="receipt-close" aria-label="Close receipt" (click)="closeReceipt()">✕</button>
       </div>
 
-      <!-- Receipt Number -->
-      <div class="receipt-number">
-        <span>Receipt Number</span>
-        <strong>#{{ payment.paymentId }}</strong>
+      <div class="backend-receipt-preview">
+        <iframe *ngIf="receiptSafeUrl" [src]="receiptSafeUrl" title="Backend payment receipt PDF"></iframe>
+        <div *ngIf="!receiptSafeUrl" class="message">Preparing receipt preview...</div>
       </div>
 
-      <!-- Student Details -->
-      <div class="receipt-section">
-        <h3>Student Details</h3>
-
-        <div class="receipt-row">
-          <span>Student Name</span>
-          <strong>
-            {{ payment.studentName || 'N/A' }}
-            {{ payment.lastName || '' }}
-          </strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Email</span>
-          <strong>{{ payment.emailAddress || 'N/A' }}</strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Mobile Number</span>
-          <strong>{{ payment.mobileNumber || 'N/A' }}</strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Registration ID</span>
-          <strong>
-            {{ payment.registrationCode || payment.registrationId }}
-          </strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Branch</span>
-          <strong>{{ payment.branchName || 'N/A' }}</strong>
-        </div>
-      </div>
-
-      <!-- Course Details -->
-      <div class="receipt-section">
-        <h3>Course Details</h3>
-
-        <div class="receipt-row">
-          <span>Course</span>
-          <strong>{{ payment.courseName || 'N/A' }}</strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Course Fees</span>
-          <strong>
-            {{ (payment.courseFees || 0) | currency:'INR':'symbol':'1.2-2' }}
-          </strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Discount</span>
-          <strong>
-            {{ (payment.discount || 0) | currency:'INR':'symbol':'1.2-2' }}
-          </strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Final Fees</span>
-          <strong>
-            {{ getReceiptFinalFees(payment) | currency:'INR':'symbol':'1.2-2' }}
-          </strong>
-        </div>
-      </div>
-
-      <!-- Payment Details -->
-      <div class="receipt-section">
-        <h3>Payment Details</h3>
-
-        <div class="receipt-row">
-          <span>Payment Date</span>
-          <strong>
-            {{ payment.paymentDate | date:'dd MMM yyyy' }}
-          </strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Payment Mode</span>
-          <strong>{{ payment.paymentMode || 'N/A' }}</strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Description</span>
-          <strong>{{ payment.paymentDescription || 'N/A' }}</strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>This Payment</span>
-          <strong>
-            {{ payment.paymentAmount | currency:'INR':'symbol':'1.2-2' }}
-          </strong>
-        </div>
-
-        <div class="receipt-row">
-          <span>Total Paid</span>
-          <strong>
-            {{ getReceiptTotalPaid(payment) | currency:'INR':'symbol':'1.2-2' }}
-          </strong>
-        </div>
-
-        <div class="receipt-row balance-row">
-          <span>Remaining Balance</span>
-          <strong>
-            {{ getReceiptBalance(payment) | currency:'INR':'symbol':'1.2-2' }}
-          </strong>
-        </div>
-      </div>
-
-      <!-- Receipt Actions -->
       <div class="receipt-actions">
-        <button type="button" class="secondary-btn" (click)="closeReceipt()">
-          Close
-        </button>
-
-        <button type="button" class="primary-btn" (click)="printReceipt()">
-          Print Receipt
-        </button>
-
-        <button type="button" class="primary-btn" [disabled]="downloadingReceipt" (click)="downloadReceiptPdf()">
-          {{ downloadingReceipt ? 'Downloading...' : 'Download Backend PDF' }}
+        <button type="button" class="secondary-btn" (click)="closeReceipt()">Close</button>
+        <button type="button" class="primary-btn" (click)="printReceipt()" [disabled]="!receiptPdfUrl">Print Receipt</button>
+        <button type="button" class="primary-btn" [disabled]="downloadingReceipt || !receiptPdfUrl" (click)="downloadReceiptPdf()">
+          {{ downloadingReceipt ? 'Preparing...' : 'Download PDF' }}
         </button>
       </div>
-
     </section>
   </div>
 

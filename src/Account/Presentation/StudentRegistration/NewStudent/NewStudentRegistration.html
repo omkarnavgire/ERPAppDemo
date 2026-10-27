@@ -40,6 +40,15 @@
     <span>{{ successMessage }}</span>
   </div>
 
+  <div class="registration-success-backdrop" *ngIf="showRegistrationSuccessAlert" role="dialog" aria-modal="true" aria-labelledby="registrationSuccessTitle">
+    <section class="registration-success-dialog">
+      <span class="registration-success-icon"><i class="bi bi-check-circle-fill"></i></span>
+      <h3 id="registrationSuccessTitle">Registration Successful</h3>
+      <p>The student has been registered successfully. Click OK to view the backend payment receipt.</p>
+      <button type="button" class="btn btn-primary" (click)="confirmRegistrationSuccess()">OK</button>
+    </section>
+  </div>
+
   <section class="registration-section enquiry-prefill-section">
     <div class="section-title">
       <span class="section-icon personal-icon"><i class="bi bi-person-lines-fill"></i></span>

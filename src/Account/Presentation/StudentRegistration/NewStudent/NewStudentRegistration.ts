@@ -519,7 +519,7 @@ export class NewStudentRegistration implements OnInit {
   }
   printPostRegistrationReceipt(): void {
     if (!this.receiptPdfUrl) return;
-    const printWindow = window.open(this.receiptPdfUrl, "_blank", "noopener,noreferrer");
+    const printWindow = window.open(this.receiptPdfUrl, "_blank");
     if (!printWindow) {
       this.receiptError = "Your browser blocked the receipt window. Allow pop-ups or download the PDF and print it.";
       return;

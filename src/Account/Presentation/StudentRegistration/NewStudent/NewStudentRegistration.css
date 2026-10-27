@@ -910,3 +910,38 @@ body.light-mode .student-registration-page > .card > .card-header p {
   .receipt-dialog-actions .btn { white-space: nowrap; padding-inline: 8px; }
   .receipt-pdf-frame { height: 55vh; }
 }
+
+
+.registration-success-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, .58);
+}
+.registration-success-dialog {
+  width: min(430px, 100%);
+  padding: 28px;
+  border: 1px solid var(--border, #dbe3ed);
+  border-radius: 18px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #172033);
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, .25);
+}
+.registration-success-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  color: #15803d;
+  background: #dcfce7;
+  font-size: 28px;
+}
+.registration-success-dialog h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 750; }
+.registration-success-dialog p { margin: 0 0 22px; color: var(--text-secondary, #64748b); }
+.registration-success-dialog .btn { min-width: 110px; }
