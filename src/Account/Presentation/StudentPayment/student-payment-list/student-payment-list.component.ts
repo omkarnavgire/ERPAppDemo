@@ -16,7 +16,7 @@ import { catchError, finalize, of, timeout } from 'rxjs';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule ],
+    RouterModule],
   templateUrl: './student-payment-list.component.html',
   styleUrls: ['./student-payment-list.component.css']
 })
@@ -50,7 +50,7 @@ export class StudentPaymentListComponent implements OnInit {
   constructor(
     private readonly paymentService: StudentPaymentService,
     private readonly sanitizer: DomSanitizer
-  ) {}
+  ) { }
 
   private readonly paymentsCacheKey = 'ciit-account-student-payments-v1';
 
@@ -62,6 +62,7 @@ export class StudentPaymentListComponent implements OnInit {
         const rows = JSON.parse(cached);
         if (Array.isArray(rows)) {
           this.payments = rows.map((item: any) => this.normalizePayment(item));
+          this.sortPaymentsLatestFirst();
           this.applyFilters();
         }
       }
@@ -80,6 +81,14 @@ export class StudentPaymentListComponent implements OnInit {
   // Close Create Payment Modal
   closeCreatePayment(): void {
     this.showCreatePayment = false;
+  }
+
+  private sortPaymentsLatestFirst(): void {
+    this.payments = [...this.payments].sort((a, b) => {
+      const dateA = new Date(a.paymentDate).getTime() || 0;
+      const dateB = new Date(b.paymentDate).getTime() || 0;
+      return dateB - dateA;
+    });
   }
 
   // Called after payment is successfully saved
@@ -112,12 +121,13 @@ export class StudentPaymentListComponent implements OnInit {
         }
         const data = Array.isArray(response) ? response
           : Array.isArray(response?.data) ? response.data
-          : Array.isArray(response?.result) ? response.result
-          : Array.isArray(response?.$values) ? response.$values
-          : Array.isArray(response?.data?.$values) ? response.data.$values
-          : [];
+            : Array.isArray(response?.result) ? response.result
+              : Array.isArray(response?.$values) ? response.$values
+                : Array.isArray(response?.data?.$values) ? response.data.$values
+                  : [];
 
         this.payments = data.map((item: any) => this.normalizePayment(item));
+        this.sortPaymentsLatestFirst();
         try {
           localStorage.setItem(this.paymentsCacheKey, JSON.stringify(this.payments));
         } catch {
@@ -248,6 +258,58 @@ export class StudentPaymentListComponent implements OnInit {
     this.receiptListStudent = null;
   }
 
+  // Download a specific receipt directly from the backend API.
+downloadPaymentReceipt(receipt: StudentPayment): void {
+  if (this.downloadingReceipt) {
+    return;
+  }
+
+  const registrationId = Number(receipt.registrationId);
+  const paymentId = Number(receipt.paymentId);
+
+  if (registrationId <= 0 || paymentId <= 0) {
+    this.errorMessage =
+      'Unable to download receipt: registration or payment ID is missing.';
+    return;
+  }
+
+  this.downloadingReceipt = true;
+  this.errorMessage = '';
+
+  this.paymentService
+    .downloadInvoice(registrationId, paymentId)
+    .pipe(
+      timeout(20000),
+      finalize(() => this.downloadingReceipt = false)
+    )
+    .subscribe({
+      next: (pdfBlob: Blob) => {
+        if (!pdfBlob || pdfBlob.size === 0) {
+          this.errorMessage = 'The backend returned an empty PDF.';
+          return;
+        }
+
+        const blobUrl = URL.createObjectURL(
+          new Blob([pdfBlob], { type: 'application/pdf' })
+        );
+
+        const anchor = document.createElement('a');
+        anchor.href = blobUrl;
+        anchor.download = `Payment-Receipt-${paymentId}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+      },
+      error: (error) => {
+        console.error('Receipt download failed:', error);
+        this.errorMessage =
+          'Unable to download receipt. Please try again.';
+      }
+    });
+}
+
   // Load the exact backend-generated PDF used by the Download action.
   viewPayment(payment: StudentPayment): void {
     if (this.receiptLoading) return;
@@ -310,21 +372,60 @@ export class StudentPaymentListComponent implements OnInit {
     }
   }
 
-  // Download the same PDF blob that is shown in the preview.
-  downloadReceiptPdf(): void {
-    const payment = this.selectedPayment;
-    if (!payment || !this.receiptPdfUrl || this.downloadingReceipt) return;
+// Download the receipt PDF directly from the backend API.
+downloadReceiptPdf(): void {
+  const payment = this.selectedPayment;
 
-    this.downloadingReceipt = true;
-    const anchor = document.createElement('a');
-    anchor.href = this.receiptPdfUrl;
-    anchor.download = `Payment-Receipt-${payment.paymentId}.pdf`;
-    anchor.style.display = 'none';
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    this.downloadingReceipt = false;
+  if (!payment || this.downloadingReceipt) {
+    return;
   }
+
+  const registrationId = Number(payment.registrationId);
+  const paymentId = Number(payment.paymentId);
+
+  if (
+    !Number.isFinite(registrationId) || registrationId <= 0 ||
+    !Number.isFinite(paymentId) || paymentId <= 0
+  ) {
+    console.error('Registration ID or Payment ID is missing.');
+    return;
+  }
+
+  this.downloadingReceipt = true;
+
+  this.paymentService
+    .downloadInvoice(registrationId, paymentId)
+    .subscribe({
+      next: (pdfBlob: Blob) => {
+        if (!pdfBlob || pdfBlob.size === 0) {
+          console.error('The backend returned an empty PDF.');
+          this.downloadingReceipt = false;
+          return;
+        }
+
+        const blobUrl = URL.createObjectURL(
+          new Blob([pdfBlob], { type: 'application/pdf' })
+        );
+
+        const anchor = document.createElement('a');
+        anchor.href = blobUrl;
+        anchor.download = `Payment-Receipt-${paymentId}.pdf`;
+        anchor.style.display = 'none';
+
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+
+        this.downloadingReceipt = false;
+      },
+      error: (error) => {
+        console.error('Backend receipt download failed:', error);
+        this.downloadingReceipt = false;
+      }
+    });
+}
 
   private normalizePayment(item: any): StudentPayment {
     return {

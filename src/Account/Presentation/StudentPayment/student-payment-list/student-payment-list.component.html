@@ -78,7 +78,8 @@
       <table>
         <thead>
           <tr>
-            <th>Payment ID</th>
+            <th>SR.</th>
+            <!-- <th>Payment ID</th> -->
             <th>Date</th>
             <th>Student ID</th>
             <th>Registration</th>
@@ -91,9 +92,10 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let payment of filteredPayments">
-
-            <td>#{{ payment.paymentId }}</td>
+          <tr *ngFor="let payment of filteredPayments; let i = index">
+            <td>{{ i + 1 }}</td>
+            <!-- 
+            <td>#{{ payment.paymentId }}</td> -->
 
             <td>
               {{ payment.paymentDate | date:'dd MMM yyyy' }}
@@ -154,16 +156,17 @@
       <div class="receipt-header">
         <div>
           <h2>Student Receipts</h2>
-          <p>Student ID: {{ receiptListStudent?.studentId || 'N/A' }} — {{ receiptListStudent?.studentName || '' }} {{ receiptListStudent?.lastName || '' }}</p>
+          <p>Student ID: {{ receiptListStudent?.studentId || 'N/A' }} — {{ receiptListStudent?.studentName || '' }} {{
+            receiptListStudent?.lastName || '' }}</p>
         </div>
-        <button type="button" class="receipt-close" (click)="closeStudentReceipts()" aria-label="Close receipts">✕</button>
+        <button type="button" class="receipt-close" (click)="closeStudentReceipts()"
+          aria-label="Close receipts">✕</button>
       </div>
 
       <div *ngIf="receiptCourses.length > 1" class="receipt-section">
         <h3>Select Course</h3>
         <div class="receipt-course-options">
-          <button type="button" class="secondary-btn receipt-course-option"
-            *ngFor="let course of receiptCourses"
+          <button type="button" class="secondary-btn receipt-course-option" *ngFor="let course of receiptCourses"
             [class.active]="selectedReceiptCourse?.courseId === course.courseId && selectedReceiptCourse.courseName === course.courseName"
             (click)="selectReceiptCourse(course)">
             <strong>{{ course.courseName }}</strong>
@@ -176,16 +179,35 @@
         <h3>{{ course.courseName }} — Receipts</h3>
         <div class="table-wrapper">
           <table>
-            <thead><tr><th>Receipt No.</th><th>Date</th><th>Payment Mode</th><th>Amount</th><th>Action</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Receipt No.</th>
+                <th>Date</th>
+                <th>Payment Mode</th>
+                <th>Amount</th>
+                <th>Action</th>
+              </tr>
+            </thead>
             <tbody>
               <tr *ngFor="let receipt of course.payments">
                 <td>#{{ receipt.paymentId }}</td>
                 <td>{{ receipt.paymentDate | date:'dd MMM yyyy' }}</td>
                 <td>{{ receipt.paymentMode || 'N/A' }}</td>
                 <td>{{ receipt.paymentAmount | currency:'INR':'symbol':'1.2-2' }}</td>
-                <td><button type="button" class="action-btn" (click)="viewPayment(receipt)">View / Download</button></td>
+                <td class="receipt-actions">
+                  <button type="button" class="action-btn view-btn" (click)="viewPayment(receipt)">
+                    View
+                  </button>
+
+                  <button type="button" class="action-btn download-btn" [disabled]="downloadingReceipt"
+                    (click)="downloadPaymentReceipt(receipt)">
+                    {{ downloadingReceipt ? 'Downloading...' : 'Download' }}
+                  </button>
+                </td>
               </tr>
-              <tr *ngIf="course.payments.length === 0"><td colspan="5">No receipts found for this course.</td></tr>
+              <tr *ngIf="course.payments.length === 0">
+                <td colspan="5">No receipts found for this course.</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -217,8 +239,10 @@
 
       <div class="receipt-actions">
         <button type="button" class="secondary-btn" (click)="closeReceipt()">Close</button>
-        <button type="button" class="primary-btn" (click)="printReceipt()" [disabled]="!receiptPdfUrl">Print Receipt</button>
-        <button type="button" class="primary-btn" [disabled]="downloadingReceipt || !receiptPdfUrl" (click)="downloadReceiptPdf()">
+        <button type="button" class="primary-btn" (click)="printReceipt()" [disabled]="!receiptPdfUrl">Print
+          Receipt</button>
+        <button type="button" class="primary-btn" [disabled]="downloadingReceipt || !receiptPdfUrl"
+          (click)="downloadReceiptPdf()">
           {{ downloadingReceipt ? 'Preparing...' : 'Download PDF' }}
         </button>
       </div>

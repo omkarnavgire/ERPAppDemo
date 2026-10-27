@@ -47,6 +47,8 @@ export class StudentPaymentApi {
     );
   }
 
+  
+
   updatePayment(
     paymentId: number,
     request: StudentPaymentRequest
@@ -62,6 +64,7 @@ export class StudentPaymentApi {
       `${this.apiUrl}/delete/${paymentId}`
     );
   }
+
 
   restorePayment(paymentId: number): Observable<any> {
     return this.http.put(
