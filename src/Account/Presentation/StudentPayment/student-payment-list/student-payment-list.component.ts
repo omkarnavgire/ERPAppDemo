@@ -52,7 +52,22 @@ export class StudentPaymentListComponent implements OnInit {
     private readonly sanitizer: DomSanitizer
   ) {}
 
+  private readonly paymentsCacheKey = 'ciit-account-student-payments-v1';
+
   ngOnInit(): void {
+    // Show previously loaded payments immediately while the API refreshes.
+    try {
+      const cached = localStorage.getItem(this.paymentsCacheKey);
+      if (cached) {
+        const rows = JSON.parse(cached);
+        if (Array.isArray(rows)) {
+          this.payments = rows.map((item: any) => this.normalizePayment(item));
+          this.applyFilters();
+        }
+      }
+    } catch {
+      // Ignore invalid/stale cache and fetch fresh data.
+    }
     this.loadPayments();
   }
 
@@ -75,7 +90,7 @@ export class StudentPaymentListComponent implements OnInit {
 
   // Load All Payments
   loadPayments(): void {
-    this.loading = true;
+    this.loading = this.payments.length === 0;
     this.errorMessage = '';
 
     this.paymentService.getAllPayments().pipe(
@@ -91,8 +106,8 @@ export class StudentPaymentListComponent implements OnInit {
     ).subscribe({
       next: (response: any) => {
         if (response === null) {
-          this.payments = [];
-          this.filteredPayments = [];
+          // Keep cached rows visible when a background refresh fails.
+          if (!this.payments.length) this.filteredPayments = [];
           return;
         }
         const data = Array.isArray(response) ? response
@@ -103,14 +118,18 @@ export class StudentPaymentListComponent implements OnInit {
           : [];
 
         this.payments = data.map((item: any) => this.normalizePayment(item));
+        try {
+          localStorage.setItem(this.paymentsCacheKey, JSON.stringify(this.payments));
+        } catch {
+          // Cache failure must not block the payment list.
+        }
         this.applyFilters();
       },
       error: (error) => {
         // catchError normally handles this; retained as a final safeguard.
         console.error('Unexpected payment-list error:', error);
         this.errorMessage = 'Unable to load payments. Please try again.';
-        this.payments = [];
-        this.filteredPayments = [];
+        if (!this.payments.length) this.filteredPayments = [];
       }
     });
   }

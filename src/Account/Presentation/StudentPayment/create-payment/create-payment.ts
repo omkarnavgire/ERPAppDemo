@@ -1,10 +1,9 @@
-
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, of } from 'rxjs';
-import { catchError, map, timeout } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, timeout, finalize } from 'rxjs/operators';
 
 import { StudentRegistrationApi } from '../../../Infrastructure/Api/StudentRegistrationApi';
 import { StudentPaymentService } from '../../../Application/StudentPayment/StudentPaymentService';
@@ -24,7 +23,8 @@ export class CreatePaymentComponent implements OnInit {
   constructor(
     private registrationApi: StudentRegistrationApi,
     private paymentService: StudentPaymentService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   students: any[] = [];
@@ -38,6 +38,7 @@ export class CreatePaymentComponent implements OnInit {
 
   dropdownOpen = false;
   loadingStudents = false;
+  loadingSelectedFee = false;
   savingPayment = false;
 
   paymentDate = this.getTodayDate();
@@ -49,13 +50,31 @@ export class CreatePaymentComponent implements OnInit {
   successMessage = '';
 
   ngOnInit(): void {
+    console.info('[CreatePayment][CP-01] Component initialized', {
+      loadingStudents: this.loadingStudents,
+      route: this.router.url
+    });
     this.loadStudentsAndPayments();
   }
 
   private getArray(response: any): any[] {
     if (Array.isArray(response)) return response;
-    if (Array.isArray(response?.data)) return response.data;
-    if (Array.isArray(response?.result)) return response.result;
+
+    const candidates = [
+      response?.data,
+      response?.result,
+      response?.items,
+      response?.registrations,
+      response?.$values,
+      response?.data?.$values,
+      response?.result?.$values,
+      response?.items?.$values
+    ];
+
+    for (const candidate of candidates) {
+      if (Array.isArray(candidate)) return candidate;
+    }
+
     return [];
   }
 
@@ -65,6 +84,7 @@ export class CreatePaymentComponent implements OnInit {
         return item[key];
       }
     }
+
     return undefined;
   }
 
@@ -74,70 +94,91 @@ export class CreatePaymentComponent implements OnInit {
   }
 
   loadStudentsAndPayments(): void {
+    if (this.loadingStudents) return;
+
     this.loadingStudents = true;
     this.errorMessage = '';
+    console.info('[CreatePayment][CP-02] Registration request started', {
+      loadingStudents: this.loadingStudents
+    });
 
-    forkJoin({
-      registrations: this.registrationApi.getRegistrations(),
-      payments: this.paymentService.getAllPayments()
-    }).pipe(timeout(20000)).subscribe({
-      next: ({ registrations, payments }) => {
+    // Load registrations first so fee APIs do not block the student dropdown.
+    this.registrationApi.getRegistrations().pipe(
+      timeout(20000)
+    ).subscribe({
+      next: registrations => {
+        console.info('[CreatePayment][CP-03] Registration API responded', {
+          responseType: typeof registrations,
+          isArray: Array.isArray(registrations),
+          responseKeys: registrations && typeof registrations === 'object' ? Object.keys(registrations) : []
+        });
         const rows = this.getArray(registrations);
-        this.allPayments = this.getArray(payments);
-
+        console.info('[CreatePayment][CP-04] Registration rows extracted', {
+          rowCount: rows.length,
+          firstRowKeys: rows[0] ? Object.keys(rows[0]) : []
+        });
         const studentMap = new Map<number, any>();
 
         for (const item of rows) {
           const studentId = this.toNumber(
-            this.getValue(item, 'student_Id', 'studentId')
+            this.getValue(item, 'student_Id', 'studentId', 'StudentId')
           );
 
           const registrationId = this.toNumber(
-            this.getValue(item, 'registration_Id', 'registrationId')
+            this.getValue(item, 'registration_Id', 'registrationId', 'RegistrationId')
           );
 
           const courseId = this.toNumber(
-            this.getValue(item, 'course_Id', 'courseId')
+            this.getValue(item, 'course_Id', 'courseId', 'CourseId')
           );
 
-          if (!studentId || !registrationId || !courseId) {
-            continue;
-          }
+          if (!studentId) continue;
 
           if (!studentMap.has(studentId)) {
             studentMap.set(studentId, {
               studentId,
               studentName: this.getValue(
-                item, 'student_Name', 'studentName'
+                item, 'student_Name', 'studentName', 'StudentName'
               ) ?? '',
               lastName: this.getValue(
-                item, 'last_Name', 'lastName'
+                item, 'last_Name', 'lastName', 'LastName'
               ) ?? '',
               mobileNumber: String(
-                this.getValue(item, 'mobile_Number', 'mobileNumber') ?? ''
+                this.getValue(
+                  item, 'mobile_Number', 'mobileNumber', 'MobileNumber'
+                ) ?? ''
               ),
               emailAddress: String(
-                this.getValue(item, 'email_Address', 'emailAddress') ?? ''
+                this.getValue(
+                  item, 'email_Address', 'emailAddress', 'EmailAddress'
+                ) ?? ''
               ),
               registrations: []
             });
           }
 
-          const student = studentMap.get(studentId);
+          if (!registrationId || !courseId) continue;
 
-          student.registrations.push({
+          studentMap.get(studentId).registrations.push({
             ...item,
             registrationId,
             studentId,
             courseId,
             registrationCode: this.getValue(
-              item, 'registration_Code', 'registrationCode'
+              item, 'registration_Code', 'registrationCode', 'RegistrationCode'
             ) ?? '',
             courseName: this.getValue(
-              item, 'course_Name', 'courseName'
+              item, 'course_Name', 'courseName', 'CourseName'
             ) ?? '',
             courseFees: this.toNumber(
-              this.getValue(item, 'course_Fees', 'courseFees', 'actualFees')
+              this.getValue(
+                item,
+                'course_Fees',
+                'courseFees',
+                'actualFees',
+                'CourseFees',
+                'ActualFees'
+              )
             ),
             discount: this.toNumber(
               this.getValue(item, 'discount', 'Discount')
@@ -150,93 +191,128 @@ export class CreatePaymentComponent implements OnInit {
             feeError: false
           });
         }
-
-        this.students = Array.from(studentMap.values());
+          this.students = Array.from(studentMap.values());
         this.filteredStudents = [...this.students];
 
-        if (this.students.length === 0) {
-          this.errorMessage =
-            'No student registrations were returned by the API.';
-          this.loadingStudents = false;
-          return;
+        console.info('[CreatePayment][CP-05] Student mapping completed', {
+          registrationRows: rows.length,
+          mappedStudents: this.students.length,
+          studentsWithRegistrations: this.students.filter(student => student.registrations?.length > 0).length,
+          firstStudent: this.students[0] ?? null
+        });
+
+        // Student dropdown must not wait for payment history or fee requests.
+        this.loadingStudents = false;
+        this.cdr.detectChanges();
+
+        console.info('[CreatePayment][CP-06] Student loading flag cleared', {
+          loadingStudents: this.loadingStudents,
+          studentCount: this.students.length,
+          filteredStudentCount: this.filteredStudents.length
+        });
+
+        if (!this.students.length) {
+          this.errorMessage = rows.length
+            ? 'Registrations loaded, but no usable student IDs were found.'
+            : 'No student registrations were returned. Use Reload to try again.';
         }
 
-        this.loadRegistrationFees();
+        this.refreshRegistrationBalances();
+        console.info('[CreatePayment][CP-07] Initial balances calculated', {
+          registrationCount: this.students.reduce((count, student) => count + (student.registrations?.length ?? 0), 0)
+        });
+
+        // Payment history loads separately and cannot block the dropdown.
+        console.info('[CreatePayment][CP-08] Payment history request started');
+        this.paymentService.getAllPayments().pipe(
+          timeout(20000),
+          catchError(error => {
+            console.warn(
+              'Payment history unavailable; student list remains available:',
+              error
+            );
+            return of([]);
+          })
+        ).subscribe(payments => {
+          this.allPayments = this.getArray(payments);
+          this.refreshRegistrationBalances();
+          console.info('[CreatePayment][CP-09] Payment history processed', {
+            paymentCount: this.allPayments.length,
+            loadingStudents: this.loadingStudents
+          });
+        });
       },
       error: error => {
-        console.error('Unable to load registrations or payments:', error);
-        this.errorMessage =
-          'Unable to load students or payment history. Please try again.';
+        console.error('[CreatePayment][CP-ERR-01] Registration request failed', error);
+        this.errorMessage = 'Unable to load students. Please try again.';
         this.loadingStudents = false;
+        console.info('[CreatePayment][CP-10] Loading cleared after registration error', {
+          loadingStudents: this.loadingStudents
+        });
       }
     });
   }
 
-  private loadRegistrationFees(): void {
-    const registrations = this.students.flatMap(student => student.registrations);
-    if (!registrations.length) {
-      this.loadingStudents = false;
-      return;
-    }
+  private refreshRegistrationBalances(): void {
+    for (const student of this.students) {
+      for (const registration of student.registrations ?? []) {
+        const registrationPayments = this.allPayments.filter(payment =>
+          this.toNumber(
+            this.getValue(
+              payment,
+              'registrationId',
+              'registration_Id',
+              'RegistrationId'
+            )
+          ) === this.toNumber(registration.registrationId) &&
+          this.getValue(payment, 'isPaid', 'IsPaid') !== false &&
+          this.getValue(payment, 'isPaid', 'IsPaid') !== 0
+        );
 
-    // Calculate payment history immediately; call the fee API only when the list API
-    // did not provide fee totals. This prevents N unnecessary requests on first load.
-    for (const registration of registrations) {
-      const registrationPayments = this.allPayments.filter(payment =>
-        Number(payment.registrationId) === Number(registration.registrationId) &&
-        payment.isPaid !== false && payment.isPaid !== 0
-      );
-      registration.totalPaid = registrationPayments.reduce(
-        (total: number, payment: any) => total + this.toNumber(payment.paymentAmount), 0
-      );
-      if (registration.courseFees > 0) {
-        registration.finalFees = Math.max(registration.courseFees - this.toNumber(registration.discount), 0);
-        registration.remainingBalance = Math.max(registration.finalFees - registration.totalPaid, 0);
-        registration.feeLoaded = true;
-        registration.feeError = false;
-        registration.fullyPaid = registration.remainingBalance <= 0;
-      }
-    }
+        registration.totalPaid = registrationPayments.reduce(
+          (total: number, payment: any) =>
+            total + this.toNumber(
+              this.getValue(
+                payment,
+                'paymentAmount',
+                'payment_Amount',
+                'PaymentAmount'
+              )
+            ),
+          0
+        );
 
-    const missingFees = registrations.filter(registration => !(registration.courseFees > 0));
-    if (!missingFees.length) {
-      this.loadingStudents = false;
-      return;
-    }
+        if (registration.courseFees > 0) {
+          registration.finalFees = Math.max(
+            registration.courseFees - this.toNumber(registration.discount),
+            0
+          );
 
-    forkJoin(missingFees.map(registration =>
-      this.registrationApi.getCourseFees(registration.courseId, registration.discount).pipe(
-        timeout(10000),
-        map(response => ({ registration, response, error: false })),
-        catchError(error => {
-          console.warn('Fee details unavailable for registration:', registration.registrationId, error);
-          return of({ registration, response: null, error: true });
-        })
-      )
-    )).subscribe(results => {
-      for (const result of results) {
-        const registration = result.registration;
-        const feeData = (result.response as any)?.data ?? result.response;
-        if (feeData && !result.error) {
-          registration.courseFees = this.toNumber(feeData.actualFees ?? feeData.courseFees);
-          registration.discount = this.toNumber(feeData.discount ?? registration.discount);
-          registration.finalFees = this.toNumber(feeData.finalFees ?? Math.max(registration.courseFees - registration.discount, 0));
-          registration.remainingBalance = Math.max(registration.finalFees - registration.totalPaid, 0);
+          registration.remainingBalance = Math.max(
+            registration.finalFees - registration.totalPaid,
+            0
+          );
+
           registration.feeLoaded = true;
           registration.feeError = false;
           registration.fullyPaid = registration.remainingBalance <= 0;
-        } else {
-          registration.feeLoaded = false;
-          registration.feeError = true;
-          registration.finalFees = Math.max(registration.courseFees - registration.discount, 0);
-          registration.remainingBalance = Math.max(registration.finalFees - registration.totalPaid, 0);
         }
       }
-      this.loadingStudents = false;
-    });
+    }
+  }
+
+  retryLoad(): void {
+    if (!this.loadingStudents) {
+      this.loadStudentsAndPayments();
+    }
   }
 
   toggleStudentDropdown(): void {
+    console.info('[CreatePayment][CP-11] Student dropdown clicked', {
+      loadingStudents: this.loadingStudents,
+      students: this.students.length,
+      filteredStudents: this.filteredStudents.length
+    });
     this.dropdownOpen = !this.dropdownOpen;
 
     if (this.dropdownOpen) {
@@ -261,6 +337,10 @@ export class CreatePaymentComponent implements OnInit {
   }
 
   selectStudent(student: any): void {
+    console.info('[CreatePayment][CP-12] Student selected', {
+      studentId: student?.studentId,
+      registrationCount: student?.registrations?.length ?? 0
+    });
     this.selectedStudentId = student.studentId;
     this.studentSearch =
       `${student.studentName} ${student.lastName}`.trim();
@@ -289,9 +369,77 @@ export class CreatePaymentComponent implements OnInit {
   }
 
   onRegistrationChange(): void {
+    console.info('[CreatePayment][CP-13] Registration/course changed', {
+      selectedRegistrationId: this.selectedRegistrationId
+    });
     this.paymentAmount = null;
     this.errorMessage = '';
     this.successMessage = '';
+
+    const registration = this.selectedRegistration;
+
+    if (
+      !registration ||
+      registration.feeLoaded ||
+      this.loadingSelectedFee
+    ) {
+      return;
+    }
+
+    registration.feeError = false;
+    this.loadingSelectedFee = true;
+
+    this.registrationApi.getCourseFees(
+      registration.courseId,
+      registration.discount
+    ).pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Unable to load selected course fee:', error);
+        registration.feeError = true;
+        this.errorMessage =
+          'Unable to load fees for this course. Please try selecting the course again.';
+        return of(null);
+      }),
+      finalize(() => this.loadingSelectedFee = false)
+    ).subscribe(response => {
+      if (!response) return;
+
+      const feeData: any = (response as any)?.data ?? response;
+
+      registration.courseFees = this.toNumber(
+        feeData.actualFees ??
+        feeData.courseFees ??
+        feeData.course_Fees ??
+        feeData.ActualFees ??
+        feeData.CourseFees
+      );
+
+      registration.discount = this.toNumber(
+        feeData.discount ??
+        feeData.Discount ??
+        registration.discount
+      );
+
+      registration.finalFees = this.toNumber(
+        feeData.finalFees ??
+        feeData.FinalFees ??
+        Math.max(registration.courseFees - registration.discount, 0)
+      );
+
+      registration.remainingBalance = Math.max(
+        registration.finalFees - registration.totalPaid,
+        0
+      );
+
+      registration.feeLoaded = true;
+      registration.feeError = false;
+      registration.fullyPaid = registration.remainingBalance <= 0;
+
+      if (registration.fullyPaid) {
+        this.errorMessage = 'This course is already fully paid.';
+      }
+    });
   }
 
   cancelPayment(): void {
@@ -342,10 +490,10 @@ export class CreatePaymentComponent implements OnInit {
 
     this.savingPayment = true;
 
-    this.paymentService.createPayment(request).subscribe({
+    this.paymentService.createPayment(request).pipe(
+      finalize(() => this.savingPayment = false)
+    ).subscribe({
       next: () => {
-        this.savingPayment = false;
-
         this.router.navigate(['/main/student-payments'], {
           state: {
             paymentSuccess: true,
@@ -355,7 +503,6 @@ export class CreatePaymentComponent implements OnInit {
       },
       error: error => {
         console.error('Unable to save payment:', error);
-        this.savingPayment = false;
         this.errorMessage =
           error?.error?.message ||
           'Unable to save payment. Please check the details and try again.';

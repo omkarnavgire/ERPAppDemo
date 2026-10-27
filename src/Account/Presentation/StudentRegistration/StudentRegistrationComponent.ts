@@ -66,8 +66,33 @@ export class StudentRegistrationComponent implements OnInit {
 
   selectedStudent: ExistingStudentRegistrationData | null = null;
 
+  private readonly registrationsCacheKey = "ciit-account-student-registrations-v1";
+
   ngOnInit(): void {
+    // Render the last successful list immediately; refresh it in the background.
+    const cached = this.readCache<RegistrationRow[]>(this.registrationsCacheKey);
+    if (cached?.length) {
+      this.registrations = cached;
+      this.buildUniqueStudents();
+    }
     this.loadRegistrations();
+  }
+
+  private readCache<T>(key: string): T | null {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) as T : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private writeCache<T>(key: string, value: T): void {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Cache is an optimization only; the API remains the source of truth.
+    }
   }
 
 clearSearch(): void {
@@ -83,7 +108,7 @@ clearSearch(): void {
       return;
     }
 
-    this.loading = true;
+    this.loading = this.registrations.length === 0;
     this.errorMessage = "";
 
     const startTime = performance.now();
@@ -103,12 +128,7 @@ clearSearch(): void {
       )
       .subscribe({
         next: (response: any) => {
-          const rows: any[] = Array.isArray(response) ? response
-            : Array.isArray(response?.data) ? response.data
-            : Array.isArray(response?.result) ? response.result
-            : Array.isArray(response?.$values) ? response.$values
-            : Array.isArray(response?.data?.$values) ? response.data.$values
-            : [];
+          const rows: any[] = this.getRows(response);
 
           this.registrations = rows.map((item: any) => ({
             registrationId: Number(
@@ -141,6 +161,7 @@ clearSearch(): void {
           }));
 
           this.buildUniqueStudents();
+          this.writeCache(this.registrationsCacheKey, this.registrations);
 
           console.log(
             `Loaded ${this.registrations.length} registrations and ${this.students.length} unique students`
@@ -150,13 +171,24 @@ clearSearch(): void {
         error: (error) => {
           console.error("Load Registrations Error:", error);
 
-          this.registrations = [];
-          this.students = [];
+          // Keep the last known list visible if a background refresh fails.
+          if (!this.registrations.length) {
+            this.registrations = [];
+            this.students = [];
+          }
 
           this.errorMessage =
             "Unable to load student registrations. Please try again.";
         }
       });
+  }
+
+  private getRows(response: any): any[] {
+    if (Array.isArray(response)) return response;
+    const candidates = [response?.data, response?.result, response?.items,
+      response?.registrations, response?.$values, response?.data?.$values,
+      response?.result?.$values, response?.items?.$values];
+    return candidates.find(Array.isArray) ?? [];
   }
 
   private buildUniqueStudents(): void {

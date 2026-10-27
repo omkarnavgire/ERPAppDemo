@@ -4,8 +4,9 @@
   <!-- Header -->
   <div class="payment-header">
     <div>
+      <span class="eyebrow">CIIT · ACCOUNTS</span>
       <h2>Create Student Payment</h2>
-      <p>Record a payment and track the remaining course fees.</p>
+      <p>Record a fee payment and review the course balance.</p>
     </div>
 
     <button
@@ -15,6 +16,11 @@
       (click)="cancelPayment()">
       &times;
     </button>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage && !loadingStudents && !students.length" role="alert">
+    <strong>Student list unavailable</strong><p>{{ errorMessage }}</p>
+    <button type="button" class="retry-button" (click)="retryLoad()">Try again</button>
   </div>
 
   <!-- Loading State -->
@@ -29,8 +35,8 @@
     novalidate>
 
     <!-- Student Selection -->
-    <div class="form-section">
-      <h3>Student Information</h3>
+    <div class="form-section student-section">
+      <div class="section-title"><span class="section-icon"><i class="bi bi-person-vcard"></i></span><div><span class="section-kicker">STEP 01</span><h3>Student Information</h3></div></div>
 
       <div class="form-group">
         <label for="studentDropdown">Select Student <span class="required">*</span></label>
@@ -120,7 +126,7 @@
 
     <!-- Course Registration -->
     <div class="form-section">
-      <h3>Course and Fee Details</h3>
+      <div class="section-title"><span class="section-icon"><i class="bi bi-mortarboard"></i></span><div><span class="section-kicker">STEP 02</span><h3>Course and Fee Details</h3></div></div>
 
       <div class="form-group">
         <label for="registration">
@@ -142,9 +148,8 @@
             *ngFor="let registration of studentRegistrations"
             [ngValue]="registration.registrationId"
             [disabled]="registration.feeError ||
-                        !registration.feeLoaded ||
-                        registration.fullyPaid ||
-                        registration.remainingBalance <= 0">
+                        (registration.feeLoaded && (registration.fullyPaid ||
+                        registration.remainingBalance <= 0))">
 
             {{ registration.courseName || 'Course' }}
             —
@@ -240,7 +245,7 @@
 
     <!-- Payment Information -->
     <div class="form-section">
-      <h3>Payment Information</h3>
+      <div class="section-title"><span class="section-icon"><i class="bi bi-credit-card"></i></span><div><span class="section-kicker">STEP 03</span><h3>Payment Information</h3></div></div>
 
       <div class="form-group">
         <label for="paymentDate">
