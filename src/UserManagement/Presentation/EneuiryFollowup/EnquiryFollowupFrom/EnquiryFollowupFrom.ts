@@ -107,60 +107,117 @@ export class Enquiryform implements OnInit {
         });
     }
 
-    loadQualifications():void{
-    this.qualificationsLoading=true;
+    loadQualifications(): void {
+        this.qualificationsLoading = true;
 
-    this.qualificationApplication.getAll().subscribe({
-        next:(response:any)=>{
-            const data=Array.isArray(response)?response:response?.data||response?.result||response?.items||[];
+        this.qualificationApplication.getAll().subscribe({
+            next: (response: any) => {
+                const data = Array.isArray(response) ? response : response?.data || response?.result || response?.items || [];
 
-            this.qualifications=data
-                .map((item:any)=>String(item?.qualification??'').trim())
-                .filter((item:string)=>item!=='')
-                .filter((item:string,index:number,array:string[])=>array.indexOf(item)===index);
+                this.qualifications = data
+                    .map((item: any) => String(item?.qualification ?? '').trim())
+                    .filter((item: string) => item !== '')
+                    .filter((item: string, index: number, array: string[]) => array.indexOf(item) === index);
 
-            this.qualificationsLoading=false;
-        },
-        error:(error:any)=>{
-            console.error('Qualification API error:',error);
-            this.qualifications=[];
-            this.qualificationsLoading=false;
-        }
-    });
-}
+                this.qualificationsLoading = false;
+            },
+            error: (error: any) => {
+                console.error('Qualification API error:', error);
+                this.qualifications = [];
+                this.qualificationsLoading = false;
+            }
+        });
+    }
 
-loadLeadSources():void{
-    this.leadSourcesLoading=true;
 
-    this.leadSourceApplication.getAll().subscribe({
-        next:(response:any)=>{
-            const data=Array.isArray(response)?response:response?.data||response?.result||response?.items||[];
+    loadLeadSources(): void {
+        this.leadSourcesLoading = true;
 
-            this.leadSourceOptions=data
-                .map((item:any)=>String(item?.sourceName??'').trim())
-                .filter((item:string)=>item!=='')
-                .filter((item:string,index:number,array:string[])=>array.indexOf(item)===index);
+        this.leadSourceApplication.getAll().subscribe({
+            next: (response: any) => {
+                const responseReceivedAt = performance.now();
+                console.time('LeadSource processing');
 
-            this.leadSourcesLoading=false;
-        },
-        error:(error:any)=>{
-            console.error('Lead Source API error:',error);
-            this.leadSourceOptions=[];
-            this.leadSourcesLoading=false;
-        }
-    });
-}
+                const data = Array.isArray(response)
+                    ? response
+                    : response?.data ?? response?.result ?? response?.items ?? [];
 
+                this.leadSourceOptions = data
+                    .map((item: any) =>
+                        String(
+                            item?.sourceName ??
+                            item?.leadSourceName ??
+                            item?.name ??
+                            ''
+                        ).trim()
+                    )
+                    .filter((name: string) => name.length > 0)
+                    .filter(
+                        (name: string, index: number, list: string[]) =>
+                            list.indexOf(name) === index
+                    );
+
+                this.leadSourcesLoading = false;
+
+                console.timeEnd('LeadSource processing');
+                console.log('Response received at:', responseReceivedAt);
+            },
+            error: (error: any) => {
+                console.error('Lead Source API error:', error);
+                this.leadSourceOptions = [];
+                this.leadSourcesLoading = false;
+            }
+        });
+    }
+
+
+    // loadCourses(): void {
+    //     this.coursesLoading = true;
+
+    //     console.log('Loading courses from TrainingCourse Application');
+
+    //     this.trainingCourse.getAll().subscribe({
+    //         next: (response: any) => {
+    //             console.log('Course dropdown API response:', response);
+
+    //             const data = Array.isArray(response) ? response : response?.data || response?.result || response?.items || [];
+
+    //             this.courses = data
+    //                 .map((course: any) => ({
+    //                     id: Number(course?.courseId ?? course?.id ?? 0),
+    //                     name: String(course?.courseName ?? course?.name ?? '')
+    //                 }))
+    //                 .filter((course: any) => course.id > 0 && course.name.trim() !== '')
+    //                 .filter((course: any, index: number, array: any[]) => index === array.findIndex(item => item.id === course.id))
+    //                 .sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+    //             console.log('Course options loaded:', this.courses);
+    //             this.coursesLoading = false;
+    //         },
+    //         error: (error: any) => {
+    //             console.error('Course loading error:', error);
+    //             this.courses = [];
+    //             this.coursesLoading = false;
+    //             this.errormessage = error?.error?.message || 'Courses load nahi hue.';
+    //         }
+    //     });
+    // }
     loadCourses(): void {
         this.coursesLoading = true;
 
-        console.log('Loading courses from TrainingCourse Application');
+        const startTime = performance.now();
 
         this.trainingCourse.getAll().subscribe({
             next: (response: any) => {
-                console.log('Course dropdown API response:', response);
+                console.log(
+                    'TrainingCourse API time:',
+                    (performance.now() - startTime).toFixed(0),
+                    'ms'
+                );
 
-                const data = Array.isArray(response) ? response : response?.data || response?.result || response?.items || [];
+                const data = Array.isArray(response)
+                    ? response
+                    : response?.data || response?.result || response?.items || [];
 
                 this.courses = data
                     .map((course: any) => ({
@@ -168,17 +225,18 @@ loadLeadSources():void{
                         name: String(course?.courseName ?? course?.name ?? '')
                     }))
                     .filter((course: any) => course.id > 0 && course.name.trim() !== '')
-                    .filter((course: any, index: number, array: any[]) => index === array.findIndex(item => item.id === course.id))
+                    .filter(
+                        (course: any, index: number, array: any[]) =>
+                            index === array.findIndex(item => item.id === course.id)
+                    )
                     .sort((a: any, b: any) => a.name.localeCompare(b.name));
 
-                console.log('Course options loaded:', this.courses);
                 this.coursesLoading = false;
             },
             error: (error: any) => {
-                console.error('Course loading error:', error);
+                console.error('TrainingCourse API error:', error);
                 this.courses = [];
                 this.coursesLoading = false;
-                this.errormessage = error?.error?.message || 'Courses load nahi hue.';
             }
         });
     }
@@ -197,6 +255,10 @@ loadLeadSources():void{
             }
         });
     }
+
+    cancelForm(): void {
+    this.router.navigate(['/main/enquiry']);
+}
 
     patchEnquiry(data: any): void {
         this.enquiryForm.patchValue({

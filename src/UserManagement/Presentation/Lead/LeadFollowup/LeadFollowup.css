@@ -180,7 +180,7 @@
 
 .new-icon
 {
-    background:rgba(5,150,105,.10);
+    background:rgba(23,105,210,.10);
     color:var(--primary)
 }
 
@@ -210,7 +210,7 @@
 
 .new-followup-card
 {
-    border-color:rgba(5,150,105,.20)
+    border-color:rgba(23,105,210,.20)
 }
 
 .followup-card
@@ -281,7 +281,7 @@
 .form-group textarea:focus
 {
     border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(5,150,105,.08)
+    box-shadow:0 0 0 3px rgba(23,105,210,.08)
 }
 
 .form-group input:disabled

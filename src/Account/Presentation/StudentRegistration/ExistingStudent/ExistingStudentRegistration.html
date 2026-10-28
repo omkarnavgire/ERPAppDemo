@@ -1,107 +1,394 @@
-
 <div class="existing-student-form">
-  <div class="registration-modal-header">
-    <div>
-      <h4>Register Existing Student</h4>
-      <p>Register this student for a new course</p>
-    </div>
-    <button type="button" class="modal-close" (click)="closeForm()">×</button>
+
+  <!-- Header -->
+  <div class="existing-registration-header">
   </div>
 
-  <div class="registration-modal-body">
-    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div class="existing-registration-body">
 
-    <div *ngIf="student" class="student-summary">
-      <div><strong>Student ID</strong><span>{{ student.studentId }}</span></div>
-      <div><strong>Student Name</strong><span>{{ student.studentName }} {{ student.lastName }}</span></div>
-      <div><strong>Mobile</strong><span>{{ student.mobileNumber || '-' }}</span></div>
-      <div><strong>Email</strong><span>{{ student.emailAddress || '-' }}</span></div>
+    <!-- Messages -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <i class="bi bi-exclamation-circle me-2"></i>
+      {{ errorMessage }}
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Previously Registered Courses</label>
-      <div class="form-control existing-courses">
-        {{ student?.registeredCourses || 'No previous course details' }}
-      </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
     </div>
 
-    <form (ngSubmit)="registerCourse()">
-      <h3 class="section-title">New Course Details</h3>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label">New Course *</label>
-          <select class="form-select" name="selectedCourseId" [(ngModel)]="selectedCourseId" (ngModelChange)="onCourseChange()" required>
-            <option [ngValue]="0">Select New Course</option>
-            <option *ngFor="let course of availableCourses" [ngValue]="course.courseId">
-              {{ course.courseName }}
-            </option>
-          </select>
-          <small *ngIf="dropdownLoading" class="text-muted">Loading courses...</small>
-          <small *ngIf="!dropdownLoading && courses.length > 0 && availableCourses.length === 0" class="text-muted">
-            This student is already registered for all available courses.
-          </small>
-        </div>
+    <!-- 1. Select Existing Student -->
+    <section class="existing-form-card" *ngIf="!student">
+      <div class="existing-card-heading">
+        <span class="existing-section-icon">
+          <i class="bi bi-people-fill"></i>
+        </span>
 
-        <div class="col-md-6">
-          <label class="form-label">Discount Amount (₹)</label>
-          <input type="number" class="form-control" name="discount" [(ngModel)]="discount" (ngModelChange)="onDiscountChange()" min="0">
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Actual Course Fees (₹)</label>
-          <input type="number" class="form-control" [value]="actualFees" readonly>
-        </div>
-
-        <div class="col-md-6">
-          <label class="form-label">Final Course Fees (₹)</label>
-          <input type="number" class="form-control" [value]="finalFees" readonly>
+        <div>
+          <h5>1. Select Existing Student</h5>
+          <p>Select a student from the available student list.</p>
         </div>
       </div>
 
-      <hr>
-      <h3 class="section-title">Payment Details</h3>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label class="form-label">Payment Amount (₹) *</label>
-          <input type="number" class="form-control" name="paymentAmount" [(ngModel)]="paymentForm.paymentAmount" min="0" required>
+      <div class="existing-card-body">
+        <label for="studentSelect" class="form-label">
+          Student <span class="required-star">*</span>
+        </label>
+
+        <select
+          id="studentSelect"
+          class="form-select"
+          name="selectedStudentId"
+          [ngModel]="selectedStudentId"
+          (ngModelChange)="onStudentSelect($event)"
+          [disabled]="uniqueStudents.length === 0"
+          required>
+
+          <option [ngValue]="0">Select an existing student</option>
+
+          <option
+            *ngFor="let s of uniqueStudents"
+            [ngValue]="s.studentId">
+            {{ s.studentName }} {{ s.lastName }}
+            - {{ s.mobileNumber }}
+            (ID: {{ s.studentId }})
+          </option>
+        </select>
+
+        <small
+          *ngIf="uniqueStudents.length === 0"
+          class="text-danger">
+          No students available. Please check the student list
+          and API response.
+        </small>
+      </div>
+    </section>
+
+    <!-- 2. Selected Student Information -->
+    <section class="existing-form-card" *ngIf="activeStudent">
+
+      <div class="existing-card-heading">
+        <span class="existing-section-icon">
+          <i class="bi bi-person-vcard"></i>
+        </span>
+
+        <div>
+          <h5>{{ student ? '1. Student Details' : '2. Student Information' }}</h5>
+          <p>Details of the selected student.</p>
         </div>
 
-        <div class="col-md-6">
-          <label class="form-label">Payment Date *</label>
-          <input type="date" class="form-control" name="paymentDate" [(ngModel)]="paymentForm.paymentDate" required>
+        <span class="existing-selected-badge">
+          <i class="bi bi-check-circle-fill"></i>
+          Selected
+        </span>
+      </div>
+
+      <div class="existing-card-body">
+        <div class="existing-student-summary">
+
+          <div class="summary-item">
+            <span>Student ID</span>
+            <strong>{{ activeStudent.studentId }}</strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Student Name</span>
+            <strong>
+              {{ activeStudent.studentName }}
+              {{ activeStudent.lastName }}
+            </strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Mobile Number</span>
+            <strong>{{ activeStudent.mobileNumber || '-' }}</strong>
+          </div>
+
+          <div class="summary-item">
+            <span>Email Address</span>
+            <strong>{{ activeStudent.emailAddress || '-' }}</strong>
+          </div>
+
         </div>
 
-        <div class="col-md-6">
-          <label class="form-label">Payment Mode *</label>
-          <select class="form-select" name="paymentMode" [(ngModel)]="paymentForm.paymentMode" required>
-            <option value="">Select Payment Mode</option>
-            <option>Cash</option>
-            <option>UPI</option>
-            <option>Online</option>
-            <option>Card</option>
-            <option>Bank Transfer</option>
-          </select>
+        <div class="previous-courses-block">
+          <label class="form-label">
+            Previously Registered Courses
+          </label>
+
+          <div class="previous-courses-value">
+            {{ activeStudent.registeredCourses || 'No previous course details' }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Course and Payment Form -->
+    <form
+      (ngSubmit)="registerCourse()"
+      #existingCourseForm="ngForm">
+
+      <!-- New Course Details -->
+      <section class="existing-form-card">
+
+        <div class="existing-card-heading">
+          <span class="existing-section-icon course-section-icon">
+            <i class="bi bi-book-half"></i>
+          </span>
+
+          <div>
+            <h5>{{ student ? '2. Choose New Course' : '3. New Course Details' }}</h5>
+            <p>Select a course and confirm the applicable fees.</p>
+          </div>
         </div>
 
-        <div class="col-md-6">
-          <label class="form-label">Lead ID</label>
-          <input type="number" class="form-control" name="leadId" [(ngModel)]="paymentForm.leadId">
+        <div class="existing-card-body">
+          <div class="row g-3">
+
+            <!-- Course -->
+            <div class="col-md-6">
+              <label for="selectedCourseId" class="form-label">
+                New Course <span class="required-star">*</span>
+              </label>
+
+              <select
+                id="selectedCourseId"
+                class="form-select"
+                name="selectedCourseId"
+                [(ngModel)]="selectedCourseId"
+                (ngModelChange)="onCourseChange()"
+                [disabled]="!activeStudent || dropdownLoading"
+                required>
+
+                <option [ngValue]="0">Select New Course</option>
+
+                <option
+                  *ngFor="let course of availableCourses"
+                  [ngValue]="course.courseId">
+                  {{ course.courseName }}
+                </option>
+              </select>
+
+              <small
+                *ngIf="dropdownLoading"
+                class="existing-help-text">
+                Loading courses...
+              </small>
+
+              <small
+                *ngIf="
+                  !dropdownLoading &&
+                  activeStudent &&
+                  courses.length > 0 &&
+                  availableCourses.length === 0
+                "
+                class="existing-help-text">
+                This student is already registered for all available courses.
+              </small>
+            </div>
+
+            <!-- Discount -->
+            <div class="col-md-6">
+              <label for="discount" class="form-label">
+                Discount Amount (₹)
+              </label>
+
+              <input
+                id="discount"
+                type="number"
+                class="form-control"
+                name="discount"
+                [(ngModel)]="discount"
+                (ngModelChange)="onDiscountChange()"
+                min="0"
+                [disabled]="!activeStudent">
+            </div>
+
+            <!-- Actual Fees -->
+            <div class="col-md-6">
+              <label for="actualFees" class="form-label">
+                Actual Course Fees (₹)
+              </label>
+
+              <input
+                id="actualFees"
+                type="number"
+                class="form-control"
+                [value]="actualFees"
+                readonly>
+            </div>
+
+            <!-- Final Fees -->
+            <div class="col-md-6">
+              <label for="finalFees" class="form-label">
+                Final Course Fees (₹)
+              </label>
+
+              <input
+                id="finalFees"
+                type="number"
+                class="form-control final-fees-input"
+                [value]="finalFees"
+                readonly>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment Details -->
+      <section class="existing-form-card">
+
+        <div class="existing-card-heading">
+          <span class="existing-section-icon payment-section-icon">
+            <i class="bi bi-credit-card"></i>
+          </span>
+
+          <div>
+            <h5>{{ student ? '3. Payment Details' : '4. Payment Details' }}</h5>
+            <p>Enter the initial payment information.</p>
+          </div>
         </div>
 
-        <div class="col-12">
-          <label class="form-label">Payment Description</label>
-          <textarea class="form-control" name="paymentDescription" [(ngModel)]="paymentForm.paymentDescription" rows="2"></textarea>
+        <div class="existing-card-body">
+          <div class="row g-3">
+
+            <!-- Payment Amount -->
+            <div class="col-md-6">
+              <label for="paymentAmount" class="form-label">
+                Payment Amount (₹)
+                <span class="required-star">*</span>
+              </label>
+
+              <input
+                id="paymentAmount"
+                type="number"
+                class="form-control"
+                name="paymentAmount"
+                [(ngModel)]="paymentForm.paymentAmount"
+                min="0"
+                required
+                [disabled]="!activeStudent">
+            </div>
+
+            <!-- Payment Date -->
+            <div class="col-md-6">
+              <label for="paymentDate" class="form-label">
+                Payment Date
+                <span class="required-star">*</span>
+              </label>
+
+              <input
+                id="paymentDate"
+                type="date"
+                class="form-control"
+                name="paymentDate"
+                [(ngModel)]="paymentForm.paymentDate"
+                required
+                [disabled]="!activeStudent">
+            </div>
+
+            <!-- Payment Mode -->
+            <div class="col-md-6">
+              <label for="paymentMode" class="form-label">
+                Payment Mode
+                <span class="required-star">*</span>
+              </label>
+
+              <select
+                id="paymentMode"
+                class="form-select"
+                name="paymentMode"
+                [(ngModel)]="paymentForm.paymentMode"
+                required
+                [disabled]="!activeStudent">
+
+                <option value="">Select Payment Mode</option>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Online">Online</option>
+                <option value="Card">Card</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+              </select>
+            </div>
+
+            <!-- Lead ID -->
+            <div class="col-md-6">
+              <label for="leadId" class="form-label">
+                Lead ID
+              </label>
+
+              <input
+                id="leadId"
+                type="number"
+                class="form-control"
+                name="leadId"
+                [(ngModel)]="paymentForm.leadId"
+                [disabled]="!activeStudent">
+            </div>
+
+            <!-- Payment Description -->
+            <div class="col-12">
+              <label for="paymentDescription" class="form-label">
+                Payment Description
+              </label>
+
+              <textarea
+                id="paymentDescription"
+                class="form-control"
+                name="paymentDescription"
+                [(ngModel)]="paymentForm.paymentDescription"
+                rows="2"
+                placeholder="Enter payment details or remarks"
+                [disabled]="!activeStudent">
+              </textarea>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Actions -->
+      <div class="existing-registration-footer">
+
+        <span class="existing-footer-note">
+          <i class="bi bi-info-circle"></i>
+          Select a student and course before registering.
+        </span>
+
+        <div class="existing-footer-actions">
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="resetPaymentForm()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+            Reset
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="closeForm()">
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="
+              submitting ||
+              dropdownLoading ||
+              !activeStudent ||
+              selectedCourseId <= 0 ||
+              availableCourses.length === 0
+            ">
+            <i class="bi bi-person-check me-1"></i>
+            {{ submitting ? 'Registering...' : 'Register' }}
+          </button>
+
         </div>
       </div>
 
-      <div class="registration-modal-footer mt-4">
-        <button type="button" class="btn btn-outline-secondary" (click)="resetPaymentForm()">Reset</button>
-        <button type="button" class="btn btn-light border" (click)="closeForm()">Cancel</button>
-        <button type="submit" class="btn btn-success" [disabled]="submitting || dropdownLoading || availableCourses.length === 0">
-          {{ submitting ? 'Submitting...' : 'Register for Course' }}
-        </button>
-      </div>
     </form>
   </div>
 </div>

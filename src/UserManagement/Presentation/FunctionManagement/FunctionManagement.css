@@ -88,7 +88,7 @@
 }
 
 .stat-card:nth-child(2)::before{
-    background:linear-gradient(180deg,#10b981,#14b8a6);
+    background:linear-gradient(180deg,#1769d2,#14b8a6);
 }
 
 .stat-card:nth-child(3)::before{
@@ -346,7 +346,7 @@ td p{
 }
 
 .switch.on{
-    background:linear-gradient(90deg,#10b981,#14b8a6);
+    background:linear-gradient(90deg,#1769d2,#14b8a6);
 }
 
 .switch.on span{

@@ -74,7 +74,7 @@
 
 .success-message{
     background:#ecfdf5;
-    color:#047857;
+    color:#1054ae;
     border:1px solid #a7f3d0;
 }
 
@@ -222,7 +222,7 @@
 }
 
 .new-icon{
-    background:rgba(5,150,105,.10);
+    background:rgba(23,105,210,.10);
     color:var(--primary);
 }
 
@@ -258,7 +258,7 @@
 }
 
 .new-followup-card{
-    border-color:rgba(5,150,105,.20);
+    border-color:rgba(23,105,210,.20);
 }
 
 .previous-followup-card{
@@ -361,7 +361,7 @@
 .form-group select:focus,
 .form-group textarea:focus{
     border-color:var(--primary);
-    box-shadow:0 0 0 2px rgba(5,150,105,.1);
+    box-shadow:0 0 0 2px rgba(23,105,210,.1);
 }
 
 .form-group input[readonly]{

@@ -15,13 +15,14 @@
             </p>
           </div>
 
-          <button
-            type="button"
-            class="btn btn-success"
-            (click)="openNewStudentForm()">
-            <i class="bi bi-person-plus me-1"></i>
-            + Register New Student
-          </button>
+          <div class="student-header-actions">
+            <button type="button" class="btn btn-outline-primary" (click)="openExistingStudentPicker()">
+              <i class="bi bi-people me-1"></i> Existing Student Registration
+            </button>
+            <button type="button" class="btn btn-primary" (click)="openNewStudentForm()">
+              <i class="bi bi-person-plus me-1"></i> Register New Student
+            </button>
+          </div>
         </div>
 
         <div *ngIf="successMessage" class="alert alert-success alert-dismissible">
@@ -134,9 +135,9 @@
                       <button
                         *ngIf="students.find(s => s.studentId === registration.studentId) as student"
                         type="button"
-                        class="btn btn-success btn-sm"
-                        (click)="registerExistingStudent(student)">
-                        Register
+                        class="btn btn-primary btn-sm"
+                        (click)="viewStudentProfile(student)">
+                        <i class="bi bi-eye me-1"></i> View Profile
                       </button>
                     </td>
                   </tr>
@@ -187,6 +188,71 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- EXISTING STUDENT PICKER MODAL -->
+  <div *ngIf="showExistingStudentPicker" class="registration-modal-overlay" (click)="closeExistingStudentPicker()">
+    <section class="registration-modal student-picker-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <header class="registration-modal-header">
+        <div><h4>Existing Student Registration</h4><p>Select an existing student to register for another course.</p></div>
+        <button type="button" class="modal-close" aria-label="Close" (click)="closeExistingStudentPicker()">×</button>
+      </header>
+      <div class="student-picker-body">
+        <div class="student-picker-filters">
+          <div><label class="form-label">Search Student</label><input class="form-control" [(ngModel)]="existingStudentSearch" placeholder="Name, mobile, email or registration code"></div>
+          <div><label class="form-label">Filter by Course</label><input class="form-control" [(ngModel)]="existingStudentCourseFilter" placeholder="Enter course name"></div>
+        </div>
+        <div *ngIf="loading" class="text-center py-4">Loading students...</div>
+        <div class="table-responsive" *ngIf="!loading">
+          <table class="table table-hover align-middle">
+            <thead><tr><th>Student ID</th><th>Student Name</th><th>Email</th><th>Mobile</th><th>Registered Courses</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let student of filteredExistingStudents">
+                <td>{{ student.studentId }}</td><td>{{ student.studentName }} {{ student.lastName }}</td><td>{{ student.emailAddress || '-' }}</td><td>{{ student.mobileNumber || '-' }}</td><td>{{ student.registeredCourses || '-' }}</td>
+                <td><button type="button" class="btn btn-primary btn-sm" (click)="selectStudentForNewCourse(student)">Select</button></td>
+              </tr>
+              <tr *ngIf="filteredExistingStudents.length === 0"><td colspan="6" class="text-center text-muted py-4">No existing students found.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <footer class="registration-modal-footer"><button type="button" class="btn btn-outline-secondary" (click)="closeExistingStudentPicker()">Cancel</button></footer>
+    </section>
+  </div>
+
+  <!-- STUDENT PROFILE MODAL -->
+  <div *ngIf="profileStudent as student" class="registration-modal-overlay" (click)="closeStudentProfile()">
+    <section class="registration-modal student-profile-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <header class="registration-modal-header">
+        <div><h4>Student Profile</h4><p>Complete registration and payment summary</p></div>
+        <button type="button" class="modal-close" aria-label="Close" (click)="closeStudentProfile()">×</button>
+      </header>
+      <div class="student-profile-body">
+        <div class="student-profile-identity"><div class="student-profile-avatar"><i class="bi bi-person-fill"></i></div><div><h3>{{ student.studentName }} {{ student.lastName }}</h3><p>Student ID: {{ student.studentId }}</p></div></div>
+        <div class="student-profile-grid">
+          <div><label>Email Address</label><strong>{{ student.emailAddress || 'Not available' }}</strong></div>
+          <div><label>Mobile Number</label><strong>{{ student.mobileNumber || 'Not available' }}</strong></div>
+          <div><label>Registered Courses</label><strong>{{ student.registeredCourses || 'No courses found' }}</strong></div>
+          <div><label>Total Registration Records</label><strong>{{ student.registrations.length }}</strong></div>
+          <div><label>Total Paid (Payment History)</label><strong>{{ getStudentProfileTotal(student) | currency:'INR':'symbol':'1.2-2' }}</strong></div>
+        </div>
+        <h5 class="student-profile-section-title">Payment History</h5>
+        <div *ngIf="profilePaymentsLoading" class="text-center py-3">Loading payment history...</div>
+        <div *ngIf="profilePaymentsError" class="alert alert-warning">{{ profilePaymentsError }}</div>
+        <div class="table-responsive" *ngIf="!profilePaymentsLoading && profilePayments.length > 0"><table class="table table-hover align-middle">
+          <thead><tr><th>Payment ID</th><th>Registration Code</th><th>Course</th><th>Payment Date</th><th>Payment Mode</th><th>Amount</th><th>Description</th></tr></thead>
+          <tbody><tr *ngFor="let payment of profilePayments">
+            <td>{{ payment.paymentId || '-' }}</td><td>{{ payment.registrationCode || '-' }}</td><td>{{ payment.courseName || '-' }}</td><td>{{ payment.paymentDate ? (payment.paymentDate | date:'dd MMM yyyy') : '-' }}</td><td>{{ payment.paymentMode || '-' }}</td><td>{{ payment.paymentAmount | currency:'INR':'symbol':'1.2-2' }}</td><td>{{ payment.paymentDescription || '-' }}</td>
+          </tr></tbody>
+        </table></div>
+        <div class="table-responsive" *ngIf="!profilePaymentsLoading && profilePayments.length === 0"><table class="table table-hover align-middle">
+          <thead><tr><th>Registration Code</th><th>Course</th><th>Registration Date</th><th>Recorded Amount</th><th>Status</th></tr></thead>
+          <tbody><tr *ngFor="let registration of student.registrations"><td>{{ registration.registrationCode || '-' }}</td><td>{{ registration.courseName || '-' }}</td><td>{{ registration.registrationDate ? (registration.registrationDate | date:'dd MMM yyyy') : '-' }}</td><td>{{ registration.paymentAmount | currency:'INR':'symbol':'1.2-2' }}</td><td>{{ registration.currentStatus || '-' }}</td></tr></tbody>
+        </table></div>
+        <p class="student-profile-note">Payment history is loaded from the Student Payment API. If no payment records are returned, the registration amounts are shown as fallback.</p>
+      </div>
+      <footer class="registration-modal-footer"><button type="button" class="btn btn-outline-secondary" (click)="closeStudentProfile()">Close</button><button type="button" class="btn btn-primary" (click)="closeStudentProfile(); registerExistingStudent(student)">Register for Another Course</button></footer>
+    </section>
   </div>
 
   <!-- EXISTING STUDENT COURSE REGISTRATION MODAL -->

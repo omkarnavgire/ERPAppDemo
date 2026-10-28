@@ -1,29 +1,26 @@
+/* =========================================
+   CIIT New Student Registration
+   Supports Light + Dark Theme
+========================================= */
 
-/* =========================================================
-   STUDENT REGISTRATION - PROFESSIONAL THEME
-   Supports Light Theme and Dark Theme
-   ========================================================= */
+:host {
+  display: block;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
 
-.new-registration-page {
-  --registration-accent: var(--primary, #10b981);
-  --registration-accent-dark: var(--primary-dark, #059669);
-  --registration-bg: var(--bg-card, #ffffff);
-  --registration-surface: var(--bg-main, #f4f7fb);
-  --registration-input: var(--bg-input, #ffffff);
-  --registration-text: var(--text-main, #172033);
-  --registration-muted: var(--text-secondary, #64748b);
-  --registration-border: var(--border, #dbe4ee);
-  --registration-shadow: var(--shadow, rgba(15, 23, 42, 0.08));
+.new-registration-page.student-registration-page {
+  --ns-primary: #2563eb;
+  --ns-primary-hover: #1d4ed8;
+  --ns-radius: 14px;
 
   width: 100%;
-  min-width: 0;
-  padding: 24px;
-  color: var(--registration-text);
-  background: var(--registration-surface);
-  border-radius: 16px;
-  font-family: inherit;
-  line-height: 1.5;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 12px 14px 24px;
+  box-sizing: border-box;
+
+  color: var(--text-primary, #1e293b);
+  background: transparent;
 }
 
 .new-registration-page *,
@@ -32,916 +29,1161 @@
   box-sizing: border-box;
 }
 
-/* =========================================================
-   TOP NAVIGATION
-   ========================================================= */
+/* LIGHT THEME */
+.student-registration-page {
+  --ns-bg: #ffffff;
+  --ns-panel: #ffffff;
+  --ns-card: #ffffff;
+  --ns-card-header: #f8fafc;
+  --ns-input-bg: #ffffff;
+  --ns-text: #1e293b;
+  --ns-muted: #64748b;
+  --ns-border: #dbe3ee;
+  --ns-input-border: #cbd5e1;
+  --ns-hover: #eff6ff;
+  --ns-soft: #f1f5f9;
+}
 
-.new-registration-page .registration-topbar {
+/* DARK THEME
+   Supports common theme attributes/classes.
+*/
+:host-context(.dark),
+:host-context(.dark-theme),
+:host-context([data-theme="dark"]),
+:host-context([data-bs-theme="dark"]),
+:host-context(body.dark),
+:host-context(body.dark-theme),
+:host-context(body[data-theme="dark"]),
+:host-context(body[data-bs-theme="dark"]) {
+  --ns-bg: #111827;
+  --ns-panel: #111827;
+  --ns-card: #1f2937;
+  --ns-card-header: #1b2535;
+  --ns-input-bg: #111827;
+  --ns-text: #f8fafc;
+  --ns-muted: #cbd5e1;
+  --ns-border: #374151;
+  --ns-input-border: #4b5563;
+  --ns-hover: #263449;
+  --ns-soft: #253247;
+}
+
+/* Back button */
+.student-registration-page .registration-topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 22px;
+  margin-bottom: 10px;
 }
 
-.new-registration-page .btn-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  min-height: 42px;
-  padding: 9px 16px;
-  border: 1px solid var(--registration-border);
-  border-radius: 9px;
-  background: var(--registration-bg);
-  color: var(--registration-text);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.new-registration-page .btn-back i {
-  color: var(--registration-accent);
-  font-size: 17px;
-}
-
-.new-registration-page .btn-back:hover {
-  background: var(--registration-accent);
-  border-color: var(--registration-accent);
-  color: #ffffff;
-  transform: translateX(-2px);
-}
-
-.new-registration-page .btn-back:hover i {
-  color: #ffffff;
-}
-
-/* =========================================================
-   MAIN HEADER
-   ========================================================= */
-
-.new-registration-page .registration-header {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  position: relative;
-  margin-bottom: 24px;
-  padding: 24px;
-  overflow: hidden;
-  background: var(--registration-bg);
-  border: 1px solid var(--registration-border);
-  border-radius: 14px;
-  box-shadow: 0 4px 16px var(--registration-shadow);
-}
-
-.new-registration-page .registration-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 5px;
-  height: 100%;
-  background: var(--registration-accent);
-}
-
-.new-registration-page .header-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 64px;
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  background: var(--registration-accent);
-  color: #ffffff;
-  box-shadow: 0 5px 14px var(--registration-shadow);
-}
-
-.new-registration-page .header-icon i {
-  display: inline-block;
-  color: #ffffff !important;
-  font-size: 29px;
-  line-height: 1;
-}
-
-.new-registration-page .header-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.new-registration-page .header-content h2 {
-  margin: 0 0 6px;
-  color: var(--registration-text);
-  font-size: clamp(21px, 2vw, 28px);
-  font-weight: 750;
-  line-height: 1.3;
-  letter-spacing: -0.4px;
-}
-
-.new-registration-page .header-content p {
-  margin: 0;
-  color: var(--registration-muted);
-  font-size: 14px;
-}
-
-.new-registration-page .header-status {
+.student-registration-page .btn-back {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  flex-shrink: 0;
-  padding: 8px 12px;
-  background: var(--registration-surface);
-  color: var(--registration-muted);
-  border: 1px solid var(--registration-border);
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.new-registration-page .header-status i {
-  color: var(--registration-accent);
-  font-size: 15px;
-}
-
-/* =========================================================
-   ALERT MESSAGES
-   ========================================================= */
-
-.new-registration-page .registration-alert {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 18px;
-  padding: 13px 16px;
+  padding: 9px 13px;
+  color: var(--ns-text);
+  background: var(--ns-panel);
+  border: 1px solid var(--ns-border);
   border-radius: 9px;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.new-registration-page .registration-alert i {
-  flex-shrink: 0;
-  font-size: 18px;
+.student-registration-page .btn-back:hover {
+  background: var(--ns-hover);
+  border-color: var(--ns-primary);
 }
 
-/* =========================================================
-   SECTION CARDS
-   ========================================================= */
-
-.new-registration-page .registration-section {
-  margin-bottom: 22px;
-  overflow: hidden;
-  background: var(--registration-bg);
-  border: 1px solid var(--registration-border);
-  border-radius: 13px;
-  box-shadow: 0 3px 12px var(--registration-shadow);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.new-registration-page .registration-section:hover {
-  border-color: var(--registration-accent);
-  box-shadow: 0 5px 18px var(--registration-shadow);
-}
-
-.new-registration-page .section-title {
+/* Main heading */
+.student-registration-page .registration-header {
   display: flex;
   align-items: center;
-  gap: 13px;
-  min-height: 76px;
-  padding: 15px 20px;
-  background: var(--registration-bg);
-  border-bottom: 1px solid var(--registration-border);
+  gap: 14px;
+  padding: 15px 18px;
+  margin-bottom: 15px;
+  color: #ffffff;
+  background: linear-gradient(120deg, #1e2a45, #1b3355);
+  border-radius: 5px 5px 0 0;
+  border-bottom: 1px solid #455266;
 }
 
-.new-registration-page .section-icon {
-  display: inline-flex;
+.student-registration-page .header-icon {
+  display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  color: #60a5fa;
+  font-size: 24px;
 }
 
-.new-registration-page .section-icon i {
-  display: inline-block;
-  font-size: 21px;
-  line-height: 1;
-}
-
-.new-registration-page .personal-icon {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.13);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.new-registration-page .qualification-icon {
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.13);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-}
-
-.new-registration-page .course-icon {
-  color: #d97706;
-  background: rgba(245, 158, 11, 0.14);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.new-registration-page .payment-icon {
-  color: #6366f1;
-  background: rgba(99, 102, 241, 0.13);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-}
-
-.new-registration-page .section-heading {
+.student-registration-page .header-content {
   flex: 1;
   min-width: 0;
 }
 
-.new-registration-page .section-heading h3 {
-  margin: 0 0 4px;
-  color: var(--registration-text);
+.student-registration-page .header-content h2 {
+  margin: 0 0 5px;
+  color: #ffffff;
+  font-size: clamp(19px, 2vw, 25px);
+  font-weight: 750;
+}
+
+.student-registration-page .header-content p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.student-registration-page .header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Four-step navigation */
+.student-registration-page .registration-stepper,
+.student-registration-page .wizard-stepper,
+.student-registration-page .stepper-container {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 11px;
+}
+
+.student-registration-page .step-item,
+.student-registration-page .wizard-step,
+.student-registration-page .stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 64px;
+  padding: 8px;
+  color: var(--ns-text);
+  background: var(--ns-soft);
+  border: 1px solid var(--ns-border);
+  border-radius: 10px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.student-registration-page .step-item.active,
+.student-registration-page .wizard-step.active,
+.student-registration-page .stepper-step.active,
+.student-registration-page .step-item.completed,
+.student-registration-page .wizard-step.completed,
+.student-registration-page .stepper-step.completed {
+  color: #ffffff;
+  background: var(--ns-primary);
+  border-color: var(--ns-primary);
+}
+
+.student-registration-page .step-item i,
+.student-registration-page .wizard-step i,
+.student-registration-page .stepper-step i {
+  font-size: 18px;
+}
+
+/* Registration cards */
+.student-registration-page .registration-section {
+  margin: 0 0 12px;
+  overflow: hidden;
+  color: var(--ns-text);
+  background: var(--ns-card);
+  border: 1px solid var(--ns-border);
+  border-radius: var(--ns-radius);
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+}
+
+.student-registration-page .section-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 54px;
+  padding: 11px 15px;
+  background: var(--ns-card-header);
+  border-bottom: 1px solid var(--ns-border);
+}
+
+.student-registration-page .section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 17px;
+}
+
+.student-registration-page .personal-icon {
+  color: #60a5fa;
+  background: #1e3a5f;
+}
+
+.student-registration-page .qualification-icon {
+  color: #c4b5fd;
+  background: #38265e;
+}
+
+.student-registration-page .course-icon {
+  color: #6ee7b7;
+  background: #124a3a;
+}
+
+.student-registration-page .payment-icon {
+  color: #fcd34d;
+  background: #59421c;
+}
+
+.student-registration-page .section-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-registration-page .section-heading h3 {
+  margin: 0 0 3px;
+  color: var(--ns-text);
   font-size: 15px;
   font-weight: 750;
+}
+
+.student-registration-page .section-heading p {
+  margin: 0;
+  color: var(--ns-muted);
+  font-size: 11px;
   line-height: 1.4;
 }
 
-.new-registration-page .section-heading p {
-  margin: 0;
-  color: var(--registration-muted);
-  font-size: 12px;
-}
-
-.new-registration-page .section-step {
-  display: inline-flex;
+.student-registration-page .section-step {
+  display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: 35px;
-  height: 35px;
-  border-radius: 9px;
-  background: var(--registration-surface);
-  color: var(--registration-muted);
-  font-size: 12px;
-  font-weight: 750;
+  flex: 0 0 31px;
+  width: 31px;
+  height: 31px;
+  color: #93c5fd;
+  background: #263a58;
+  border: 1px solid #3b5275;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
 }
 
-.new-registration-page .section-body {
-  padding: 23px 20px 7px;
+.student-registration-page .section-body {
+  padding: 14px 15px;
+  background: var(--ns-card);
 }
 
-/* =========================================================
-   LABELS
-   ========================================================= */
+/* Enquiry selector */
+.student-registration-page .enquiry-prefill-section {
+  margin-bottom: 10px;
+  border-color: var(--ns-border);
+}
 
-.new-registration-page label {
+.student-registration-page .enquiry-prefill-section .section-title {
+  min-height: 45px;
+  background: var(--ns-card-header);
+}
+
+.student-registration-page .enquiry-prefill-section .section-body {
+  padding: 11px 15px;
+}
+
+/* Personal details: four columns */
+.student-registration-page .personal-details-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 12px;
+  margin: 0;
+}
+
+.student-registration-page .personal-details-grid > [class*="col-"] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0;
+  margin: 0 !important;
+}
+
+/* Four-column fallback for the personal-information row */
+@media (min-width: 1200px) {
+  .student-registration-page
+  .enquiry-prefill-section
+  + .registration-section
+  .section-body > .row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 12px;
+    margin: 0;
+  }
+
+  .student-registration-page
+  .enquiry-prefill-section
+  + .registration-section
+  .section-body > .row > [class*="col-"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    margin: 0 !important;
+  }
+}
+
+/* Labels */
+.student-registration-page .section-body label {
   display: block;
-  margin-bottom: 8px;
-  color: var(--registration-text);
+  margin-bottom: 5px;
+  color: var(--ns-text);
   font-size: 12px;
   font-weight: 650;
 }
 
-.new-registration-page label span {
+.student-registration-page .section-body label span {
   color: #ef4444;
-  font-weight: 750;
 }
 
-/* =========================================================
-   INPUTS AND SELECTS
-   ========================================================= */
-
-.new-registration-page .form-control,
-.new-registration-page .form-select {
-  display: block;
+/* Inputs and dropdowns */
+.student-registration-page .form-control,
+.student-registration-page .form-select {
   width: 100%;
-  min-height: 43px;
-  padding: 10px 12px;
-  border: 1px solid var(--registration-border);
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 10px;
+  color: var(--ns-text);
+  background-color: var(--ns-input-bg);
+  border: 1px solid var(--ns-input-border);
   border-radius: 8px;
-  background-color: var(--registration-input);
-  color: var(--registration-text);
   font-family: inherit;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 12px;
   box-shadow: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color .2s, box-shadow .2s;
 }
 
-.new-registration-page textarea.form-control {
-  min-height: 78px;
-  resize: vertical;
+.student-registration-page .form-control::placeholder {
+  color: var(--ns-muted);
+  opacity: .8;
 }
 
-.new-registration-page .form-control::placeholder {
-  color: var(--registration-muted);
-  opacity: 0.8;
+.student-registration-page .form-select {
+  padding-right: 30px;
 }
 
-.new-registration-page .form-control:focus,
-.new-registration-page .form-select:focus {
-  background-color: var(--registration-input);
-  color: var(--registration-text);
-  border-color: var(--registration-accent);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14);
+.student-registration-page .form-control:focus,
+.student-registration-page .form-select:focus {
+  color: var(--ns-text);
+  background-color: var(--ns-input-bg);
+  border-color: var(--ns-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .16);
   outline: none;
 }
 
-.new-registration-page .form-control[readonly],
-.new-registration-page .form-control:disabled,
-.new-registration-page .form-select:disabled {
-  background-color: var(--registration-surface);
-  color: var(--registration-muted);
+.student-registration-page .form-control[readonly],
+.student-registration-page .form-control:disabled,
+.student-registration-page .form-select:disabled {
+  color: var(--ns-muted);
+  background-color: var(--ns-soft);
   opacity: 1;
 }
 
-.new-registration-page select option {
-  background: var(--registration-bg);
-  color: var(--registration-text);
+.student-registration-page textarea.form-control {
+  min-height: 52px;
+  resize: vertical;
 }
 
-.new-registration-page input[type="date"] {
-  cursor: pointer;
-}
-
-.new-registration-page input[type="file"] {
-  padding: 5px;
-  overflow: hidden;
-}
-
-.new-registration-page input[type="file"]::file-selector-button {
-  margin-right: 10px;
-  padding: 7px 10px;
-  border: 0;
-  border-radius: 5px;
-  background: var(--registration-surface);
-  color: var(--registration-text);
-  cursor: pointer;
-}
-
-.new-registration-page .form-text {
-  display: block;
-  margin-top: 6px;
-  color: var(--registration-muted);
+.student-registration-page input[type="file"].form-control {
+  padding: 5px 7px;
   font-size: 11px;
 }
 
-.new-registration-page .form-text i {
-  margin-right: 4px;
-  color: var(--registration-accent);
+.student-registration-page input[type="file"]::file-selector-button {
+  padding: 6px 9px;
+  margin-right: 8px;
+  color: var(--ns-text);
+  background: var(--ns-soft);
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-/* =========================================================
-   INPUT ICON WRAPPERS
-   ========================================================= */
-
-.new-registration-page .input-icon-wrapper {
-  position: relative;
+.student-registration-page .section-body .row {
+  --bs-gutter-x: 12px;
+  --bs-gutter-y: 8px;
 }
 
-.new-registration-page .input-icon-wrapper > i {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 13px;
-  color: var(--registration-muted);
-  font-size: 15px;
-  pointer-events: none;
-  transform: translateY(-50%);
+.student-registration-page .section-body .mb-3 {
+  margin-bottom: 10px !important;
 }
 
-.new-registration-page .input-icon-wrapper .form-control {
-  padding-left: 37px;
+.student-registration-page .form-text,
+.student-registration-page .text-muted {
+  display: block;
+  margin-top: 4px;
+  color: var(--ns-muted) !important;
+  font-size: 10px;
 }
 
-/* =========================================================
-   FINAL COURSE FEE SUMMARY
-   ========================================================= */
+/* Same as local address checkbox */
+.student-registration-page .same-address-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 6px !important;
+  color: #60a5fa !important;
+  font-size: 11px !important;
+  font-weight: 650 !important;
+  cursor: pointer;
+}
 
-.new-registration-page .fee-summary {
+.student-registration-page .same-address-checkbox input {
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--ns-primary);
+  cursor: pointer;
+}
+
+.student-registration-page #permanentAddress[readonly] {
+  background: var(--ns-soft);
+  cursor: default;
+}
+
+/* Fees summary */
+.student-registration-page .fee-summary {
   display: flex;
   align-items: center;
-  gap: 15px;
-  min-height: 94px;
-  height: 100%;
-  padding: 17px;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.35);
+  gap: 12px;
+  min-height: 76px;
+  padding: 12px 14px;
+  color: var(--ns-text);
+  background: var(--ns-hover);
+  border: 1px solid var(--ns-border);
   border-radius: 11px;
 }
 
-.new-registration-page .fee-summary-icon {
-  display: inline-flex;
+.student-registration-page .fee-summary-icon {
+  display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 48px;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--registration-accent);
-  color: #ffffff;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  color: #60a5fa;
+  background: var(--ns-soft);
+  border-radius: 9px;
+  font-size: 18px;
 }
 
-.new-registration-page .fee-summary-icon i {
-  color: #ffffff !important;
-  font-size: 23px;
-}
-
-.new-registration-page .fee-summary-content {
+.student-registration-page .fee-summary-content {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 3px;
-  min-width: 0;
 }
 
-.new-registration-page .fee-summary-label {
-  color: var(--registration-muted);
-  font-size: 12px;
-  font-weight: 650;
-}
-
-.new-registration-page .fee-summary-amount {
-  color: var(--registration-accent);
-  font-size: clamp(20px, 2vw, 27px);
-  font-weight: 800;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-}
-
-.new-registration-page .fee-summary-note {
-  color: var(--registration-muted);
+.student-registration-page .fee-summary-label,
+.student-registration-page .fee-summary-note {
+  color: var(--ns-muted);
   font-size: 11px;
 }
 
-.new-registration-page .fee-summary-check {
-  align-self: flex-start;
-  color: var(--registration-accent);
-  font-size: 20px;
+.student-registration-page .fee-summary-amount {
+  color: #16a34a;
+  font-size: 21px;
+  font-weight: 800;
 }
 
-/* =========================================================
-   FORM FOOTER AND BUTTONS
-   ========================================================= */
+.student-registration-page .fee-summary-check {
+  color: #10b981;
+  font-size: 19px;
+}
 
-.new-registration-page .registration-actions {
+/* Bottom navigation */
+.student-registration-page .registration-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 5px;
-  padding: 20px;
-  background: var(--registration-bg);
-  border: 1px solid var(--registration-border);
-  border-radius: 12px;
+  gap: 8px;
+  padding: 12px 0 0;
+  margin-top: 10px;
+  border-top: 1px solid var(--ns-border);
 }
 
-.new-registration-page .form-note {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex: 1;
-  min-width: 180px;
-  color: var(--registration-muted);
+.student-registration-page .registration-actions .form-note {
+  flex: 1 1 180px;
+  color: var(--ns-muted);
   font-size: 11px;
+  line-height: 1.5;
 }
 
-.new-registration-page .form-note i {
-  color: var(--registration-accent);
-  font-size: 15px;
+.student-registration-page .registration-actions .form-note i {
+  margin-right: 5px;
+  color: #60a5fa;
 }
 
-.new-registration-page .registration-actions .btn {
+.student-registration-page .registration-actions .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  min-height: 42px;
-  padding: 10px 16px;
+  min-height: 38px;
+  padding: 8px 13px;
   border-radius: 8px;
   font-size: 12px;
-  font-weight: 650;
-  transition: all 0.2s ease;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
 }
 
-.new-registration-page .registration-actions .btn i {
-  font-size: 15px;
-}
-
-.new-registration-page .registration-actions .btn-primary {
-  background: var(--registration-accent);
-  border-color: var(--registration-accent);
+.student-registration-page .btn-primary {
   color: #ffffff;
+  background: var(--ns-primary);
+  border: 1px solid var(--ns-primary);
 }
 
-.new-registration-page .registration-actions .btn-primary:hover:not(:disabled) {
-  background: var(--registration-accent-dark);
-  border-color: var(--registration-accent-dark);
-  transform: translateY(-1px);
+.student-registration-page .btn-primary:hover:not(:disabled) {
+  color: #ffffff;
+  background: var(--ns-primary-hover);
+  border-color: var(--ns-primary-hover);
 }
 
-.new-registration-page .registration-actions .btn-outline-secondary {
-  background: var(--registration-bg);
-  border-color: var(--registration-border);
-  color: var(--registration-text);
+.student-registration-page .btn-outline-primary {
+  color: #60a5fa;
+  background: transparent;
+  border: 1px solid #3b82f6;
 }
 
-.new-registration-page .registration-actions .btn-outline-secondary:hover:not(:disabled) {
-  background: var(--registration-surface);
-  border-color: var(--registration-muted);
+.student-registration-page .btn-outline-primary:hover:not(:disabled) {
+  color: #ffffff;
+  background: var(--ns-primary);
 }
 
-.new-registration-page .registration-actions .btn:disabled {
+.student-registration-page .btn-outline-secondary {
+  color: var(--ns-text);
+  background: var(--ns-soft);
+  border: 1px solid var(--ns-border);
+}
+
+.student-registration-page .btn-outline-secondary:hover:not(:disabled) {
+  background: var(--ns-hover);
+  border-color: var(--ns-primary);
+}
+
+.student-registration-page .registration-actions .btn:disabled {
+  opacity: .55;
   cursor: not-allowed;
-  opacity: 0.65;
 }
 
-/* =========================================================
-   BOOTSTRAP ICON VISIBILITY
-   ========================================================= */
-
-.new-registration-page i.bi {
-  display: inline-block;
-  font-style: normal;
-  line-height: 1;
-  vertical-align: middle;
-}
-
-.new-registration-page .header-icon i,
-.new-registration-page .fee-summary-icon i {
-  color: #ffffff !important;
-}
-
-/* =========================================================
-   LIGHT THEME
-   ========================================================= */
-
-[data-theme="light"] .new-registration-page,
-.light-theme .new-registration-page,
-body.light-mode .new-registration-page {
-  --registration-bg: #ffffff;
-  --registration-surface: #f4f7fb;
-  --registration-input: #ffffff;
-  --registration-text: #172033;
-  --registration-muted: #64748b;
-  --registration-border: #dbe4ee;
-  --registration-shadow: rgba(15, 23, 42, 0.07);
-}
-
-/* =========================================================
-   DARK THEME
-   ========================================================= */
-
-[data-theme="dark"] .new-registration-page,
-.dark-theme .new-registration-page,
-body.dark-mode .new-registration-page {
-  --registration-bg: #182421;
-  --registration-surface: #111b19;
-  --registration-input: #1c2b27;
-  --registration-text: #edf5f1;
-  --registration-muted: #a2b4ad;
-  --registration-border: #2b4039;
-  --registration-shadow: rgba(0, 0, 0, 0.16);
-}
-
-/* Ensure Bootstrap headings and labels follow the active theme */
-[data-theme="dark"] .new-registration-page label,
-.dark-theme .new-registration-page label,
-body.dark-mode .new-registration-page label {
-  color: var(--registration-text);
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN
-   ========================================================= */
-
-@media (max-width: 992px) {
-  .new-registration-page {
-    padding: 18px;
-  }
-
-  .new-registration-page .registration-header {
-    padding: 20px;
-  }
-
-  .new-registration-page .section-body {
-    padding: 20px 16px 5px;
-  }
-}
-
-@media (max-width: 768px) {
-  .new-registration-page {
-    padding: 12px;
-    border-radius: 10px;
-  }
-
-  .new-registration-page .registration-header {
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 13px;
-    padding: 18px;
-  }
-
-  .new-registration-page .header-icon {
-    flex-basis: 50px;
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-  }
-
-  .new-registration-page .header-icon i {
-    font-size: 23px;
-  }
-
-  .new-registration-page .header-content {
-    flex-basis: calc(100% - 65px);
-  }
-
-  .new-registration-page .header-content h2 {
-    font-size: 21px;
-  }
-
-  .new-registration-page .header-status {
-    margin-left: 63px;
-  }
-
-  .new-registration-page .section-title {
-    min-height: 66px;
-    gap: 10px;
-    padding: 12px;
-  }
-
-  .new-registration-page .section-icon {
-    flex-basis: 38px;
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-  }
-
-  .new-registration-page .section-icon i {
-    font-size: 18px;
-  }
-
-  .new-registration-page .section-heading h3 {
-    font-size: 13px;
-  }
-
-  .new-registration-page .section-heading p {
-    font-size: 11px;
-  }
-
-  .new-registration-page .section-step {
-    width: 29px;
-    height: 29px;
-    font-size: 10px;
-  }
-
-  .new-registration-page .section-body {
-    padding: 16px 12px 4px;
-  }
-
-  .new-registration-page .registration-actions {
-    justify-content: stretch;
-    padding: 14px;
-  }
-
-  .new-registration-page .form-note {
-    flex-basis: 100%;
-    margin-bottom: 5px;
-  }
-
-  .new-registration-page .registration-actions .btn {
-    flex: 1 1 auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .new-registration-page {
-    padding: 9px;
-  }
-
-  .new-registration-page .registration-header {
-    padding: 14px;
-  }
-
-  .new-registration-page .header-content h2 {
-    font-size: 18px;
-  }
-
-  .new-registration-page .header-content p {
-    font-size: 12px;
-  }
-
-  .new-registration-page .header-status {
-    margin-left: 0;
-  }
-
-  .new-registration-page .section-step {
-    display: none;
-  }
-
-  .new-registration-page .fee-summary {
-    gap: 10px;
-    padding: 12px;
-  }
-
-  .new-registration-page .fee-summary-icon {
-    flex-basis: 40px;
-    width: 40px;
-    height: 40px;
-  }
-
-  .new-registration-page .fee-summary-amount {
-    font-size: 20px;
-  }
-
-  .new-registration-page .registration-actions .btn {
-    flex-basis: 100%;
-  }
-}
-
-/* =========================================================
-   ACCESSIBILITY
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-  .new-registration-page *,
-  .new-registration-page *::before,
-  .new-registration-page *::after {
-    transition: none !important;
-    animation: none !important;
-  }
-}
-
-/* =====================================================
-   FIX: STUDENT REGISTRATION PAGE HEADER THEME
-   ===================================================== */
-
-/* Header container */
-.student-registration-page > .card > .card-header,
-.student-registration-page .page-header,
-.student-registration-page .registration-page-header {
-    background: var(--bg-card, #182421) !important;
-    color: var(--text-main, #edf5f1) !important;
-    border-bottom: 1px solid var(--border, #2b4039) !important;
-}
-
-/* Main heading */
-.student-registration-page .page-header h1,
-.student-registration-page .page-header h2,
-.student-registration-page .registration-page-header h1,
-.student-registration-page .registration-page-header h2,
-.student-registration-page > .card > .card-header h1,
-.student-registration-page > .card > .card-header h2 {
-    color: var(--text-main, #edf5f1) !important;
-    font-weight: 750;
-    opacity: 1 !important;
-}
-
-/* Header description */
-.student-registration-page .page-header p,
-.student-registration-page .registration-page-header p,
-.student-registration-page > .card > .card-header p {
-    color: var(--text-secondary, #a2b4ad) !important;
-    opacity: 1 !important;
-}
-
-/* Back navigation link */
-.student-registration-page a,
-.student-registration-page .breadcrumb a {
-    color: var(--primary, #10b981);
-}
-
-.student-registration-page a:hover,
-.student-registration-page .breadcrumb a:hover {
-    color: var(--primary-dark, #059669);
-}
-
-/* Dark theme header */
-[data-theme="dark"] .student-registration-page > .card > .card-header,
-.dark-theme .student-registration-page > .card > .card-header,
-body.dark-mode .student-registration-page > .card > .card-header {
-    background: #182421 !important;
-    color: #edf5f1 !important;
-}
-
-/* Light theme header */
-[data-theme="light"] .student-registration-page > .card > .card-header,
-.light-theme .student-registration-page > .card > .card-header,
-body.light-mode .student-registration-page > .card > .card-header {
-    background: #ffffff !important;
-    color: #172033 !important;
-}
-
-[data-theme="light"] .student-registration-page > .card > .card-header h1,
-[data-theme="light"] .student-registration-page > .card > .card-header h2,
-.light-theme .student-registration-page > .card > .card-header h1,
-.light-theme .student-registration-page > .card > .card-header h2,
-body.light-mode .student-registration-page > .card > .card-header h1,
-body.light-mode .student-registration-page > .card > .card-header h2 {
-    color: #172033 !important;
-}
-
-[data-theme="light"] .student-registration-page > .card > .card-header p,
-.light-theme .student-registration-page > .card > .card-header p,
-body.light-mode .student-registration-page > .card > .card-header p {
-    color: #64748b !important;
-}
-
-
-/* Professional post-registration receipt dialog */
-.receipt-dialog-backdrop {
+/* Registration success modal */
+.student-registration-page .registration-success-backdrop,
+.student-registration-page .receipt-dialog-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1200;
+  z-index: 1080;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 22px;
-  background: rgba(15, 23, 42, .68);
+  padding: 16px;
+  background: rgba(15, 23, 42, .7);
   backdrop-filter: blur(4px);
 }
-.receipt-dialog {
+
+.student-registration-page .registration-success-dialog {
+  width: min(100%, 420px);
+  padding: 25px;
+  color: var(--ns-text);
+  background: var(--ns-panel);
+  border: 1px solid var(--ns-border);
+  border-radius: 15px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .2);
+  text-align: center;
+}
+
+.student-registration-page .registration-success-icon {
+  margin-bottom: 12px;
+  color: #10b981;
+  font-size: 44px;
+}
+
+.student-registration-page .registration-success-dialog h3 {
+  margin: 0 0 8px;
+  color: var(--ns-text);
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.student-registration-page .registration-success-dialog p {
+  margin: 0 0 18px;
+  color: var(--ns-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Receipt modal */
+.student-registration-page .receipt-dialog {
   display: flex;
   flex-direction: column;
-  width: min(1040px, 100%);
-  max-height: min(92vh, 980px);
+  width: min(100%, 920px);
+  max-height: 92vh;
   overflow: hidden;
-  background: var(--bg-card, #fff);
-  color: var(--text-main, #172033);
-  border: 1px solid var(--border, #dbe3ed);
-  border-radius: 18px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, .3);
+  color: var(--ns-text);
+  background: var(--ns-panel);
+  border: 1px solid var(--ns-border);
+  border-radius: 14px;
+  box-shadow: 0 20px 65px rgba(0, 0, 0, .25);
 }
-.receipt-dialog-header, .receipt-dialog-footer {
+
+.student-registration-page .receipt-dialog-header,
+.student-registration-page .receipt-dialog-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--border, #e2e8f0);
-}
-.receipt-dialog-heading { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.receipt-dialog-icon {
-  display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px;
-  color: #047857; background: #d1fae5; border-radius: 14px; font-size: 22px;
-}
-.receipt-dialog-heading h2 { margin: 0 0 4px; font-size: 1.1rem; font-weight: 750; }
-.receipt-dialog-heading p { margin: 0; color: var(--text-secondary, #64748b); font-size: .88rem; }
-.receipt-dialog-close { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px; border: 0; border-radius: 10px; background: transparent; color: inherit; }
-.receipt-dialog-close:hover { background: var(--bg-hover, #f1f5f9); }
-.receipt-dialog-body { min-height: 250px; padding: 16px 22px; overflow: auto; }
-.receipt-success-note { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; padding: 10px 12px; color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; font-size: .9rem; }
-.receipt-loading-state, .receipt-empty-state { display: flex; min-height: 260px; align-items: center; justify-content: center; flex-direction: column; gap: 12px; color: var(--text-secondary, #64748b); text-align: center; }
-.receipt-loading-state strong { color: var(--text-main, #172033); }
-.receipt-loading-state small { max-width: 400px; }
-.receipt-error-state { display: flex; align-items: flex-start; gap: 10px; padding: 14px; border-radius: 10px; color: #9a3412; background: #fff7ed; border: 1px solid #fed7aa; }
-.receipt-pdf-frame { display: block; width: 100%; height: min(62vh, 680px); border: 1px solid var(--border, #dbe3ed); border-radius: 10px; background: #f8fafc; }
-.receipt-empty-state { font-size: 1.05rem; }
-.receipt-empty-state i { font-size: 2rem; }
-.receipt-dialog-footer { border-top: 1px solid var(--border, #e2e8f0); border-bottom: 0; }
-.receipt-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; }
-@media (max-width: 640px) {
-  .receipt-dialog-backdrop { padding: 8px; }
-  .receipt-dialog { max-height: 96vh; border-radius: 14px; }
-  .receipt-dialog-header, .receipt-dialog-footer { padding: 14px; }
-  .receipt-dialog-body { padding: 12px; }
-  .receipt-dialog-footer { align-items: stretch; flex-direction: column-reverse; }
-  .receipt-dialog-actions { display: grid; grid-template-columns: 1fr 1fr; }
-  .receipt-dialog-actions .btn { white-space: nowrap; padding-inline: 8px; }
-  .receipt-pdf-frame { height: 55vh; }
+  gap: 12px;
+  padding: 13px 16px;
+  background: var(--ns-card-header);
 }
 
+.student-registration-page .receipt-dialog-header {
+  border-bottom: 1px solid var(--ns-border);
+}
 
-.registration-success-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1200;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: rgba(15, 23, 42, .58);
+.student-registration-page .receipt-dialog-footer {
+  border-top: 1px solid var(--ns-border);
 }
-.registration-success-dialog {
-  width: min(430px, 100%);
-  padding: 28px;
-  border: 1px solid var(--border, #dbe3ed);
-  border-radius: 18px;
-  background: var(--surface, #fff);
-  color: var(--text-primary, #172033);
-  text-align: center;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, .25);
+
+.student-registration-page .receipt-dialog-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
 }
-.registration-success-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
+
+.student-registration-page .receipt-dialog-icon {
+  color: #60a5fa;
+  font-size: 23px;
+}
+
+.student-registration-page .receipt-dialog-heading h2 {
+  margin: 0 0 4px;
+  color: var(--ns-text);
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.student-registration-page .receipt-dialog-heading p {
+  margin: 0;
+  color: var(--ns-muted);
+  font-size: 11px;
+}
+
+.student-registration-page .receipt-dialog-close {
+  width: 34px;
+  height: 34px;
+  color: var(--ns-text);
+  background: var(--ns-soft);
+  border: 1px solid var(--ns-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.student-registration-page .receipt-dialog-body {
+  padding: 14px;
+  overflow: auto;
+  background: var(--ns-bg);
+}
+
+.student-registration-page .receipt-success-note,
+.student-registration-page .receipt-error-state,
+.student-registration-page .receipt-empty-state {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
   margin-bottom: 12px;
-  border-radius: 50%;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.student-registration-page .receipt-success-note {
   color: #15803d;
   background: #dcfce7;
-  font-size: 28px;
 }
-.registration-success-dialog h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 750; }
-.registration-success-dialog p { margin: 0 0 22px; color: var(--text-secondary, #64748b); }
-.registration-success-dialog .btn { min-width: 110px; }
+
+.student-registration-page .receipt-error-state {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.student-registration-page .receipt-empty-state {
+  justify-content: center;
+  min-height: 100px;
+  color: var(--ns-muted);
+  border: 1px dashed var(--ns-border);
+}
+
+.student-registration-page .receipt-loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 9px;
+  min-height: 160px;
+  color: var(--ns-muted);
+}
+
+.student-registration-page .receipt-pdf-frame {
+  width: 100%;
+  height: 60vh;
+  background: #ffffff;
+  border: 1px solid var(--ns-border);
+  border-radius: 8px;
+}
+
+.student-registration-page .receipt-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Tablet */
+@media (max-width: 1199px) {
+  .student-registration-page .personal-details-grid,
+  .student-registration-page
+  .enquiry-prefill-section
+  + .registration-section
+  .section-body > .row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Small screens */
+@media (max-width: 991px) {
+  .new-registration-page.student-registration-page {
+    padding: 10px;
+  }
+
+  .student-registration-page .personal-details-grid,
+  .student-registration-page
+  .enquiry-prefill-section
+  + .registration-section
+  .section-body > .row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .student-registration-page .registration-header {
+    padding: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 575px) {
+  .new-registration-page.student-registration-page {
+    padding: 8px;
+  }
+
+  .student-registration-page .registration-header {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .student-registration-page .header-icon {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+    font-size: 19px;
+  }
+
+  .student-registration-page .header-content h2 {
+    font-size: 18px;
+  }
+
+  .student-registration-page .header-content p {
+    font-size: 11px;
+  }
+
+  .student-registration-page .header-status {
+    display: none;
+  }
+
+  .student-registration-page .registration-stepper,
+  .student-registration-page .wizard-stepper,
+  .student-registration-page .stepper-container {
+    gap: 4px;
+  }
+
+  .student-registration-page .step-item,
+  .student-registration-page .wizard-step,
+  .student-registration-page .stepper-step {
+    min-height: 52px;
+    padding: 5px 2px;
+    font-size: 10px;
+  }
+
+  .student-registration-page .section-title {
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  .student-registration-page .section-body {
+    padding: 11px;
+  }
+
+  .student-registration-page .personal-details-grid,
+  .student-registration-page
+  .enquiry-prefill-section
+  + .registration-section
+  .section-body > .row {
+    grid-template-columns: 1fr;
+  }
+
+  .student-registration-page .registration-actions {
+    justify-content: stretch;
+  }
+
+  .student-registration-page .registration-actions .form-note {
+    flex-basis: 100%;
+  }
+
+  .student-registration-page .registration-actions .btn {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  .student-registration-page .receipt-dialog-header,
+  .student-registration-page .receipt-dialog-footer {
+    flex-wrap: wrap;
+    padding: 11px;
+  }
+
+  .student-registration-page .receipt-dialog-actions {
+    width: 100%;
+  }
+
+  .student-registration-page .receipt-dialog-actions .btn {
+    flex: 1;
+  }
+
+  .student-registration-page .receipt-pdf-frame {
+    height: 52vh;
+  }
+}
+
+
+/* Gender Radio Buttons */
+.student-registration-page .gender-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ns-text, #1e293b);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+
+
+.student-registration-page .gender-radio-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.student-registration-page .gender-radio-option {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 8px 12px;
+  margin: 0 !important;
+  color: var(--ns-text, #1e293b) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Fix Gender Radio Button Text Color */
+
+.student-registration-page .gender-radio-option,
+.student-registration-page .gender-radio-option span {
+  color: var(--ns-text, #1e293b) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+.student-registration-page .gender-radio-option input[type="radio"] {
+  accent-color: #2563eb;
+}
+
+.student-registration-page .gender-radio-option:has(input:checked) {
+  color: #1d4ed8 !important;
+}
+
+.student-registration-page .gender-radio-option:has(input:checked) span {
+  color: #1d4ed8 !important;
+}
+
+/* Keep red color only for required asterisk */
+.student-registration-page .gender-label span {
+  color: #dc2626 !important;
+}
+
+/* =========================================
+   FIX: CIIT STUDENT REGISTRATION DARK THEME
+   Paste at the END of CSS
+========================================= */
+
+/* Dark theme cards */
+:host-context(.dark) .student-registration-page,
+:host-context(.dark-mode) .student-registration-page,
+:host-context(.dark-theme) .student-registration-page,
+:host-context(.theme-dark) .student-registration-page,
+:host-context([data-theme="dark"]) .student-registration-page,
+:host-context([data-bs-theme="dark"]) .student-registration-page,
+:host-context(body.dark) .student-registration-page,
+:host-context(body.dark-mode) .student-registration-page,
+:host-context(body.dark-theme) .student-registration-page,
+:host-context(body.theme-dark) .student-registration-page,
+:host-context(body[data-theme="dark"]) .student-registration-page,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page {
+  --ns-bg: #111827;
+  --ns-panel: #172333;
+  --ns-card: #172333;
+  --ns-card-header: #1e3554;
+  --ns-input-bg: #111c2d;
+  --ns-text: #f1f5f9;
+  --ns-muted: #b8c7dc;
+  --ns-border: #344b68;
+  --ns-input-border: #475569;
+  --ns-hover: #243c5b;
+  --ns-soft: #20324a;
+}
+
+/* Main cards - override previous white background */
+:host-context(.dark) .student-registration-page .registration-section,
+:host-context(.dark-mode) .student-registration-page .registration-section,
+:host-context(.dark-theme) .student-registration-page .registration-section,
+:host-context(.theme-dark) .student-registration-page .registration-section,
+:host-context([data-theme="dark"]) .student-registration-page .registration-section,
+:host-context([data-bs-theme="dark"]) .student-registration-page .registration-section,
+:host-context(body.dark) .student-registration-page .registration-section,
+:host-context(body.dark-mode) .student-registration-page .registration-section,
+:host-context(body.dark-theme) .student-registration-page .registration-section,
+:host-context(body.theme-dark) .student-registration-page .registration-section,
+:host-context(body[data-theme="dark"]) .student-registration-page .registration-section,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .registration-section {
+  color: #f1f5f9 !important;
+  background: #172333 !important;
+  border-color: #344b68 !important;
+}
+
+/* Card header */
+:host-context(.dark) .student-registration-page .section-title,
+:host-context(.dark-mode) .student-registration-page .section-title,
+:host-context(.dark-theme) .student-registration-page .section-title,
+:host-context(.theme-dark) .student-registration-page .section-title,
+:host-context([data-theme="dark"]) .student-registration-page .section-title,
+:host-context([data-bs-theme="dark"]) .student-registration-page .section-title,
+:host-context(body.dark) .student-registration-page .section-title,
+:host-context(body.dark-mode) .student-registration-page .section-title,
+:host-context(body.dark-theme) .student-registration-page .section-title,
+:host-context(body.theme-dark) .student-registration-page .section-title,
+:host-context(body[data-theme="dark"]) .student-registration-page .section-title,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .section-title {
+  color: #f1f5f9 !important;
+  background: #1e3554 !important;
+  border-color: #344b68 !important;
+}
+
+/* Card body - fix white background */
+:host-context(.dark) .student-registration-page .registration-section .section-body,
+:host-context(.dark-mode) .student-registration-page .registration-section .section-body,
+:host-context(.dark-theme) .student-registration-page .registration-section .section-body,
+:host-context(.theme-dark) .student-registration-page .registration-section .section-body,
+:host-context([data-theme="dark"]) .student-registration-page .registration-section .section-body,
+:host-context([data-bs-theme="dark"]) .student-registration-page .registration-section .section-body,
+:host-context(body.dark) .student-registration-page .registration-section .section-body,
+:host-context(body.dark-mode) .student-registration-page .registration-section .section-body,
+:host-context(body.dark-theme) .student-registration-page .registration-section .section-body,
+:host-context(body.theme-dark) .student-registration-page .registration-section .section-body,
+:host-context(body[data-theme="dark"]) .student-registration-page .registration-section .section-body,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .registration-section .section-body {
+  color: #f1f5f9 !important;
+  background: #172333 !important;
+}
+
+/* Enquiry card */
+:host-context(.dark) .student-registration-page .enquiry-prefill-section,
+:host-context(.dark-mode) .student-registration-page .enquiry-prefill-section,
+:host-context(.dark-theme) .student-registration-page .enquiry-prefill-section,
+:host-context(.theme-dark) .student-registration-page .enquiry-prefill-section,
+:host-context([data-theme="dark"]) .student-registration-page .enquiry-prefill-section,
+:host-context([data-bs-theme="dark"]) .student-registration-page .enquiry-prefill-section,
+:host-context(body.dark) .student-registration-page .enquiry-prefill-section,
+:host-context(body.dark-mode) .student-registration-page .enquiry-prefill-section,
+:host-context(body.dark-theme) .student-registration-page .enquiry-prefill-section,
+:host-context(body.theme-dark) .student-registration-page .enquiry-prefill-section,
+:host-context(body[data-theme="dark"]) .student-registration-page .enquiry-prefill-section,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .enquiry-prefill-section {
+  color: #f1f5f9 !important;
+  background: #172333 !important;
+  border-color: #344b68 !important;
+}
+
+:host-context(.dark) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(.dark-mode) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(.dark-theme) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(.theme-dark) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context([data-theme="dark"]) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context([data-bs-theme="dark"]) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(body.dark) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(body.dark-mode) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(body.dark-theme) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(body.theme-dark) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(body[data-theme="dark"]) .student-registration-page .enquiry-prefill-section .section-title,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .enquiry-prefill-section .section-title {
+  background: #1e3554 !important;
+}
+
+/* Labels and headings */
+:host-context(.dark) .student-registration-page .section-body label,
+:host-context(.dark-mode) .student-registration-page .section-body label,
+:host-context(.dark-theme) .student-registration-page .section-body label,
+:host-context(.theme-dark) .student-registration-page .section-body label,
+:host-context([data-theme="dark"]) .student-registration-page .section-body label,
+:host-context([data-bs-theme="dark"]) .student-registration-page .section-body label,
+:host-context(body.dark) .student-registration-page .section-body label,
+:host-context(body.dark-mode) .student-registration-page .section-body label,
+:host-context(body.dark-theme) .student-registration-page .section-body label,
+:host-context(body.theme-dark) .student-registration-page .section-body label,
+:host-context(body[data-theme="dark"]) .student-registration-page .section-body label,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .section-body label {
+  color: #e2e8f0 !important;
+}
+
+:host-context(.dark) .student-registration-page .section-heading h3,
+:host-context(.dark-mode) .student-registration-page .section-heading h3,
+:host-context(.dark-theme) .student-registration-page .section-heading h3,
+:host-context(.theme-dark) .student-registration-page .section-heading h3,
+:host-context([data-theme="dark"]) .student-registration-page .section-heading h3,
+:host-context([data-bs-theme="dark"]) .student-registration-page .section-heading h3,
+:host-context(body.dark) .student-registration-page .section-heading h3,
+:host-context(body.dark-mode) .student-registration-page .section-heading h3,
+:host-context(body.dark-theme) .student-registration-page .section-heading h3,
+:host-context(body.theme-dark) .student-registration-page .section-heading h3,
+:host-context(body[data-theme="dark"]) .student-registration-page .section-heading h3,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .section-heading h3 {
+  color: #f8fafc !important;
+}
+
+:host-context(.dark) .student-registration-page .section-heading p,
+:host-context(.dark-mode) .student-registration-page .section-heading p,
+:host-context(.dark-theme) .student-registration-page .section-heading p,
+:host-context(.theme-dark) .student-registration-page .section-heading p,
+:host-context([data-theme="dark"]) .student-registration-page .section-heading p,
+:host-context([data-bs-theme="dark"]) .student-registration-page .section-heading p,
+:host-context(body.dark) .student-registration-page .section-heading p,
+:host-context(body.dark-mode) .student-registration-page .section-heading p,
+:host-context(body.dark-theme) .student-registration-page .section-heading p,
+:host-context(body.theme-dark) .student-registration-page .section-heading p,
+:host-context(body[data-theme="dark"]) .student-registration-page .section-heading p,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .section-heading p {
+  color: #b8c7dc !important;
+}
+
+/* Inputs and dropdowns */
+:host-context(.dark) .student-registration-page .form-control,
+:host-context(.dark) .student-registration-page .form-select,
+:host-context(.dark-mode) .student-registration-page .form-control,
+:host-context(.dark-mode) .student-registration-page .form-select,
+:host-context(.dark-theme) .student-registration-page .form-control,
+:host-context(.dark-theme) .student-registration-page .form-select,
+:host-context(.theme-dark) .student-registration-page .form-control,
+:host-context(.theme-dark) .student-registration-page .form-select,
+:host-context([data-theme="dark"]) .student-registration-page .form-control,
+:host-context([data-theme="dark"]) .student-registration-page .form-select,
+:host-context([data-bs-theme="dark"]) .student-registration-page .form-control,
+:host-context([data-bs-theme="dark"]) .student-registration-page .form-select,
+:host-context(body.dark) .student-registration-page .form-control,
+:host-context(body.dark) .student-registration-page .form-select,
+:host-context(body.dark-mode) .student-registration-page .form-control,
+:host-context(body.dark-mode) .student-registration-page .form-select,
+:host-context(body.dark-theme) .student-registration-page .form-control,
+:host-context(body.dark-theme) .student-registration-page .form-select,
+:host-context(body.theme-dark) .student-registration-page .form-control,
+:host-context(body.theme-dark) .student-registration-page .form-select,
+:host-context(body[data-theme="dark"]) .student-registration-page .form-control,
+:host-context(body[data-theme="dark"]) .student-registration-page .form-select,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .form-control,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .form-select {
+  color: #f1f5f9 !important;
+  background-color: #111c2d !important;
+  border-color: #475569 !important;
+}
+
+:host-context(.dark) .student-registration-page .form-control::placeholder,
+:host-context(.dark-mode) .student-registration-page .form-control::placeholder,
+:host-context(.dark-theme) .student-registration-page .form-control::placeholder,
+:host-context(.theme-dark) .student-registration-page .form-control::placeholder,
+:host-context([data-theme="dark"]) .student-registration-page .form-control::placeholder,
+:host-context([data-bs-theme="dark"]) .student-registration-page .form-control::placeholder,
+:host-context(body.dark) .student-registration-page .form-control::placeholder,
+:host-context(body.dark-mode) .student-registration-page .form-control::placeholder,
+:host-context(body.dark-theme) .student-registration-page .form-control::placeholder,
+:host-context(body.theme-dark) .student-registration-page .form-control::placeholder,
+:host-context(body[data-theme="dark"]) .student-registration-page .form-control::placeholder,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .form-control::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Radio button labels */
+:host-context(.dark) .student-registration-page .gender-radio-option,
+:host-context(.dark-mode) .student-registration-page .gender-radio-option,
+:host-context(.dark-theme) .student-registration-page .gender-radio-option,
+:host-context(.theme-dark) .student-registration-page .gender-radio-option,
+:host-context([data-theme="dark"]) .student-registration-page .gender-radio-option,
+:host-context([data-bs-theme="dark"]) .student-registration-page .gender-radio-option,
+:host-context(body.dark) .student-registration-page .gender-radio-option,
+:host-context(body.dark-mode) .student-registration-page .gender-radio-option,
+:host-context(body.dark-theme) .student-registration-page .gender-radio-option,
+:host-context(body.theme-dark) .student-registration-page .gender-radio-option,
+:host-context(body[data-theme="dark"]) .student-registration-page .gender-radio-option,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .gender-radio-option,
+:host-context(.dark) .student-registration-page .gender-radio-option span,
+:host-context(.dark-mode) .student-registration-page .gender-radio-option span,
+:host-context(.dark-theme) .student-registration-page .gender-radio-option span,
+:host-context(.theme-dark) .student-registration-page .gender-radio-option span,
+:host-context([data-theme="dark"]) .student-registration-page .gender-radio-option span,
+:host-context([data-bs-theme="dark"]) .student-registration-page .gender-radio-option span,
+:host-context(body.dark) .student-registration-page .gender-radio-option span,
+:host-context(body.dark-mode) .student-registration-page .gender-radio-option span,
+:host-context(body.dark-theme) .student-registration-page .gender-radio-option span,
+:host-context(body.theme-dark) .student-registration-page .gender-radio-option span,
+:host-context(body[data-theme="dark"]) .student-registration-page .gender-radio-option span,
+:host-context(body[data-bs-theme="dark"]) .student-registration-page .gender-radio-option span {
+  color: #e2e8f0 !important;
+}
+
+/* Blue selected step */
+:host-context(.dark) .student-registration-page .step-item.active,
+:host-context(.dark) .student-registration-page .wizard-step.active,
+:host-context(.dark) .student-registration-page .stepper-step.active,
+:host-context(.dark-mode) .student-registration-page .step-item.active,
+:host-context(.dark-mode) .student-registration-page .wizard-step.active,
+:host-context(.dark-mode) .student-registration-page .stepper-step.active,
+:host-context(.dark-theme) .student-registration-page .step-item.active,
+:host-context(.dark-theme) .student-registration-page .wizard-step.active,
+:host-context(.dark-theme) .student-registration-page .stepper-step.active,
+:host-context([data-theme="dark"]) .student-registration-page .step-item.active,
+:host-context([data-theme="dark"]) .student-registration-page .wizard-step.active,
+:host-context([data-theme="dark"]) .student-registration-page .stepper-step.active {
+  color: #ffffff !important;
+  background: #2563eb !important;
+  border-color: #3b82f6 !important;
+}

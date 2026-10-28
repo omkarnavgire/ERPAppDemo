@@ -536,4 +536,36 @@ export class NewStudentRegistration implements OnInit {
     this.saved.emit();
     this.router.navigate(["/main/student-registration"]);
   }
+
+  currentStep = 1;
+
+nextStep(): void {
+  if (this.currentStep < 4) {
+    this.currentStep++;
+  }
+}
+
+previousStep(): void {
+  if (this.currentStep > 1) {
+    this.currentStep--;
+  }
+}
+
+
+sameAsLocalAddress = false;
+
+onLocalAddressChange(): void {
+  if (this.sameAsLocalAddress) {
+    this.studentForm.permanentAddress =
+      this.studentForm.localAddress;
+  }
+}
+
+onSameAddressChange(): void {
+  if (this.sameAsLocalAddress) {
+    this.studentForm.permanentAddress =
+      this.studentForm.localAddress;
+  }
+}
+
 }

@@ -1,5 +1,6 @@
 
 import { Component, inject, OnInit } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { LogOut } from "./Application/Auth/LogOut";
 import { GetAllUsers } from "./Application/User/GetAllUsers";
@@ -18,7 +19,7 @@ interface SidebarMenu {
 @Component({
     selector: "app-main-layout",
     standalone: true,
-    imports: [RouterOutlet, RouterLink, RouterLinkActive],
+    imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
     templateUrl: "./Maincomponent.html",
     styleUrls: ["./Maincomponent.css"]
 })
@@ -32,24 +33,53 @@ export class MainClass implements OnInit {
     employeeName = "";
     roleName = "";
     visibleMenus: SidebarMenu[] = [];
+    isDarkTheme = false;
+    showProfileMenu = false;
 
     menus: SidebarMenu[] = [
         { label: "Dashboard", route: "/main/dashboard", icon: "▣", permission: PERMISSIONS.DASHBOARD_VIEW },
         { label: "Employee", route: "/main/user", icon: "♙", permission: PERMISSIONS.USER_VIEW, roles: ["Admin", "Super User"] },
-        { label: "Employee Registration", route: "/main/employee", icon: "◈", permission: PERMISSIONS.EMPLOYEE_VIEW, roles: ["Admin", "Super User"] },
         { label: "Lead", route: "/main/lead", icon: "◉", permission: PERMISSIONS.LEAD_VIEW, roles: ["Super User", "Admin", "Counsellor"] },
         { label: "Enquiry", route: "/main/enquiry", icon: "✎", permission: PERMISSIONS.ENQUIRY_VIEW, roles: ["Super User", "Admin", "Counsellor"] },
         { label: "Course", route: "/main/course", icon: "📚", permission: PERMISSIONS.COURSE_VIEW, roles: ["Super User", "Admin", "Counsellor"] },
         { label: "Student Registration", route: "/main/student-registration", icon: "🎓", roles: ["Accountant", "Admin", "Super User"] },
         { label: "Student Payments", route: "/main/student-payments", icon: "₹", roles: ["Accountant", "Admin", "Super User"] },
-        { label: "Function Management", route: "/main/function-management", icon: "⚙", permission: PERMISSIONS.FUNCTION_MANAGEMENT_VIEW, roles: ["Admin", "Super User"] },
+        // {label: "Batch",route: "/main/batch", icon: "📅", permission: PERMISSIONS.BATCH_VIEW, roles: ["Super User", "Admin", "Group Leader"]},
+        {label: "Batch",route: "/main/batch", icon: "📅",  roles: ["Super User", "Admin", "Group Leader"]},
+        // { label: "Function Management", route: "/main/function-management", icon: "⚙", permission: PERMISSIONS.FUNCTION_MANAGEMENT_VIEW, roles: ["Admin", "Super User"] },
         { label: "Reports", route: "/main/reports", icon: "▤", permission: PERMISSIONS.REPORTS_VIEW, roles: ["Admin", "Super User", "Accountant"] },
-        { label: "Profile", route: "/main/profile", icon: "⚬" },
-        { label: "Settings", route: "/main/settings", icon: "⚙" }
+        // { label: "Settings", route: "/main/settings", icon: "⚙" }
     ];
 
     ngOnInit(): void {
+        const savedTheme = localStorage.getItem("ciit-theme");
+        this.isDarkTheme = savedTheme === "dark";
+        this.applyTheme();
         this.loadUserSession();
+    }
+
+    toggleTheme(): void {
+        this.isDarkTheme = !this.isDarkTheme;
+        localStorage.setItem("ciit-theme", this.isDarkTheme ? "dark" : "light");
+        this.applyTheme();
+    }
+
+    private applyTheme(): void {
+        document.documentElement.setAttribute("data-theme", this.isDarkTheme ? "dark" : "light");
+    }
+
+    toggleProfileMenu(): void {
+        this.showProfileMenu = !this.showProfileMenu;
+    }
+
+    goToProfile(): void {
+        this.showProfileMenu = false;
+        this.router.navigate(["/main/profile"]);
+    }
+
+    goToChangePassword(): void {
+        this.showProfileMenu = false;
+        this.router.navigate(["/main/change-password"]);
     }
 
     private loadUserSession(): void {

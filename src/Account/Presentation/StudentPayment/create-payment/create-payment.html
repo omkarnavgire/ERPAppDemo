@@ -1,4 +1,3 @@
-
 <div class="payment-form-container">
 
   <!-- Header -->
@@ -18,12 +17,24 @@
     </button>
   </div>
 
-  <div class="error-message" *ngIf="errorMessage && !loadingStudents && !students.length" role="alert">
-    <strong>Student list unavailable</strong><p>{{ errorMessage }}</p>
-    <button type="button" class="retry-button" (click)="retryLoad()">Try again</button>
+  <!-- Student loading error -->
+  <div
+    class="error-message"
+    *ngIf="errorMessage && !loadingStudents && !students.length"
+    role="alert">
+
+    <strong>Student list unavailable</strong>
+    <p>{{ errorMessage }}</p>
+
+    <button
+      type="button"
+      class="retry-button"
+      (click)="retryLoad()">
+      Try again
+    </button>
   </div>
 
-  <!-- Loading State -->
+  <!-- Loading -->
   <div class="info-message" *ngIf="loadingStudents">
     <span class="loading-spinner"></span>
     Loading students, registrations and payment details...
@@ -34,315 +45,432 @@
     (ngSubmit)="savePayment()"
     novalidate>
 
-    <!-- Student Selection -->
-    <div class="form-section student-section">
-      <div class="section-title"><span class="section-icon"><i class="bi bi-person-vcard"></i></span><div><span class="section-kicker">STEP 01</span><h3>Student Information</h3></div></div>
+    <!-- TOP ROW: STUDENT + COURSE -->
+    <div class="student-course-row">
 
-      <div class="form-group">
-        <label for="studentDropdown">Select Student <span class="required">*</span></label>
+      <!-- Step 1: Student Information -->
+      <section class="form-section student-section">
 
-        <div class="student-dropdown">
-          <button
-            id="studentDropdown"
-            type="button"
-            class="form-control student-dropdown-button"
-            [disabled]="loadingStudents"
-            (click)="toggleStudentDropdown()"
-            [attr.aria-expanded]="dropdownOpen">
+        <div class="section-title">
+          <span class="section-icon">
+            <i class="bi bi-person-vcard"></i>
+          </span>
 
-            <span *ngIf="selectedStudent as student; else selectStudentText">
-              {{ student.studentName }} {{ student.lastName }}
-              <span *ngIf="student.mobileNumber">
-                · {{ student.mobileNumber }}
-              </span>
-            </span>
+          <div>
+            <span class="section-kicker">STEP 01</span>
+            <h3>Student Information</h3>
+          </div>
+        </div>
 
-            <ng-template #selectStudentText>
-              <span class="placeholder-text">Choose a student</span>
-            </ng-template>
+        <div class="form-group">
+          <label for="studentDropdown">
+            Select Student <span class="required">*</span>
+          </label>
 
-            <span class="dropdown-arrow">
-              {{ dropdownOpen ? '▲' : '▼' }}
-            </span>
-          </button>
+          <div class="student-dropdown">
 
-          <!-- Search within the dropdown -->
-          <div
-            class="student-dropdown-menu"
-            *ngIf="dropdownOpen">
+            <button
+              id="studentDropdown"
+              type="button"
+              class="form-control student-dropdown-button"
+              [disabled]="loadingStudents"
+              (click)="toggleStudentDropdown()"
+              [attr.aria-expanded]="dropdownOpen">
 
-            <input
-              type="text"
-              class="form-control student-dropdown-search"
-              placeholder="Search name, mobile or email..."
-              [(ngModel)]="studentSearch"
-              name="studentSearch"
-              (ngModelChange)="filterStudents()"
-              (click)="$event.stopPropagation()"
-              autocomplete="off" />
+              <span
+                *ngIf="selectedStudent as student; else selectStudentText">
 
-            <div
-              class="dropdown-message"
-              *ngIf="loadingStudents">
-              Loading students...
-            </div>
+                {{ student.studentName }} {{ student.lastName }}
 
-            <ng-container *ngIf="!loadingStudents">
-              <button
-                type="button"
-                class="student-option"
-                *ngFor="let student of filteredStudents"
-                (click)="selectStudent(student)">
-
-                <span class="student-option-name">
-                  {{ student.studentName }} {{ student.lastName }}
+                <span *ngIf="student.mobileNumber">
+                  · {{ student.mobileNumber }}
                 </span>
+              </span>
 
-                <small *ngIf="student.mobileNumber">
-                  {{ student.mobileNumber }}
-                </small>
+              <ng-template #selectStudentText>
+                <span class="placeholder-text">
+                  Choose a student
+                </span>
+              </ng-template>
 
-                <small *ngIf="student.emailAddress">
-                  {{ student.emailAddress }}
-                </small>
-              </button>
+              <span class="dropdown-arrow">
+                {{ dropdownOpen ? '▲' : '▼' }}
+              </span>
+            </button>
+
+            <!-- Student Search Dropdown -->
+            <div
+              class="student-dropdown-menu"
+              *ngIf="dropdownOpen">
+
+              <input
+                type="text"
+                class="form-control student-dropdown-search"
+                placeholder="Search name, mobile or email..."
+                [(ngModel)]="studentSearch"
+                name="studentSearch"
+                (ngModelChange)="filterStudents()"
+                (click)="$event.stopPropagation()"
+                autocomplete="off">
 
               <div
                 class="dropdown-message"
-                *ngIf="filteredStudents.length === 0">
-                No matching students found.
+                *ngIf="loadingStudents">
+
+                Loading students...
               </div>
-            </ng-container>
+
+              <ng-container *ngIf="!loadingStudents">
+
+                <button
+                  type="button"
+                  class="student-option"
+                  *ngFor="let student of filteredStudents"
+                  (click)="selectStudent(student)">
+
+                  <span class="student-option-name">
+                    {{ student.studentName }} {{ student.lastName }}
+                  </span>
+
+                  <small *ngIf="student.mobileNumber">
+                    {{ student.mobileNumber }}
+                  </small>
+
+                  <small *ngIf="student.emailAddress">
+                    {{ student.emailAddress }}
+                  </small>
+
+                </button>
+
+                <div
+                  class="dropdown-message"
+                  *ngIf="filteredStudents.length === 0">
+
+                  No matching students found.
+                </div>
+
+              </ng-container>
+            </div>
           </div>
+
+          <small
+            class="error-text"
+            *ngIf="!selectedStudentId && paymentForm.submitted">
+
+            Please select a student.
+          </small>
         </div>
 
-        <small
-          class="error-text"
-          *ngIf="!selectedStudentId && paymentForm.submitted">
-          Please select a student.
-        </small>
-      </div>
-    </div>
+      </section>
 
-    <!-- Course Registration -->
-    <div class="form-section">
-      <div class="section-title"><span class="section-icon"><i class="bi bi-mortarboard"></i></span><div><span class="section-kicker">STEP 02</span><h3>Course and Fee Details</h3></div></div>
+      <!-- Step 2: Course and Fee Details -->
+      <section class="form-section course-section">
 
-      <div class="form-group">
-        <label for="registration">
-          Course Registration <span class="required">*</span>
-        </label>
-
-        <select
-          id="registration"
-          class="form-control"
-          name="registration"
-          [(ngModel)]="selectedRegistrationId"
-          (ngModelChange)="onRegistrationChange()"
-          [disabled]="!selectedStudentId || loadingStudents"
-          required>
-
-          <option [ngValue]="null">Choose a course registration</option>
-
-          <option
-            *ngFor="let registration of studentRegistrations"
-            [ngValue]="registration.registrationId"
-            [disabled]="registration.feeError ||
-                        (registration.feeLoaded && (registration.fullyPaid ||
-                        registration.remainingBalance <= 0))">
-
-            {{ registration.courseName || 'Course' }}
-            —
-            <ng-container *ngIf="registration.feeLoaded && !registration.feeError">
-              {{ registration.fullyPaid ? 'Fully Paid' : 'Balance: ₹' + registration.remainingBalance }}
-            </ng-container>
-
-            <ng-container *ngIf="registration.feeError || !registration.feeLoaded">
-              Fee details unavailable
-            </ng-container>
-          </option>
-        </select>
-
-        <small
-          class="error-text"
-          *ngIf="selectedStudentId && studentRegistrations.length === 0">
-          No course registrations found for this student.
-        </small>
-      </div>
-
-      <!-- Fee Summary -->
-      <div
-        class="fee-summary"
-        *ngIf="selectedRegistration as registration">
-
-        <div class="fee-summary-header">
-          <div>
-            <span class="summary-caption">Selected Course</span>
-            <h4>{{ registration.courseName || 'Course Fee Summary' }}</h4>
-          </div>
-
-          <span
-            class="payment-status"
-            [class.status-paid]="registration.fullyPaid"
-            [class.status-pending]="!registration.fullyPaid && registration.feeLoaded"
-            [class.status-error]="registration.feeError || !registration.feeLoaded">
-
-            {{
-              registration.feeError || !registration.feeLoaded
-                ? 'Fee Unavailable'
-                : registration.fullyPaid
-                  ? 'Fully Paid'
-                  : registration.totalPaid > 0
-                    ? 'Partial Payment'
-                    : 'Pending'
-            }}
+        <div class="section-title">
+          <span class="section-icon">
+            <i class="bi bi-mortarboard"></i>
           </span>
+
+          <div>
+            <span class="section-kicker">STEP 02</span>
+            <h3>Course and Fee Details</h3>
+          </div>
         </div>
 
+        <div class="form-group">
+          <label for="registration">
+            Course Registration <span class="required">*</span>
+          </label>
+
+          <select
+            id="registration"
+            class="form-control"
+            name="registration"
+            [(ngModel)]="selectedRegistrationId"
+            (ngModelChange)="onRegistrationChange()"
+            [disabled]="!selectedStudentId || loadingStudents"
+            required>
+
+            <option [ngValue]="null">
+              Choose a course registration
+            </option>
+
+            <option
+              *ngFor="let registration of studentRegistrations"
+              [ngValue]="registration.registrationId"
+              [disabled]="
+                registration.feeError ||
+                (
+                  registration.feeLoaded &&
+                  (
+                    registration.fullyPaid ||
+                    registration.remainingBalance <= 0
+                  )
+                )
+              ">
+
+              {{ registration.courseName || 'Course' }} —
+
+              <ng-container
+                *ngIf="registration.feeLoaded && !registration.feeError">
+
+                {{
+                  registration.fullyPaid
+                    ? 'Fully Paid'
+                    : 'Balance: ₹' + registration.remainingBalance
+                }}
+              </ng-container>
+
+              <ng-container
+                *ngIf="registration.feeError || !registration.feeLoaded">
+
+                Fee details unavailable
+              </ng-container>
+
+            </option>
+          </select>
+
+          <small
+            class="error-text"
+            *ngIf="
+              selectedStudentId &&
+              studentRegistrations.length === 0
+            ">
+
+            No course registrations found for this student.
+          </small>
+        </div>
+
+        <!-- Fee Summary -->
         <div
-          class="fee-summary-content"
-          *ngIf="registration.feeLoaded && !registration.feeError">
+          class="fee-summary"
+          *ngIf="selectedRegistration as registration">
 
-          <div class="summary-row">
-            <span>Course Fee</span>
-            <strong>₹{{ registration.courseFees | number:'1.2-2' }}</strong>
+          <div class="fee-summary-header">
+            <div>
+              <span class="summary-caption">Selected Course</span>
+              <h4>
+                {{ registration.courseName || 'Course Fee Summary' }}
+              </h4>
+            </div>
+
+            <span
+              class="payment-status"
+              [class.status-paid]="registration.fullyPaid"
+              [class.status-pending]="
+                !registration.fullyPaid && registration.feeLoaded
+              "
+              [class.status-error]="
+                registration.feeError || !registration.feeLoaded
+              ">
+
+              {{
+                registration.feeError || !registration.feeLoaded
+                  ? 'Fee Unavailable'
+                  : registration.fullyPaid
+                    ? 'Fully Paid'
+                    : registration.totalPaid > 0
+                      ? 'Partial Payment'
+                      : 'Pending'
+              }}
+            </span>
           </div>
 
-          <div class="summary-row discount-row">
-            <span>Discount</span>
-            <strong>− ₹{{ registration.discount | number:'1.2-2' }}</strong>
+          <div
+            class="fee-summary-content"
+            *ngIf="registration.feeLoaded && !registration.feeError">
+
+            <div class="summary-row">
+              <span>Course Fee</span>
+              <strong>
+                ₹{{ registration.courseFees | number:'1.2-2' }}
+              </strong>
+            </div>
+
+            <div class="summary-row discount-row">
+              <span>Discount</span>
+              <strong>
+                − ₹{{ registration.discount | number:'1.2-2' }}
+              </strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Final Fee After Discount</span>
+              <strong>
+                ₹{{ registration.finalFees | number:'1.2-2' }}
+              </strong>
+            </div>
+
+            <div class="summary-row">
+              <span>Previously Received</span>
+              <strong>
+                ₹{{ registration.totalPaid | number:'1.2-2' }}
+              </strong>
+            </div>
+
+            <div class="summary-row balance-row">
+              <span>Remaining Balance</span>
+              <strong>
+                ₹{{ registration.remainingBalance | number:'1.2-2' }}
+              </strong>
+            </div>
+
           </div>
 
-          <div class="summary-row">
-            <span>Final Fee After Discount</span>
-            <strong>₹{{ registration.finalFees | number:'1.2-2' }}</strong>
+          <div
+            class="error-message"
+            *ngIf="registration.feeError || !registration.feeLoaded">
+
+            Course fee details could not be loaded.
+            Please reload the page and try again.
           </div>
 
-          <div class="summary-row">
-            <span>Previously Received</span>
-            <strong>₹{{ registration.totalPaid | number:'1.2-2' }}</strong>
+          <div
+            class="success-inline"
+            *ngIf="registration.fullyPaid && registration.feeLoaded">
+
+            This course is fully paid. No additional payment is required.
           </div>
 
-          <div class="summary-row balance-row">
-            <span>Remaining Balance</span>
-            <strong>₹{{ registration.remainingBalance | number:'1.2-2' }}</strong>
-          </div>
         </div>
 
-        <div
-          class="error-message"
-          *ngIf="registration.feeError || !registration.feeLoaded">
-          Course fee details could not be loaded. Please reload the page and try again.
-        </div>
-
-        <div
-          class="success-inline"
-          *ngIf="registration.fullyPaid && registration.feeLoaded">
-          This course is fully paid. No additional payment is required.
-        </div>
-      </div>
+      </section>
     </div>
 
-    <!-- Payment Information -->
-    <div class="form-section">
-      <div class="section-title"><span class="section-icon"><i class="bi bi-credit-card"></i></span><div><span class="section-kicker">STEP 03</span><h3>Payment Information</h3></div></div>
+    <!-- Step 3: Payment Information -->
+    <section class="form-section payment-section">
 
-      <div class="form-group">
-        <label for="paymentDate">
-          Payment Date <span class="required">*</span>
-        </label>
+      <div class="section-title">
+        <span class="section-icon">
+          <i class="bi bi-credit-card"></i>
+        </span>
 
-        <input
-          id="paymentDate"
-          type="date"
-          class="form-control"
-          name="paymentDate"
-          [(ngModel)]="paymentDate"
-          required />
+        <div>
+          <span class="section-kicker">STEP 03</span>
+          <h3>Payment Information</h3>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="paymentAmount">
-          Payment Amount (₹) <span class="required">*</span>
-        </label>
+      <!-- Four fields in one row -->
+      <div class="payment-fields-grid">
 
-        <input
-          id="paymentAmount"
-          type="number"
-          class="form-control"
-          name="paymentAmount"
-          [(ngModel)]="paymentAmount"
-          min="1"
-          step="0.01"
-          [max]="selectedRegistration?.remainingBalance ?? null"
-          [disabled]="!selectedRegistration ||
-                      !selectedRegistration.feeLoaded ||
-                      selectedRegistration.feeError ||
-                      selectedRegistration.fullyPaid"
-          placeholder="Enter amount to receive"
-          required />
+        <!-- Payment Date -->
+        <div class="form-group">
+          <label for="paymentDate">
+            Payment Date <span class="required">*</span>
+          </label>
 
-        <small
-          class="field-hint"
-          *ngIf="selectedRegistration?.feeLoaded && !selectedRegistration?.fullyPaid">
-          Maximum receivable amount: ₹{{ selectedRegistration.remainingBalance | number:'1.2-2' }}
-        </small>
+          <input
+            id="paymentDate"
+            type="date"
+            class="form-control"
+            name="paymentDate"
+            [(ngModel)]="paymentDate"
+            required>
+        </div>
 
-        <small
-          class="error-text"
-          *ngIf="selectedRegistration &&
-                 paymentAmount != null &&
-                 paymentAmount > selectedRegistration.remainingBalance">
-          Payment cannot exceed the remaining balance.
-        </small>
+        <!-- Payment Amount -->
+        <div class="form-group">
+          <label for="paymentAmount">
+            Payment Amount (₹) <span class="required">*</span>
+          </label>
 
-        <small
-          class="error-text"
-          *ngIf="paymentAmount != null && paymentAmount <= 0">
-          Payment amount must be greater than zero.
-        </small>
+          <input
+            id="paymentAmount"
+            type="number"
+            class="form-control"
+            name="paymentAmount"
+            [(ngModel)]="paymentAmount"
+            min="1"
+            step="0.01"
+            [max]="selectedRegistration?.remainingBalance ?? null"
+            [disabled]="
+              !selectedRegistration ||
+              !selectedRegistration.feeLoaded ||
+              selectedRegistration.feeError ||
+              selectedRegistration.fullyPaid
+            "
+            placeholder="Enter amount"
+            required>
+
+          <small
+            class="field-hint"
+            *ngIf="
+              selectedRegistration?.feeLoaded &&
+              !selectedRegistration?.fullyPaid
+            ">
+
+            Maximum: ₹{{
+              selectedRegistration.remainingBalance | number:'1.2-2'
+            }}
+          </small>
+
+          <small
+            class="error-text"
+            *ngIf="
+              selectedRegistration &&
+              paymentAmount != null &&
+              paymentAmount > selectedRegistration.remainingBalance
+            ">
+
+            Payment cannot exceed the remaining balance.
+          </small>
+
+          <small
+            class="error-text"
+            *ngIf="paymentAmount != null && paymentAmount <= 0">
+
+            Payment amount must be greater than zero.
+          </small>
+        </div>
+
+        <!-- Payment Mode -->
+        <div class="form-group">
+          <label for="paymentMode">
+            Payment Mode <span class="required">*</span>
+          </label>
+
+          <select
+            id="paymentMode"
+            class="form-control"
+            name="paymentMode"
+            [(ngModel)]="paymentMode"
+            required>
+
+            <option value="Cash">Cash</option>
+            <option value="UPI">UPI</option>
+            <option value="Online">Online</option>
+            <option value="Card">Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Cheque">Cheque</option>
+          </select>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="paymentDescription">
+            Description
+          </label>
+
+          <textarea
+            id="paymentDescription"
+            class="form-control"
+            name="paymentDescription"
+            [(ngModel)]="paymentDescription"
+            rows="1"
+            placeholder="Transaction reference or remarks">
+          </textarea>
+        </div>
+
       </div>
-
-      <div class="form-group">
-        <label for="paymentMode">
-          Payment Mode <span class="required">*</span>
-        </label>
-
-        <select
-          id="paymentMode"
-          class="form-control"
-          name="paymentMode"
-          [(ngModel)]="paymentMode"
-          required>
-
-          <option value="Cash">Cash</option>
-          <option value="UPI">UPI</option>
-          <option value="Online">Online</option>
-          <option value="Card">Card</option>
-          <option value="Bank Transfer">Bank Transfer</option>
-          <option value="Cheque">Cheque</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="paymentDescription">Description (Optional)</label>
-
-        <textarea
-          id="paymentDescription"
-          class="form-control"
-          name="paymentDescription"
-          [(ngModel)]="paymentDescription"
-          rows="3"
-          placeholder="Enter transaction reference or payment remarks">
-        </textarea>
-      </div>
-    </div>
+    </section>
 
     <!-- Error Message -->
     <div
       class="error-message"
       *ngIf="errorMessage"
       role="alert">
+
       <strong>Payment Not Completed</strong>
       <p>{{ errorMessage }}</p>
     </div>
@@ -352,33 +480,43 @@
       class="success-inline"
       *ngIf="successMessage"
       role="status">
+
       {{ successMessage }}
     </div>
 
-    <!-- Form Actions -->
+    <!-- Actions -->
     <div class="form-actions">
+
       <button
         type="button"
         class="btn btn-secondary"
         (click)="cancelPayment()"
         [disabled]="savingPayment">
+
         Cancel
       </button>
 
       <button
         type="submit"
         class="btn btn-primary"
-        [disabled]="paymentForm.invalid ||
-                    savingPayment ||
-                    loadingStudents ||
-                    !selectedRegistration ||
-                    !selectedRegistration.feeLoaded ||
-                    selectedRegistration.feeError ||
-                    selectedRegistration.fullyPaid ||
-                    (paymentAmount != null &&
-                     paymentAmount > selectedRegistration.remainingBalance)">
+        [disabled]="
+          paymentForm.invalid ||
+          savingPayment ||
+          loadingStudents ||
+          !selectedRegistration ||
+          !selectedRegistration.feeLoaded ||
+          selectedRegistration.feeError ||
+          selectedRegistration.fullyPaid ||
+          (
+            paymentAmount != null &&
+            paymentAmount > selectedRegistration.remainingBalance
+          )
+        ">
 
-        <span *ngIf="savingPayment" class="loading-spinner"></span>
+        <span
+          *ngIf="savingPayment"
+          class="loading-spinner">
+        </span>
 
         {{
           savingPayment
@@ -386,6 +524,7 @@
             : 'Save Payment'
         }}
       </button>
+
     </div>
 
   </form>

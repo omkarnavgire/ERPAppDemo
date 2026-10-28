@@ -1,5 +1,13 @@
 <div class="enquiry-form-page">
   <a class="back-link" routerLink="/main/enquiry">All Enquiries</a>
+   <button
+  type="button"
+  class="close-form-btn"
+  aria-label="Close enquiry form"
+  title="Close"
+  (click)="cancelForm()">
+  &times;
+</button>
   <div class="form-card">
     <div class="form-title">
       <h1>Enquiry Form</h1>
@@ -72,16 +80,29 @@
               </label>
             </div>
           </div>
+
           <div class="check-card">
-            <div class="check-title">How did you come to know about us?</div>
-            <div class="check-grid">
+            <div class="check-title">
+              How did you come to know about us?
+            </div>
+
+            <div *ngIf="leadSourcesLoading" class="dropdown-loading">
+              Loading options...
+            </div>
+
+            <div *ngIf="!leadSourcesLoading && leadSourceOptions.length > 0" class="check-grid">
               <label *ngFor="let item of leadSourceOptions">
                 <input type="checkbox" [checked]="isSelected('leadSource', item)"
                   (change)="toggleSelection('leadSource', item)">
                 {{ item }}
               </label>
             </div>
+
+            <div *ngIf="!leadSourcesLoading && leadSourceOptions.length === 0" class="dropdown-empty">
+              No options available.
+            </div>
           </div>
+
           <div class="check-card topics-card">
             <div class="check-title">Tick your Interesting Training</div>
             <div class="topics-scroll">
@@ -94,9 +115,20 @@
               </div>
             </div>
           </div>
-          <button class="submit-btn" type="submit" [disabled]="enquiryForm.invalid">
-            {{ isEditMode ? 'Update' : 'Submit' }}
-          </button>
+          <div class="form-actions">
+  <button
+    type="button"
+    class="cancel-btn"
+    (click)="cancelForm()">
+    Cancel
+  </button>
+
+  <button
+    type="submit"
+    class="submit-btn">
+    {{ isEditMode ? 'Update Enquiry' : 'Submit' }}
+  </button>
+</div>
         </div>
       </div>
     </form>

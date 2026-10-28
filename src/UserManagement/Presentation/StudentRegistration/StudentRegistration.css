@@ -41,7 +41,7 @@
   background-color: var(--bg-input);
   color: var(--text-main);
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.12);
+  box-shadow: 0 0 0 2px rgba(23, 105, 210, 0.12);
 }
 
 .student-registration-page option {
@@ -305,3 +305,30 @@
 }
 
 }
+
+/* CIIT Blue registration actions and detail dialogs */
+.student-header-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; }
+.student-registration-page .btn-success, .student-registration-page .btn-primary { background:#1769d2 !important; border-color:#1769d2 !important; color:#fff !important; }
+.student-registration-page .btn-success:hover, .student-registration-page .btn-primary:hover { background:#1054ae !important; border-color:#1054ae !important; }
+.student-registration-page .btn-outline-primary { color:#1769d2 !important; border-color:#9fc4ff !important; background:transparent !important; }
+.student-registration-page .btn-outline-primary:hover { background:#eaf2ff !important; }
+.student-registration-page .form-control:focus, .student-registration-page .form-select:focus { box-shadow:0 0 0 2px rgba(23,105,210,.14); }
+.student-picker-modal { width:min(1120px,96vw); }
+.student-profile-modal { width:min(1100px,96vw); }
+.student-picker-body, .student-profile-body { padding:22px 24px; min-height:0; overflow:auto; }
+.student-picker-filters { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-bottom:16px; }
+.student-profile-identity { display:flex; align-items:center; gap:14px; padding:16px; margin-bottom:18px; border:1px solid var(--border); border-radius:12px; background:var(--bg-hover); }
+.student-profile-avatar { width:52px; height:52px; flex-shrink:0; display:grid; place-items:center; border-radius:14px; background:#1769d2; color:white; font-size:25px; }
+.student-profile-identity h3 { margin:0 0 5px; color:var(--text-main); font-size:19px; }
+.student-profile-identity p { margin:0; color:var(--text-secondary); font-size:13px; }
+.student-profile-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:22px; }
+.student-profile-grid > div { padding:13px; min-width:0; border:1px solid var(--border); border-radius:9px; background:var(--bg-main); }
+.student-profile-grid label { display:block; margin-bottom:6px; color:var(--text-secondary); font-size:11px; font-weight:700; text-transform:uppercase; }
+.student-profile-grid strong { display:block; color:var(--text-main); font-size:13px; overflow-wrap:anywhere; }
+.student-profile-section-title { margin:0 0 12px; color:var(--text-main); font-weight:700; }
+.student-profile-note { color:var(--text-secondary); font-size:12px; margin:10px 0 0; }
+.student-registration-page .table thead th { background:#e5efff; color:#24436b; }
+html[data-theme="dark"] .student-registration-page .table thead th { background:#1a3150; color:#c8dcf8; }
+html[data-theme="dark"] .student-profile-grid > div { background:#111d2e; }
+html[data-theme="dark"] .student-profile-identity { background:#172a43; }
+@media(max-width:760px) { .student-picker-filters,.student-profile-grid { grid-template-columns:1fr; } .student-picker-body,.student-profile-body { padding:15px; } .student-header-actions { width:100%; justify-content:flex-start; } }

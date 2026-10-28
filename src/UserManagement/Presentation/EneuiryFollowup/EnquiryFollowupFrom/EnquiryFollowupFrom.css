@@ -166,3 +166,210 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.dropdown-loading,
+.dropdown-empty {
+    padding: 12px 14px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.dropdown-loading::before {
+    content: "";
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    margin-right: 9px;
+    border: 2px solid #cbd5e1;
+    border-top-color: #1769d2;
+    border-radius: 50%;
+    vertical-align: -3px;
+    animation: enquiry-loader-spin .7s linear infinite;
+}
+
+@keyframes enquiry-loader-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.close-form-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.close-form-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.cancel-btn,
+.submit-btn {
+    min-height: 42px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.cancel-btn {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+}
+
+.cancel-btn:hover {
+    background: #f1f5f9;
+}
+
+.submit-btn {
+    border: 1px solid #1769d2;
+    background: #1769d2;
+    color: #fff;
+}
+
+.submit-btn:hover {
+    background: #1054ae;
+}
+
+@media (max-width: 480px) {
+    .form-actions {
+        gap: 8px;
+    }
+
+    .cancel-btn,
+    .submit-btn {
+        flex: 1;
+        padding: 0 12px;
+    }
+}
+
+/* Form header */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+/* Close button - right side */
+.close-form-btn {
+    float: right;
+    margin-left: 0;
+}
+
+.close-form-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+
+
+/* =========================================
+   ENQUIRY FORM - DARK MODE FIX
+   ========================================= */
+
+/* Main form card */
+body.dark-mode .form-card {
+    background: #0b1424;
+    color: #e5e7eb;
+    border-color: #334155;
+}
+
+/* Main Enquiry Form heading */
+body.dark-mode .form-title {
+    background: #172337;
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+body.dark-mode .form-title h1 {
+    color: #f1f5f9;
+}
+
+/* Checkbox section headings */
+body.dark-mode .check-card {
+    background: #0b1424;
+    border-color: #334155;
+}
+
+body.dark-mode .check-title {
+    background: #172337;
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+/* Form labels and checkbox text */
+body.dark-mode .form-group > label,
+body.dark-mode .gender-group,
+body.dark-mode .radio-label,
+body.dark-mode .check-grid label {
+    color: #e5e7eb;
+}
+
+/* Input fields */
+body.dark-mode .form-group input[type="text"],
+body.dark-mode .form-group input[type="email"],
+body.dark-mode .form-group input[type="date"],
+body.dark-mode .form-group select {
+    background: #0f1b2d;
+    color: #f1f5f9;
+    border-color: #334155;
+}
+
+/* Placeholder text */
+body.dark-mode .form-group input::placeholder {
+    color: #94a3b8;
+}
+
+/* Loading and empty messages */
+body.dark-mode .dropdown-loading,
+body.dark-mode .dropdown-empty {
+    color: #cbd5e1;
+}
+
+/* Cancel button */
+body.dark-mode .cancel-btn {
+    background: #172337;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+
+/* Close button */
+body.dark-mode .close-form-btn {
+    color: #cbd5e1;
+}
+
+body.dark-mode .close-form-btn:hover {
+    background: #3b1c24;
+    color: #fca5a5;
+}
+
+/* Back link */
+body.dark-mode .back-link {
+    color: #60a5fa;
+}

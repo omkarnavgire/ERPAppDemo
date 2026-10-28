@@ -6,22 +6,22 @@
    ================================ */
 
 :root {
-    --ciit-bg: #f5f8f6;
+    --ciit-bg: #f3f7fc;
     --ciit-surface: #ffffff;
-    --ciit-border: #e2e9e5;
+    --ciit-border: #dce6f2;
 
-    --ciit-text: #44534c;
-    --ciit-muted: #718078;
-    --ciit-light-text: #a0aaa5;
+    --ciit-text: #25364d;
+    --ciit-muted: #687b94;
+    --ciit-light-text: #91a0b4;
 
-    --ciit-primary: #059669;
-    --ciit-primary-hover: #eaf5f0;
+    --ciit-primary: #1769d2;
+    --ciit-primary-hover: #e8f1ff;
 
-    --ciit-navbar: #0f2e22;
+    --ciit-navbar: #104b91;
     --ciit-navbar-text: #ffffff;
 
-    --ciit-logout: #7f1d1d;
-    --ciit-logout-hover: #dc2626;
+    --ciit-logout: #174f91;
+    --ciit-logout-hover: #0d3b73;
 }
 
 
@@ -113,7 +113,7 @@ a {
 }
 
 .ciit-logo-sub {
-    color: #9dc8b5;
+    color: #dceaff;
 
     font-size: 10px;
 
@@ -338,7 +338,7 @@ a {
 .ciit-sidebar-list a:hover {
     background: var(--ciit-primary-hover);
 
-    color: #047857;
+    color: var(--ciit-primary);
 
     transform: translateX(2px);
 }
@@ -356,7 +356,7 @@ a {
     font-weight: 600;
 
     box-shadow:
-        0 4px 10px rgba(5, 150, 105, .20);
+        0 4px 10px rgba(23, 105, 210, .20);
 }
 
 
@@ -407,28 +407,37 @@ a {
    DARK THEME - READY FOR SETTINGS
    ================================ */
 
-[data-theme="dark"] {
-    --ciit-bg: #111827;
-
-    --ciit-surface: #1f2937;
-
-    --ciit-border: #374151;
-
-    --ciit-text: #e5e7eb;
-
-    --ciit-muted: #9ca3af;
-
-    --ciit-light-text: #6b7280;
-
-    --ciit-primary: #059669;
-
-    --ciit-primary-hover: #064e3b;
-
-    --ciit-navbar: #071a13;
-
+html[data-theme="dark"], [data-theme="dark"] {
+    color-scheme: dark;
+    --ciit-bg: #0b1220;
+    --ciit-surface: #111d2e;
+    --ciit-border: #273950;
+    --ciit-text: #e6eefb;
+    --ciit-muted: #a3b4cc;
+    --ciit-light-text: #8295b0;
+    --ciit-primary: #1677f9;
+    --ciit-primary-hover: #1b3453;
+    --ciit-navbar: #071b35;
     --ciit-navbar-text: #ffffff;
+    --bg-main: #0b1220;
+    --bg-card: #111d2e;
+    --bg-sidebar: #101b2b;
+    --bg-input: #0e1929;
+    --bg-hover: #1a2c45;
+    --text-main: #e6eefb;
+    --text-secondary: #a3b4cc;
+    --text-muted: #8295b0;
+    --border: #273950;
+    --border-light: #22344b;
+    --primary: #1677f9;
+    --primary-dark: #0c62d6;
+    --navbar: #071b35;
+    --shadow: rgba(0,0,0,.32);
 }
 
+html[data-theme="light"] {
+    color-scheme: light;
+}
 
 /* ================================
    DARK THEME SIDEBAR
@@ -524,9 +533,9 @@ a {
     --text-muted: #89928f;
     --border: #e2e9e5;
     --border-light: #e9edeb;
-    --primary: #059669;
-    --primary-dark: #047857;
-    --navbar: #0f2e22;
+    --primary: #1769d2;
+    --primary-dark: #1054ae;
+    --navbar: #104b91;
     --shadow: rgba(15,46,34,.08);
 }
 
@@ -541,8 +550,8 @@ html[data-theme="dark"] {
     --text-muted: #82918b;
     --border: #293936;
     --border-light: #263532;
-    --primary: #10b981;
-    --primary-dark: #059669;
+    --primary: #1769d2;
+    --primary-dark: #1769d2;
     --navbar: #09251c;
     --shadow: rgba(0,0,0,.35);
 }
@@ -557,4 +566,148 @@ html[data-theme="dark"],
 html[data-theme="dark"] body {
     background: var(--bg-main) !important;
     color: var(--text-main) !important;
+}
+
+/* ================================
+   CIIT BLUE / LIGHT + DARK THEMES
+   ================================ */
+html, body { background: var(--bg-main, var(--ciit-bg)); color: var(--text-main, var(--ciit-text)); transition: background-color .18s ease, color .18s ease; }
+html[data-theme="dark"] body { background: #0b1220 !important; color: #e6eefb !important; }
+html[data-theme="dark"] .ciit-page, html[data-theme="dark"] .ciit-content,
+html[data-theme="dark"] .ciit-sidebar, html[data-theme="dark"] .card,
+html[data-theme="dark"] .modal-content, html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .list-group-item, html[data-theme="dark"] .table,
+html[data-theme="dark"] .table-light, html[data-theme="dark"] .bg-light {
+    background-color: var(--bg-card, #111d2e) !important; color: var(--text-main, #e6eefb) !important;
+    border-color: var(--border, #273950) !important;
+}
+html[data-theme="dark"] .card-header, html[data-theme="dark"] .modal-header,
+html[data-theme="dark"] .modal-footer { background-color: #16263b !important; color: #e6eefb !important; border-color: #273950 !important; }
+html[data-theme="dark"] .form-control, html[data-theme="dark"] .form-select,
+html[data-theme="dark"] textarea, html[data-theme="dark"] select, html[data-theme="dark"] input {
+    background-color: var(--bg-input, #0e1929); color: var(--text-main, #e6eefb); border-color: var(--border, #273950);
+}
+html[data-theme="dark"] .form-control::placeholder, html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder { color: #8295b0; }
+html[data-theme="dark"] .table { --bs-table-bg: #111d2e; --bs-table-color: #e6eefb; --bs-table-border-color: #273950; --bs-table-striped-bg: #142239; --bs-table-striped-color: #e6eefb; --bs-table-hover-bg: #1a2c45; --bs-table-hover-color: #fff; }
+html[data-theme="dark"] .text-dark, html[data-theme="dark"] .text-body { color: #e6eefb !important; }
+html[data-theme="dark"] .text-muted { color: #a3b4cc !important; }
+html[data-theme="dark"] .btn-close { filter: invert(1) grayscale(1); }
+html[data-theme="dark"] .alert-success { background: #102d45; color: #b9dcff; border-color: #24527c; }
+html[data-theme="dark"] .alert-danger { background: #3a1c2a; color: #ffd4df; border-color: #713149; }
+
+/* Replace the legacy green Bootstrap success palette with CIIT blue. */
+.btn-success, .bg-success { background-color: #1769d2 !important; border-color: #1769d2 !important; color: #fff !important; }
+.btn-success:hover { background-color: #1054ae !important; border-color: #1054ae !important; }
+.btn-outline-success { color: #1769d2 !important; border-color: #1769d2 !important; }
+.btn-outline-success:hover { background-color: #1769d2 !important; color: #fff !important; }
+.text-success { color: #1769d2 !important; }
+html[data-theme="dark"] .btn-success, html[data-theme="dark"] .bg-success { background-color: #1677f9 !important; border-color: #1677f9 !important; color: #fff !important; }
+html[data-theme="dark"] .btn-outline-primary { color: #7eb6ff !important; border-color: #438de7 !important; }
+html[data-theme="dark"] .btn-outline-primary:hover { background: #1677f9 !important; color: #fff !important; }
+html[data-theme="dark"] .bg-white { background-color: #111d2e !important; }
+html[data-theme="dark"] .border, html[data-theme="dark"] hr { border-color: #273950 !important; }
+
+
+
+/* Enquiry form - fix headings in the actual CIIT dark theme */
+html[data-theme="dark"] .enquiry-form-page .form-card {
+    background: var(--bg-card);
+    color: var(--text-main);
+    border-color: var(--border);
+}
+
+html[data-theme="dark"] .enquiry-form-page .form-title,
+html[data-theme="dark"] .enquiry-form-page .check-title {
+    background: #1a2c45 !important;
+    color: #e6eefb !important;
+    border-color: #273950 !important;
+}
+
+html[data-theme="dark"] .enquiry-form-page .form-title h1,
+html[data-theme="dark"] .enquiry-form-page .check-title,
+html[data-theme="dark"] .enquiry-form-page .check-title * {
+    color: #e6eefb !important;
+}
+
+html[data-theme="dark"] .enquiry-form-page .form-group label,
+html[data-theme="dark"] .enquiry-form-page .check-grid label {
+    color: #e6eefb;
+}
+
+html[data-theme="dark"] .enquiry-form-page .form-group input,
+html[data-theme="dark"] .enquiry-form-page .form-group select {
+    background: #0e1929;
+    color: #e6eefb;
+    border-color: #273950;
+}
+
+html[data-theme="dark"] .enquiry-form-page .back-link {
+    color: #8ec0ff;
+}
+
+
+/* =========================================
+   ENQUIRY FORM - CONSISTENT DARK MODE FIELDS
+   ========================================= */
+
+html[data-theme="dark"] .enquiry-form-page {
+    color: #e6eefb;
+}
+
+/* All form fields */
+html[data-theme="dark"] .enquiry-form-page input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] .enquiry-form-page select,
+html[data-theme="dark"] .enquiry-form-page textarea {
+    background-color: #0e1929 !important;
+    color: #e6eefb !important;
+    border: 1px solid #475569 !important;
+    border-radius: 5px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color-scheme: dark;
+}
+
+/* Date and number fields */
+html[data-theme="dark"] .enquiry-form-page input[type="date"],
+html[data-theme="dark"] .enquiry-form-page input[type="number"],
+html[data-theme="dark"] .enquiry-form-page input[type="tel"] {
+    background-color: #0e1929 !important;
+    color: #e6eefb !important;
+    color-scheme: dark;
+}
+
+/* Placeholder */
+html[data-theme="dark"] .enquiry-form-page input::placeholder,
+html[data-theme="dark"] .enquiry-form-page textarea::placeholder {
+    color: #a3b4cc !important;
+    opacity: 1;
+}
+
+/* Dropdown options */
+html[data-theme="dark"] .enquiry-form-page select option {
+    background-color: #111d2e;
+    color: #e6eefb;
+}
+
+/* Focus */
+html[data-theme="dark"] .enquiry-form-page input:focus,
+html[data-theme="dark"] .enquiry-form-page select:focus,
+html[data-theme="dark"] .enquiry-form-page textarea:focus {
+    border-color: #1677f9 !important;
+    outline: 2px solid rgba(22, 119, 249, .2);
+    outline-offset: 1px;
+}
+
+/* Keep checkbox and radio controls consistent */
+html[data-theme="dark"] .enquiry-form-page input[type="checkbox"],
+html[data-theme="dark"] .enquiry-form-page input[type="radio"] {
+    accent-color: #1677f9;
+}
+
+/* Consistent labels */
+html[data-theme="dark"] .enquiry-form-page .form-group label,
+html[data-theme="dark"] .enquiry-form-page .check-grid label {
+    color: #e6eefb !important;
 }

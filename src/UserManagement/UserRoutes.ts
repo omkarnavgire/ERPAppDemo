@@ -8,9 +8,7 @@ import { ChangePasswordClass } from "./Presentation/Account/ChangePassword/Chang
 import { ProfileComponent } from "./Presentation/Account/Profile/ProfileComponent";
 
 import { DashboardComponent } from "./Presentation/Dashboard/DashboardComponent";
-import { UserComponent } from "./Presentation/User/UserComponent";
 import { LeadComponent } from "./Presentation/Lead/LeadComponent";
-import { EmployeeComponent } from "./Presentation/Employee/EmployeeComponent";
 import { MainClass } from "./Maincomponent";
 
 import { authGuard } from "./Core/guards/AuthGuards";
@@ -22,16 +20,20 @@ import { FollowupForm } from "./Presentation/EneuiryFollowup/Followup/FollowupFo
 
 import { TrainingCourseComponent } from "./Presentation/TrainingCourse/TrainingCourseComponent";
 import { SettingsComponent } from "./Presentation/Settings/SettingsComponent";
-import { EditUserRolesComponent } from "./Presentation/User/EditUserRoles/EditUserRolesComponent";
+import { EditUserRolesComponent } from "./Presentation/Employee/EditUserRoles/EditUserRolesComponent";
 import { LeadFollowupComponent } from "./Presentation/Lead/LeadFollowup/LeadFollowupComponent";
 import { FunctionManagementComponent } from "./Presentation/FunctionManagement/FunctionManagementComponent";
 import { ReportsComponent } from "./Presentation/Reports/ReportsComponent";
 
 import { StudentRegistrationComponent } from "../Account/Presentation/StudentRegistration/StudentRegistrationComponent";
 import { NewStudentRegistration } from "../Account/Presentation/StudentRegistration/NewStudent/NewStudentRegistration";
+import { StudentDetails } from "../Account/Presentation/StudentDetails/StudentDetails";
 
 import { StudentPaymentListComponent } from "../Account/Presentation/StudentPayment/student-payment-list/student-payment-list.component";
 import { CreatePaymentComponent } from "../Account/Presentation/StudentPayment/create-payment/create-payment";
+
+import { BatchComponent } from "src/Group-Leader/Presentation/BatchComponent";
+import { EmployeeComponent } from "./Presentation/Employee/Employee";
 
 export const routes: Routes = [
     // Authentication Routes
@@ -62,7 +64,7 @@ export const routes: Routes = [
             },
             {
                 path: "user",
-                component: UserComponent,
+                component: EmployeeComponent,
                 data: { permission: PERMISSIONS.USER_VIEW },
                 canActivate: [authGuard]
             },
@@ -85,16 +87,22 @@ export const routes: Routes = [
                 canActivate: [authGuard]
             },
             {
-                path: "employee",
-                component: EmployeeComponent,
-                data: { permission: PERMISSIONS.EMPLOYEE_VIEW },
-                canActivate: [authGuard]
-            },
-            {
                 path: "change-password",
                 component: ChangePasswordClass,
                 canActivate: [authGuard]
             },
+
+            // Group Leader - Batch Management Route
+            {
+                path: "batch",
+                component: BatchComponent,
+                canActivate: [authGuard],
+                data: {
+                    roles: ["Admin", "Super User", "Group Leader"]
+                }
+            },
+
+            // Profile Route
             {
                 path: "profile",
                 component: ProfileComponent,
@@ -162,6 +170,11 @@ export const routes: Routes = [
             {
                 path: "student-registration",
                 component: StudentRegistrationComponent,
+                canActivate: [authGuard]
+            },
+            {
+                path: "student-details/:studentId",
+                component: StudentDetails,
                 canActivate: [authGuard]
             },
             {

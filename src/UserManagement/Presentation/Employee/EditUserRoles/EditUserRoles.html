@@ -1,0 +1,159 @@
+<div class="page-container">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Edit User Roles</h1>
+            <p>{{userName}}</p>
+        </div>
+
+        <button
+            type="button"
+            class="back-btn"
+            (click)="back()">
+            ← Back
+        </button>
+
+    </div>
+
+    @if(loading) {
+
+        <div class="loading-box">
+            Loading roles...
+        </div>
+
+    } @else {
+
+        @if(errorMessage) {
+
+            <div class="message error-message">
+                {{errorMessage}}
+            </div>
+
+        }
+
+        @if(successMessage) {
+
+            <div class="message success-message">
+                {{successMessage}}
+            </div>
+
+        }
+
+        <div class="roles-card">
+
+            <div class="roles-title">
+                <h2>Assign User Roles</h2>
+            </div>
+
+            <div class="role-search">
+
+                <input
+                    type="text"
+                    placeholder="filter topic by name"
+                    #roleSearch>
+
+            </div>
+
+            <div class="role-label">
+                Role Name
+            </div>
+
+            <div class="roles-grid">
+
+                @for(role of allRoles; track role.roleId) {
+
+                    @if(
+                        role.roleName
+                            .toLowerCase()
+                            .includes(
+                                roleSearch.value.toLowerCase()
+                            )
+                    ) {
+
+                        <label class="role-checkbox">
+
+                            <input
+                                type="checkbox"
+                                [checked]="isSelected(role.roleId)"
+                                (change)="toggleRole(role,$event)">
+
+                            <span>
+                                {{role.roleName}}
+                            </span>
+
+                        </label>
+
+                    }
+
+                }
+
+            </div>
+
+            <div class="selected-section">
+
+                <div class="selected-header">
+                    <h3>Selected Roles</h3>
+
+                    <span>
+                        {{selectedRoleIds.length}} selected
+                    </span>
+                </div>
+
+                <div class="selected-roles">
+
+                    @for(role of allRoles; track role.roleId) {
+
+                        @if(isSelected(role.roleId)) {
+
+                            <span class="selected-role">
+                                {{role.roleName}}
+                            </span>
+
+                        }
+
+                    }
+
+                    @if(selectedRoleIds.length===0) {
+
+                        <span class="no-selected">
+                            No roles selected
+                        </span>
+
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="roles-footer">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    [disabled]="saving"
+                    (click)="back()">
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="submit-btn"
+                    [disabled]="saving || !hasChanges()"
+                    (click)="saveChanges()">
+
+                    @if(saving) {
+                        Saving...
+                    } @else {
+                        Submit
+                    }
+
+                </button>
+
+            </div>
+
+        </div>
+
+    }
+
+</div>

@@ -95,13 +95,13 @@ export class StudentRegistrationComponent implements OnInit {
     }
   }
 
-clearSearch(): void {
-  this.searchText = "";
-  this.courseSearch = "";
+  clearSearch(): void {
+    this.searchText = "";
+    this.courseSearch = "";
 
-  // Refresh the displayed list after clearing filters
-  this.registrations = [...this.registrations];
-}
+    // Refresh the displayed list after clearing filters
+    this.registrations = [...this.registrations];
+  }
 
   loadRegistrations(): void {
     if (this.loading) {
@@ -120,8 +120,7 @@ clearSearch(): void {
           this.loading = false;
 
           console.log(
-            `Student registrations request completed in ${
-              (performance.now() - startTime).toFixed(0)
+            `Student registrations request completed in ${(performance.now() - startTime).toFixed(0)
             } ms`
           );
         })
@@ -186,25 +185,67 @@ clearSearch(): void {
   private getRows(response: any): any[] {
     if (Array.isArray(response)) return response;
     const candidates = [response?.data, response?.result, response?.items,
-      response?.registrations, response?.$values, response?.data?.$values,
-      response?.result?.$values, response?.items?.$values];
+    response?.registrations, response?.$values, response?.data?.$values,
+    response?.result?.$values, response?.items?.$values];
     return candidates.find(Array.isArray) ?? [];
   }
 
-  private buildUniqueStudents(): void {
+  // private buildUniqueStudents(): void {
+  //   const studentMap = new Map<number, ExistingStudent>();
+  //   const courseSets = new Map<number, Set<string>>();
+
+  //   for (const registration of this.registrations) {
+  //     if (!registration.studentId) {
+  //       continue;
+  //     }
+
+  //     let student = studentMap.get(registration.studentId);
+
+  //     if (!student) {
+  //       student = {
+  //         studentId: registration.studentId,
+  //         studentName: registration.studentName,
+  //         lastName: registration.lastName,
+  //         mobileNumber: registration.mobileNumber,
+  //         emailAddress: registration.emailAddress,
+  //         registeredCourses: "",
+  //         registrations: []
+  //       };
+
+  //       studentMap.set(registration.studentId, student);
+  //       courseSets.set(registration.studentId, new Set<string>());
+  //     }
+
+  //     student.registrations.push(registration);
+
+  //     if (registration.courseName) {
+  //       courseSets.get(registration.studentId)?.add(
+  //         registration.courseName
+  //       );
+  //     }
+  //   }
+
+  //   for (const [studentId, student] of studentMap) {
+  //     student.registeredCourses = [
+  //       ...(courseSets.get(studentId) ?? [])
+  //     ].join(", ");
+  //   }
+
+  //   this.students = Array.from(studentMap.values());
+  // }
+
+  buildUniqueStudents(): void {
     const studentMap = new Map<number, ExistingStudent>();
-    const courseSets = new Map<number, Set<string>>();
+    const courseNames = new Map<number, Set<string>>();
 
     for (const registration of this.registrations) {
-      if (!registration.studentId) {
-        continue;
-      }
+      const studentId = Number(registration.studentId);
+      if (studentId <= 0) continue;
 
-      let student = studentMap.get(registration.studentId);
-
+      let student = studentMap.get(studentId);
       if (!student) {
         student = {
-          studentId: registration.studentId,
+          studentId,
           studentName: registration.studentName,
           lastName: registration.lastName,
           mobileNumber: registration.mobileNumber,
@@ -212,27 +253,28 @@ clearSearch(): void {
           registeredCourses: "",
           registrations: []
         };
-
-        studentMap.set(registration.studentId, student);
-        courseSets.set(registration.studentId, new Set<string>());
+        studentMap.set(studentId, student);
+        courseNames.set(studentId, new Set<string>());
       }
 
+      // Keep every registration so previous courses are shown and excluded
+      // from the new-course dropdown.
       student.registrations.push(registration);
-
       if (registration.courseName) {
-        courseSets.get(registration.studentId)?.add(
-          registration.courseName
-        );
+        courseNames.get(studentId)?.add(registration.courseName);
       }
     }
 
     for (const [studentId, student] of studentMap) {
-      student.registeredCourses = [
-        ...(courseSets.get(studentId) ?? [])
-      ].join(", ");
+      student.registeredCourses = Array.from(
+        courseNames.get(studentId) ?? new Set<string>()
+      ).join(", ");
     }
 
     this.students = Array.from(studentMap.values());
+    console.log(
+      `Loaded ${this.registrations.length} registrations and ${this.students.length} unique students`
+    );
   }
 
   get filteredRegistrations(): RegistrationRow[] {
@@ -304,12 +346,12 @@ clearSearch(): void {
 
     this.loadRegistrations();
   }
-trackByRegistrationId(
-  index: number,
-  registration: RegistrationRow
-): number {
-  return registration.registrationId || index;
-}
+  trackByRegistrationId(
+    index: number,
+    registration: RegistrationRow
+  ): number {
+    return registration.registrationId || index;
+  }
   onExistingStudentSaved(): void {
     this.showExistingCourseForm = false;
     this.selectedStudent = null;
@@ -319,4 +361,77 @@ trackByRegistrationId(
 
     this.loadRegistrations();
   }
+
+  openExistingStudentForm(): void {
+    this.showForm = false;
+    this.errorMessage = "";
+    this.successMessage = "";
+    this.selectedStudent = null;
+    this.showExistingCourseForm = true;
+  }
+
+
+
+openStudentDetails(registration: RegistrationRow): void {
+  const studentId = Number(registration.studentId);
+
+  if (studentId <= 0) {
+    this.errorMessage = "Invalid Student ID.";
+    return;
+  }
+
+  // Find the unique student using Student ID.
+  const existingStudent = this.students.find(
+    student => Number(student.studentId) === studentId
+  );
+
+  if (!existingStudent) {
+    this.errorMessage = "Student details not found.";
+    return;
+  }
+
+  this.errorMessage = "";
+  this.successMessage = "";
+
+  // Prepare all registered courses for this student.
+  const courses = existingStudent.registrations.map(item => ({
+    registrationCode: item.registrationCode,
+    courseName: item.courseName,
+    courseFees: null,
+    discount: null,
+    finalFees: null,
+    status: item.currentStatus || "Not available"
+  }));
+
+  // Pass only available payment amounts.
+  // Date, payment mode and description require payment API data.
+  const payments = existingStudent.registrations
+    .filter(item => Number(item.paymentAmount) > 0)
+    .map(item => ({
+      paymentDate: "",
+      amount: Number(item.paymentAmount),
+      paymentMode: "",
+      description: item.courseName
+        ? `Payment recorded for ${item.courseName}`
+        : "",
+      status: item.currentStatus || "Not available"
+    }));
+
+  const studentDetails = {
+    ...existingStudent,
+    firstName: existingStudent.studentName,
+    courses,
+    payments
+  };
+
+  // Open the separate Student Details page, not Existing Registration.
+  this.router.navigate(
+    ["/main/student-details", studentId],
+    {
+      state: {
+        student: studentDetails
+      }
+    }
+  );
+}
 }
