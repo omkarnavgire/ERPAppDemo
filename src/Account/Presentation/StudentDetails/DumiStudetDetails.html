@@ -1,0 +1,303 @@
+
+<div class="student-details-page">
+
+  <!-- Header -->
+  <header class="details-header">
+    <button class="back-button" type="button" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i>
+      Back to Students
+    </button>
+
+    <div class="details-title-row">
+      <div class="details-title-icon">
+        <i class="bi bi-person-vcard-fill"></i>
+      </div>
+
+      <div class="details-title-content">
+        <h2>Student Details</h2>
+        <p>Complete student profile, education, courses and payments.</p>
+      </div>
+
+      <span class="student-id-badge">
+        Student ID: {{ student.studentId || '-' }}
+      </span>
+    </div>
+  </header>
+
+  <!-- Loading / Error -->
+  <div *ngIf="loading" class="details-message">
+    <div class="spinner-border text-primary"></div>
+    <p>Loading student details...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- Personal Information -->
+    <section class="details-card">
+      <div class="details-card-header">
+        <span class="details-icon personal-icon">
+          <i class="bi bi-person-fill"></i>
+        </span>
+        <div>
+          <h3>Personal Information</h3>
+          <p>Student's personal and contact details</p>
+        </div>
+      </div>
+
+      <div class="details-card-body">
+        <div class="details-grid">
+
+          <div class="detail-item">
+            <label>Student ID</label>
+            <strong>{{ student.studentId || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>First Name</label>
+            <strong>{{ student.firstName || student.studentName || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Last Name</label>
+            <strong>{{ student.lastName || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Date of Birth</label>
+            <strong>{{ student.dateOfBirth || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Gender</label>
+            <strong>{{ student.gender || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Mobile Number</label>
+            <strong>{{ student.mobileNumber || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>WhatsApp Number</label>
+            <strong>{{ student.whatsAppNumber || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Email Address</label>
+            <strong>{{ student.emailAddress || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Parent Name</label>
+            <strong>{{ student.parentName || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Parent Mobile</label>
+            <strong>{{ student.parentMobileNumber || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Aadhaar Number</label>
+            <strong>{{ student.aadhaarNumber || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Local Address</label>
+            <strong>{{ student.localAddress || '-' }}</strong>
+          </div>
+
+          <div class="detail-item detail-full-width">
+            <label>Permanent Address</label>
+            <strong>{{ student.permanentAddress || '-' }}</strong>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Qualification -->
+    <section class="details-card">
+      <div class="details-card-header">
+        <span class="details-icon qualification-icon">
+          <i class="bi bi-mortarboard-fill"></i>
+        </span>
+        <div>
+          <h3>Qualification Details</h3>
+          <p>Educational background and academic results</p>
+        </div>
+      </div>
+
+      <div class="details-card-body">
+        <div class="details-grid">
+
+          <div class="detail-item">
+            <label>Qualification</label>
+            <strong>{{ student.qualification || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>University / Board</label>
+            <strong>{{ student.universityBoard || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Passing Year</label>
+            <strong>{{ student.passingYear || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Medium</label>
+            <strong>{{ student.medium || '-' }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Percentage / CGPA</label>
+            <strong>{{ student.percentageCgpa ?? '-' }}</strong>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Courses -->
+    <section class="details-card">
+      <div class="details-card-header">
+        <span class="details-icon course-icon">
+          <i class="bi bi-book-half"></i>
+        </span>
+        <div>
+          <h3>Course Details</h3>
+          <p>Registered courses and registration information</p>
+        </div>
+      </div>
+
+      <div class="details-card-body">
+
+        <div class="details-grid mb-3">
+          <div class="detail-item">
+            <label>Total Registered Courses</label>
+            <strong>{{ student.courses.length }}</strong>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table details-table">
+            <thead>
+              <tr>
+                <th>Sr.</th>
+                <th>Registration Code</th>
+                <th>Course Name</th>
+                <th>Course Fees (₹)</th>
+                <th>Discount (₹)</th>
+                <th>Final Fees (₹)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let course of student.courses; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ course.registrationCode || '-' }}</td>
+                <td>{{ course.courseName || '-' }}</td>
+                <td>{{ course.courseFees ?? '-' }}</td>
+                <td>{{ course.discount ?? '-' }}</td>
+                <td>{{ course.finalFees ?? '-' }}</td>
+                <td>
+                  <span class="status-badge">
+                    {{ course.status || 'Not available' }}
+                  </span>
+                </td>
+              </tr>
+
+              <tr *ngIf="student.courses.length === 0">
+                <td colspan="7" class="text-center py-4">
+                  No course details available.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Payments -->
+    <section class="details-card">
+      <div class="details-card-header">
+        <span class="details-icon payment-icon">
+          <i class="bi bi-credit-card-fill"></i>
+        </span>
+        <div>
+          <h3>Payment Details</h3>
+          <p>Payment transactions and payment status</p>
+        </div>
+      </div>
+
+      <div class="details-card-body">
+
+        <div class="details-grid mb-3">
+          <div class="detail-item">
+            <label>Total Payments Recorded</label>
+            <strong>{{ student.payments.length }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <label>Total Amount Paid (₹)</label>
+            <strong>{{ totalPaid }}</strong>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table details-table">
+            <thead>
+              <tr>
+                <th>Sr.</th>
+                <th>Payment Date</th>
+                <th>Amount (₹)</th>
+                <th>Payment Mode</th>
+                <th>Description</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let payment of student.payments; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ payment.paymentDate || '-' }}</td>
+                <td>{{ payment.amount ?? '-' }}</td>
+                <td>{{ payment.paymentMode || '-' }}</td>
+                <td>{{ payment.description || '-' }}</td>
+                <td>
+                  <span class="status-badge">
+                    {{ payment.status || 'Not available' }}
+                  </span>
+                </td>
+              </tr>
+
+              <tr *ngIf="student.payments.length === 0">
+                <td colspan="6" class="text-center py-4">
+                  No payment details available.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+  </ng-container>
+
+  <footer class="details-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="goBack()">
+      <i class="bi bi-arrow-left me-1"></i>
+      Back to Students
+    </button>
+  </footer>
+
+</div>

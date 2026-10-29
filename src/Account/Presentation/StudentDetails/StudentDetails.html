@@ -226,70 +226,61 @@
       </div>
     </section>
 
-    <!-- Payments -->
-    <section class="details-card">
-      <div class="details-card-header">
-        <span class="details-icon payment-icon">
-          <i class="bi bi-credit-card-fill"></i>
-        </span>
-        <div>
-          <h3>Payment Details</h3>
-          <p>Payment transactions and payment status</p>
-        </div>
-      </div>
+   
 
-      <div class="details-card-body">
+<!-- Payment Details -->
+<div class="details-card payment-details-card">
 
-        <div class="details-grid mb-3">
-          <div class="detail-item">
-            <label>Total Payments Recorded</label>
-            <strong>{{ student.payments.length }}</strong>
-          </div>
+  <div class="details-card-header">
+    <div class="details-icon payment-icon">
+      <i class="bi bi-credit-card-fill"></i>
+    </div>
 
-          <div class="detail-item">
-            <label>Total Amount Paid (₹)</label>
-            <strong>{{ totalPaid }}</strong>
-          </div>
-        </div>
+    <div>
+      <h3>Payment Details</h3>
+      <p>Course fees, discount, final fees and payment balance</p>
+    </div>
+  </div>
 
-        <div class="table-responsive">
-          <table class="table details-table">
-            <thead>
-              <tr>
-                <th>Sr.</th>
-                <th>Payment Date</th>
-                <th>Amount (₹)</th>
-                <th>Payment Mode</th>
-                <th>Description</th>
-                <th>Status</th>
-              </tr>
-            </thead>
+  <div class="details-card-body">
+    <div class="table-responsive">
 
-            <tbody>
-              <tr *ngFor="let payment of student.payments; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>{{ payment.paymentDate || '-' }}</td>
-                <td>{{ payment.amount ?? '-' }}</td>
-                <td>{{ payment.paymentMode || '-' }}</td>
-                <td>{{ payment.description || '-' }}</td>
-                <td>
-                  <span class="status-badge">
-                    {{ payment.status || 'Not available' }}
-                  </span>
-                </td>
-              </tr>
+      <table class="table payment-summary-table">
+        <thead>
+          <tr>
+            <th>Sr. No.</th>
+            <th>Course Name</th>
+            <th>Course Fees (₹)</th>
+            <th>Discount (₹)</th>
+            <th>Final Fees (₹)</th>
+            <th>Total Paid (₹)</th>
+            <th>Remaining Balance (₹)</th>
+          </tr>
+        </thead>
 
-              <tr *ngIf="student.payments.length === 0">
-                <td colspan="6" class="text-center py-4">
-                  No payment details available.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <tbody>
+          <tr *ngFor="let course of student.courses; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ course.courseName || '-' }}</td>
+            <td>{{ course.courseFees ?? '-' }}</td>
+            <td>{{ course.discount ?? 0 }}</td>
+            <td>{{ course.finalFees ?? '-' }}</td>
+            <td>{{ course.totalPaid ?? '-' }}</td>
+            <td>{{ course.remainingBalance ?? '-' }}</td>
+          </tr>
 
-      </div>
-    </section>
+          <tr *ngIf="student.courses.length === 0">
+            <td colspan="7" class="text-center py-4">
+              No course payment details available.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
 
   </ng-container>
 

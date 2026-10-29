@@ -2,9 +2,8 @@ import { Component, EventEmitter, Output, OnInit, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
-import { catchError, timeout, finalize } from 'rxjs/operators';
-
+import { forkJoin, of } from 'rxjs';
+import { catchError, timeout, finalize, map, take } from 'rxjs/operators';
 import { StudentRegistrationApi } from '../../../Infrastructure/Api/StudentRegistrationApi';
 import { StudentPaymentService } from '../../../Application/StudentPayment/StudentPaymentService';
 import { StudentPaymentRequest } from '../../../Domain/DTOs/StudentPaymentRequest';
@@ -253,53 +252,105 @@ export class CreatePaymentComponent implements OnInit {
     });
   }
 
-  private refreshRegistrationBalances(): void {
-    for (const student of this.students) {
-      for (const registration of student.registrations ?? []) {
-        const registrationPayments = this.allPayments.filter(payment =>
-          this.toNumber(
-            this.getValue(
-              payment,
-              'registrationId',
-              'registration_Id',
-              'RegistrationId'
-            )
-          ) === this.toNumber(registration.registrationId) &&
-          this.getValue(payment, 'isPaid', 'IsPaid') !== false &&
-          this.getValue(payment, 'isPaid', 'IsPaid') !== 0
+private getLatestPaymentSummary(registrationId: number): any | null {
+  const records = this.allPayments.filter(payment =>
+    Number(
+      this.getValue(
+        payment,
+        'registrationId',
+        'registration_Id',
+        'RegistrationId'
+      )
+    ) === Number(registrationId) &&
+    this.getValue(payment, 'isPaid', 'IsPaid') !== false &&
+    Number(this.getValue(payment, 'isPaid', 'IsPaid') ?? 1) !== 0
+  );
+
+  if (!records.length) {
+    return null;
+  }
+
+  // Latest payment date first; paymentId breaks ties.
+  records.sort((a, b) => {
+    const dateA = new Date(
+      this.getValue(a, 'paymentDate', 'PaymentDate') ?? 0
+    ).getTime();
+
+    const dateB = new Date(
+      this.getValue(b, 'paymentDate', 'PaymentDate') ?? 0
+    ).getTime();
+
+    if (dateA !== dateB) {
+      return dateB - dateA;
+    }
+
+    return Number(b.paymentId ?? b.PaymentId ?? 0) -
+           Number(a.paymentId ?? a.PaymentId ?? 0);
+  });
+
+  return records[0];
+}
+
+ private refreshRegistrationBalances(): void {
+  for (const student of this.students) {
+    for (const registration of student.registrations ?? []) {
+      const latest = this.getLatestPaymentSummary(
+        registration.registrationId
+      );
+
+      if (latest) {
+        // get-all already contains the aggregated fee summary.
+        registration.courseFees = this.toNumber(
+          latest.courseFees ?? latest.CourseFees ??
+          registration.courseFees
         );
 
-        registration.totalPaid = registrationPayments.reduce(
-          (total: number, payment: any) =>
-            total + this.toNumber(
-              this.getValue(
-                payment,
-                'paymentAmount',
-                'payment_Amount',
-                'PaymentAmount'
-              )
-            ),
+        registration.discount = this.toNumber(
+          latest.discount ?? latest.Discount ??
+          registration.discount
+        );
+
+        registration.finalFees = this.toNumber(
+          latest.finalFees ?? latest.FinalFees ??
+          Math.max(
+            registration.courseFees - registration.discount,
+            0
+          )
+        );
+
+        registration.totalPaid = this.toNumber(
+          latest.totalPaid ?? latest.TotalPaid
+        );
+
+        registration.remainingBalance = this.toNumber(
+          latest.remainingBalance ?? latest.RemainingBalance
+        );
+
+        registration.feeLoaded = true;
+        registration.feeError = false;
+        registration.fullyPaid =
+          registration.remainingBalance <= 0;
+
+      } else if (registration.courseFees > 0) {
+        // No payment record exists: calculate from the registration fee.
+        registration.finalFees = Math.max(
+          registration.courseFees -
+          this.toNumber(registration.discount),
           0
         );
 
-        if (registration.courseFees > 0) {
-          registration.finalFees = Math.max(
-            registration.courseFees - this.toNumber(registration.discount),
-            0
-          );
-
-          registration.remainingBalance = Math.max(
-            registration.finalFees - registration.totalPaid,
-            0
-          );
-
-          registration.feeLoaded = true;
-          registration.feeError = false;
-          registration.fullyPaid = registration.remainingBalance <= 0;
-        }
+        registration.totalPaid = 0;
+        registration.remainingBalance = registration.finalFees;
+        registration.feeLoaded = true;
+        registration.feeError = false;
+        registration.fullyPaid =
+          registration.remainingBalance <= 0;
       }
     }
   }
+
+  this.cdr.detectChanges();
+}
 
   retryLoad(): void {
     if (!this.loadingStudents) {
@@ -336,22 +387,22 @@ export class CreatePaymentComponent implements OnInit {
     });
   }
 
-  selectStudent(student: any): void {
-    console.info('[CreatePayment][CP-12] Student selected', {
-      studentId: student?.studentId,
-      registrationCount: student?.registrations?.length ?? 0
-    });
-    this.selectedStudentId = student.studentId;
-    this.studentSearch =
-      `${student.studentName} ${student.lastName}`.trim();
 
-    this.studentRegistrations = student.registrations ?? [];
-    this.selectedRegistrationId = null;
-    this.paymentAmount = null;
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.dropdownOpen = false;
-  }
+selectStudent(student: any): void {
+  this.selectedStudentId = student.studentId;
+  this.studentSearch =
+    `${student.studentName} ${student.lastName}`.trim();
+
+  this.studentRegistrations = [];
+  this.selectedRegistrationId = null;
+  this.paymentAmount = null;
+
+  this.errorMessage = '';
+  this.successMessage = '';
+  this.dropdownOpen = false;
+
+  this.loadEligibleRegistrations(student);
+}
 
   get selectedStudent(): any | null {
     return this.students.find(
@@ -493,11 +544,25 @@ export class CreatePaymentComponent implements OnInit {
     this.paymentService.createPayment(request).pipe(
       finalize(() => this.savingPayment = false)
     ).subscribe({
-      next: () => {
+      next: (response: any) => {
+        // Pass the newly created payment details to the payment list
+        // so the matching student row can be moved/highlighted there.
+        const result = response?.data ?? response?.result ?? response;
+        const paymentId = Number(
+          result?.paymentId ??
+          result?.payment_Id ??
+          result?.PaymentId ??
+          result?.paymentID ??
+          0
+        );
+
         this.router.navigate(['/main/student-payments'], {
           state: {
             paymentSuccess: true,
-            message: 'Payment received successfully!'
+            message: 'Payment received successfully!',
+            newPaymentId: paymentId > 0 ? paymentId : null,
+            newPaymentRegistrationId: Number(registration.registrationId),
+            newPaymentAmount: amount
           }
         });
       },
@@ -518,4 +583,207 @@ export class CreatePaymentComponent implements OnInit {
 
     return `${year}-${month}-${day}`;
   }
+
+private loadEligibleRegistrations(student: any): void {
+  const registrations = student?.registrations ?? [];
+
+  this.studentRegistrations = [];
+  this.selectedRegistrationId = null;
+  this.paymentAmount = null;
+  this.errorMessage = '';
+
+  if (registrations.length === 0) {
+    this.loadingSelectedFee = false;
+    this.errorMessage =
+      'No course registrations found for this student.';
+    this.cdr.detectChanges();
+    return;
+  }
+
+  this.loadingSelectedFee = true;
+  this.cdr.detectChanges();
+
+  let completed = 0;
+  const total = registrations.length;
+  const eligible: any[] = [];
+
+  const completeRequest = (): void => {
+    completed++;
+
+    if (completed < total) {
+      return;
+    }
+
+    // Remove duplicate registration IDs.
+    const uniqueRegistrations = new Map<number, any>();
+
+    for (const registration of eligible) {
+      const id = Number(registration.registrationId);
+
+      if (!uniqueRegistrations.has(id)) {
+        uniqueRegistrations.set(id, registration);
+      }
+    }
+
+    this.studentRegistrations = Array.from(
+      uniqueRegistrations.values()
+    );
+
+    // Auto-select when exactly one eligible registration exists.
+    if (this.studentRegistrations.length === 1) {
+      this.selectedRegistrationId =
+        this.studentRegistrations[0].registrationId;
+    } else {
+      this.selectedRegistrationId = null;
+    }
+
+    this.loadingSelectedFee = false;
+
+    if (this.studentRegistrations.length === 0) {
+      this.errorMessage =
+        'No course with an outstanding balance is available for payment.';
+    }
+
+    console.log('[CreatePayment] Eligible registrations:', 
+      this.studentRegistrations.map(r => ({
+        registrationId: r.registrationId,
+        courseId: r.courseId,
+        courseName: r.courseName,
+        totalPaid: r.totalPaid,
+        remainingBalance: r.remainingBalance
+      }))
+    );
+
+    this.cdr.detectChanges();
+  };
+
+  registrations.forEach((registration: any) => {
+    // Use existing fee details only when they are already loaded.
+    if (registration.feeLoaded && !registration.feeError) {
+      if (this.toNumber(registration.remainingBalance) > 0) {
+        eligible.push(registration);
+      }
+
+      completeRequest();
+      return;
+    }
+
+    this.registrationApi
+      .getCourseFees(
+        registration.courseId,
+        registration.discount
+      )
+      .pipe(
+        take(1),
+        timeout(10000),
+
+        catchError(error => {
+          console.error(
+            '[CreatePayment] Fee API failed',
+            registration.registrationId,
+            error
+          );
+
+          registration.feeLoaded = false;
+          registration.feeError = true;
+
+          return of(null);
+        })
+      )
+      .subscribe({
+        next: (response: any) => {
+          if (!response) {
+            return;
+          }
+
+          const feeData =
+            response?.data ??
+            response?.result ??
+            response;
+
+          const courseFees = this.toNumber(
+            feeData?.actualFees ??
+            feeData?.courseFees ??
+            feeData?.course_Fees ??
+            feeData?.ActualFees ??
+            feeData?.CourseFees
+          );
+
+          const discount = this.toNumber(
+            feeData?.discount ??
+            feeData?.Discount ??
+            registration.discount
+          );
+
+          // Find the latest payment summary for this registration.
+          const latest = this.getLatestPaymentSummary(
+            registration.registrationId
+          );
+
+          const finalFees = this.toNumber(
+            latest?.finalFees ??
+            latest?.FinalFees ??
+            feeData?.finalFees ??
+            feeData?.FinalFees ??
+            Math.max(courseFees - discount, 0)
+          );
+
+          let totalPaid: number;
+          let remainingBalance: number;
+
+          if (latest) {
+            // get-all already returns aggregated totals.
+            totalPaid = this.toNumber(
+              latest.totalPaid ?? latest.TotalPaid
+            );
+
+            remainingBalance = this.toNumber(
+              latest.remainingBalance ??
+              latest.RemainingBalance
+            );
+          } else {
+            // No payment record exists for this registration.
+            totalPaid = 0;
+            remainingBalance = Math.max(finalFees, 0);
+          }
+
+          registration.courseFees = this.toNumber(
+            latest?.courseFees ??
+            latest?.CourseFees ??
+            courseFees
+          );
+
+          registration.discount = this.toNumber(
+            latest?.discount ??
+            latest?.Discount ??
+            discount
+          );
+
+          registration.finalFees = finalFees;
+          registration.totalPaid = totalPaid;
+          registration.remainingBalance = remainingBalance;
+
+          registration.feeLoaded = true;
+          registration.feeError = false;
+          registration.fullyPaid =
+            remainingBalance <= 0;
+
+          if (remainingBalance > 0) {
+            eligible.push(registration);
+          }
+        },
+
+        error: error => {
+          console.error(
+            '[CreatePayment] Unexpected fee error',
+            error
+          );
+        },
+
+        complete: () => {
+          completeRequest();
+        }
+      });
+  });
+}
 }

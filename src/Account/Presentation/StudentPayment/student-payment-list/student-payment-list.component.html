@@ -7,7 +7,10 @@
       <p>Manage payments, view receipts and track collections.</p>
     </div>
 
-    <button type="button" class="btn btn-primary" routerLink="/main/student-payments/create">
+    <button
+      type="button"
+      class="btn btn-primary"
+      routerLink="/main/student-payments/create">
       + Create Payment
     </button>
   </div>
@@ -25,27 +28,44 @@
 
       <div class="field">
         <label for="paymentSearch">Search</label>
-        <input id="paymentSearch" type="text" [(ngModel)]="searchText" (ngModelChange)="applyFilters()"
+        <input
+          id="paymentSearch"
+          type="text"
+          [(ngModel)]="searchText"
+          (ngModelChange)="applyFilters()"
           placeholder="Payment ID, student, registration..." />
       </div>
 
       <div class="field">
         <label for="fromDate">From Date</label>
-        <input id="fromDate" type="date" [(ngModel)]="fromDate" (ngModelChange)="applyFilters()" />
+        <input
+          id="fromDate"
+          type="date"
+          [(ngModel)]="fromDate"
+          (ngModelChange)="applyFilters()" />
       </div>
 
       <div class="field">
         <label for="toDate">To Date</label>
-        <input id="toDate" type="date" [(ngModel)]="toDate" (ngModelChange)="applyFilters()" />
+        <input
+          id="toDate"
+          type="date"
+          [(ngModel)]="toDate"
+          (ngModelChange)="applyFilters()" />
       </div>
 
       <div class="field">
         <label for="paymentMode">Payment Mode</label>
-        <select id="paymentMode" [(ngModel)]="selectedPaymentMode" (ngModelChange)="applyFilters()">
+        <select
+          id="paymentMode"
+          [(ngModel)]="selectedPaymentMode"
+          (ngModelChange)="applyFilters()">
+
           <option value="">All Modes</option>
           <option value="Cash">Cash</option>
           <option value="UPI">UPI</option>
           <option value="Bank Transfer">Bank Transfer</option>
+          <option value="Online">Online</option>
           <option value="Card">Card</option>
           <option value="Cheque">Cheque</option>
         </select>
@@ -53,7 +73,10 @@
 
     </div>
 
-    <button type="button" class="secondary-btn" (click)="clearFilters()">
+    <button
+      type="button"
+      class="secondary-btn"
+      (click)="clearFilters()">
       Clear Filters
     </button>
   </div>
@@ -67,82 +90,73 @@
   <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
 
-    <button type="button" (click)="loadPayments()">
+    <button
+      type="button"
+      (click)="loadPayments()">
       Retry
     </button>
   </div>
 
-  <!-- Payment Table -->
+  <!-- Unique Student Payment Table -->
   <div class="table-card" *ngIf="!loading">
     <div class="table-wrapper">
       <table>
         <thead>
           <tr>
-            <th>SR.</th>
-            <!-- <th>Payment ID</th> -->
-            <th>Date</th>
+            <th>Sr.</th>
             <th>Student ID</th>
-            <th>Registration</th>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Payment Mode</th>
-            <th class="amount">Amount</th>
+            <th>Student Name</th>
+            <th>Email</th>
+            <th>Total Paid (₹)</th>
             <th>Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr *ngFor="let payment of filteredPayments; let i = index">
+          <tr
+            *ngFor="let student of uniqueStudents; let i = index"
+            [class.new-payment-highlight]="isHighlightedPayment(student)"
+            [attr.title]="
+              isHighlightedPayment(student)
+                ? 'New payment'
+                : null
+            "
+            (click)="clearNewPaymentHighlight()">
+
             <td>{{ i + 1 }}</td>
-            <!-- 
-            <td>#{{ payment.paymentId }}</td> -->
+
+            <td>{{ student.studentId || 'N/A' }}</td>
 
             <td>
-              {{ payment.paymentDate | date:'dd MMM yyyy' }}
-            </td>
+              {{ student.studentName || 'N/A' }}
+              {{ student.lastName || '' }}
 
-            <td>{{ payment.studentId || 'N/A' }}</td>
-
-            <td>
-              {{ payment.registrationCode || payment.registrationId }}
-            </td>
-
-            <td>
-              <strong>
-                {{ payment.studentName || 'N/A' }}
-                {{ payment.lastName || '' }}
-              </strong>
-
-              <small *ngIf="payment.emailAddress">
-                {{ payment.emailAddress }}
-              </small>
-            </td>
-
-            <td>
-              {{ payment.courseName || 'N/A' }}
-            </td>
-
-            <td>
-              <span class="mode-badge">
-                {{ payment.paymentMode || 'N/A' }}
+              <span
+                *ngIf="isHighlightedPayment(student)"
+                class="new-payment-badge">
+                NEW PAYMENT
               </span>
             </td>
 
-            <td class="amount">
-              {{ payment.paymentAmount | currency:'INR':'symbol':'1.2-2' }}
+            <td>{{ student.emailAddress || 'N/A' }}</td>
+
+            <td class="amount-cell">
+              {{ student.totalPaidForList | currency:'INR':'symbol':'1.2-2' }}
             </td>
 
             <td>
-              <button type="button" class="action-btn" (click)="openStudentReceipts(payment)">
-                Receipt
+              <button
+                type="button"
+                class="action-btn"
+                (click)="openStudentReceipts(student)">
+                Receipts
               </button>
             </td>
-
           </tr>
 
-          <tr *ngIf="filteredPayments.length === 0">
-            <td colspan="9" class="empty-state">
-              No payments found.
+          <tr *ngIf="uniqueStudents.length === 0">
+            <td colspan="6" class="empty-state">
+              No students found.
             </td>
           </tr>
         </tbody>
@@ -150,33 +164,68 @@
     </div>
   </div>
 
-  <!-- Student receipts grouped by student and course -->
-  <div class="receipt-overlay" *ngIf="showStudentReceipts" (click)="closeStudentReceipts()">
-    <section class="receipt-modal student-receipts-modal" (click)="$event.stopPropagation()">
+  <!-- Student Receipts Modal -->
+  <div
+    class="receipt-overlay"
+    *ngIf="showStudentReceipts"
+    (click)="closeStudentReceipts()">
+
+    <section
+      class="receipt-modal student-receipts-modal"
+      (click)="$event.stopPropagation()">
+
       <div class="receipt-header">
         <div>
           <h2>Student Receipts</h2>
-          <p>Student ID: {{ receiptListStudent?.studentId || 'N/A' }} — {{ receiptListStudent?.studentName || '' }} {{
-            receiptListStudent?.lastName || '' }}</p>
+
+          <p>
+            Student ID: {{ receiptListStudent?.studentId || 'N/A' }}
+            —
+            {{ receiptListStudent?.studentName || '' }}
+            {{ receiptListStudent?.lastName || '' }}
+          </p>
         </div>
-        <button type="button" class="receipt-close" (click)="closeStudentReceipts()"
-          aria-label="Close receipts">✕</button>
+
+        <button
+          type="button"
+          class="receipt-close"
+          (click)="closeStudentReceipts()"
+          aria-label="Close receipts">
+          ✕
+        </button>
       </div>
 
-      <div *ngIf="receiptCourses.length > 1" class="receipt-section">
+      <!-- Select Course -->
+      <div
+        *ngIf="receiptCourses.length > 1"
+        class="receipt-section">
+
         <h3>Select Course</h3>
+
         <div class="receipt-course-options">
-          <button type="button" class="secondary-btn receipt-course-option" *ngFor="let course of receiptCourses"
-            [class.active]="selectedReceiptCourse?.courseId === course.courseId && selectedReceiptCourse.courseName === course.courseName"
+          <button
+            type="button"
+            class="secondary-btn receipt-course-option"
+            *ngFor="let course of receiptCourses"
+            [class.active]="
+              selectedReceiptCourse?.courseId === course.courseId &&
+              selectedReceiptCourse?.courseName === course.courseName
+            "
             (click)="selectReceiptCourse(course)">
+
             <strong>{{ course.courseName }}</strong>
             <small>{{ course.payments.length }} receipt(s)</small>
           </button>
         </div>
       </div>
 
-      <div class="receipt-section" *ngIf="selectedReceiptCourse as course">
+      <!-- Receipt List -->
+      <div
+        class="receipt-section"
+        *ngIf="selectedReceiptCourse as course">
+
         <h3>{{ course.courseName }} — Receipts</h3>
+
         <div class="table-wrapper">
           <table>
             <thead>
@@ -188,31 +237,54 @@
                 <th>Action</th>
               </tr>
             </thead>
+
             <tbody>
               <tr *ngFor="let receipt of course.payments">
                 <td>#{{ receipt.paymentId }}</td>
-                <td>{{ receipt.paymentDate | date:'dd MMM yyyy' }}</td>
+
+                <td>
+                  {{ receipt.paymentDate | date:'dd MMM yyyy' }}
+                </td>
+
                 <td>{{ receipt.paymentMode || 'N/A' }}</td>
-                <td>{{ receipt.paymentAmount | currency:'INR':'symbol':'1.2-2' }}</td>
+
+                <td>
+                  {{ receipt.paymentAmount | currency:'INR':'symbol':'1.2-2' }}
+                </td>
+
                 <td class="receipt-actions">
-                  <button type="button" class="action-btn view-btn" (click)="viewPayment(receipt)">
+                  <button
+                    type="button"
+                    class="action-btn view-btn"
+                    (click)="viewPayment(receipt)">
                     View
                   </button>
 
-                  <button type="button" class="action-btn download-btn" [disabled]="downloadingReceipt"
+                  <button
+                    type="button"
+                    class="action-btn download-btn"
+                    [disabled]="downloadingReceipt"
                     (click)="downloadPaymentReceipt(receipt)">
+
                     {{ downloadingReceipt ? 'Downloading...' : 'Download' }}
                   </button>
                 </td>
               </tr>
+
               <tr *ngIf="course.payments.length === 0">
-                <td colspan="5">No receipts found for this course.</td>
+                <td colspan="5">
+                  No receipts found for this course.
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <div *ngIf="receiptCourses.length === 0" class="message">No receipts found for this student.</div>
+
+      <div *ngIf="receiptCourses.length === 0" class="message">
+        No receipts found for this student.
+      </div>
+
     </section>
   </div>
 
@@ -221,43 +293,73 @@
     Loading payment receipt...
   </div>
 
-  <!-- Backend PDF Receipt Viewer: preview, print and download use the same PDF returned by the API. -->
-  <div class="receipt-overlay" *ngIf="selectedPayment as payment" (click)="closeReceipt()">
-    <section class="receipt-modal backend-pdf-receipt-modal" (click)="$event.stopPropagation()">
+  <!-- Backend PDF Receipt Viewer -->
+  <div
+    class="receipt-overlay"
+    *ngIf="selectedPayment as payment"
+    (click)="closeReceipt()">
+
+    <section
+      class="receipt-modal backend-pdf-receipt-modal"
+      (click)="$event.stopPropagation()">
+
       <div class="receipt-header">
         <div>
           <h2>Payment Receipt</h2>
-          <p>{{ payment.studentName || 'Student' }} · Receipt #{{ payment.paymentId }}</p>
+          <p>
+            {{ payment.studentName || 'Student' }}
+            · Receipt #{{ payment.paymentId }}
+          </p>
         </div>
-        <button type="button" class="receipt-close" aria-label="Close receipt" (click)="closeReceipt()">✕</button>
+
+        <button
+          type="button"
+          class="receipt-close"
+          aria-label="Close receipt"
+          (click)="closeReceipt()">
+          ✕
+        </button>
       </div>
 
       <div class="backend-receipt-preview">
-        <iframe *ngIf="receiptSafeUrl" [src]="receiptSafeUrl" title="Backend payment receipt PDF"></iframe>
-        <div *ngIf="!receiptSafeUrl" class="message">Preparing receipt preview...</div>
+        <iframe
+          *ngIf="receiptSafeUrl"
+          [src]="receiptSafeUrl"
+          title="Backend payment receipt PDF">
+        </iframe>
+
+        <div *ngIf="!receiptSafeUrl" class="message">
+          Preparing receipt preview...
+        </div>
       </div>
 
       <div class="receipt-actions">
-        <button type="button" class="secondary-btn" (click)="closeReceipt()">Close</button>
-        <button type="button" class="primary-btn" (click)="printReceipt()" [disabled]="!receiptPdfUrl">Print
-          Receipt</button>
-        <button type="button" class="primary-btn" [disabled]="downloadingReceipt || !receiptPdfUrl"
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="closeReceipt()">
+          Close
+        </button>
+
+        <button
+          type="button"
+          class="primary-btn"
+          (click)="printReceipt()"
+          [disabled]="!receiptPdfUrl">
+          Print Receipt
+        </button>
+
+        <button
+          type="button"
+          class="primary-btn"
+          [disabled]="downloadingReceipt || !receiptPdfUrl"
           (click)="downloadReceiptPdf()">
+
           {{ downloadingReceipt ? 'Preparing...' : 'Download PDF' }}
         </button>
       </div>
+
     </section>
   </div>
-
-  <!-- Create Payment Modal
-  <div class="payment-modal-backdrop" *ngIf="showCreatePayment" (click)="closeCreatePayment()">
-
-    <section class="payment-modal-content" (click)="$event.stopPropagation()">
-
-      <app-create-payment (cancel)="closeCreatePayment()" (paymentSaved)="onPaymentSaved()">
-      </app-create-payment>
-
-    </section>
-  </div> -->
 
 </div>

@@ -1,46 +1,46 @@
-
 <div class="container-fluid py-4 student-registration-page">
 
-  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+  <!-- Page Header -->
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100 mb-3">
 
-  <!-- Page Title -->
-  <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-3">
+      <div
+        class="bg-primary text-white rounded-4 d-flex align-items-center justify-content-center"
+        style="width: 60px; height: 60px; flex-shrink: 0;">
+        <i class="bi bi-person-vcard-fill fs-3"></i>
+      </div>
+
+      <div>
+        <h3 class="mb-1">Student Registration Form</h3>
+        <p class="text-muted mb-0">
+          View student details, qualification and registration information.
+        </p>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
     <div
-      class="bg-primary text-white rounded-4 d-flex align-items-center justify-content-center"
-      style="width: 60px; height: 60px; flex-shrink: 0;">
-      <i class="bi bi-person-vcard-fill fs-3"></i>
-    </div>
+      class="d-flex align-items-center flex-wrap gap-2"
+      *ngIf="!showExistingCourseForm">
 
-    <div>
-      <h3 class="mb-1">Student Registration Form</h3>
-      <p class="text-muted mb-0">
-        Enter student personal, education, course and payment details.
-      </p>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="openNewStudentForm()">
+        <i class="bi bi-person-plus me-1"></i>
+        Register New Student
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="openExistingStudentForm()">
+        <i class="bi bi-person-check me-1"></i>
+        Register Existing Student
+      </button>
+
     </div>
   </div>
-
-  <!-- Action Buttons -->
-  <div class="d-flex align-items-center flex-wrap gap-2" *ngIf="!showExistingCourseForm">
-
-    <button
-      type="button"
-      class="btn btn-primary"
-      (click)="openNewStudentForm()">
-      <i class="bi bi-person-plus me-1"></i>
-      Register New Student
-    </button>
-
-    <button
-      type="button"
-      class="btn btn-outline-primary"
-      (click)="openExistingStudentForm()">
-      <i class="bi bi-person-check me-1"></i>
-      Register Existing Student
-    </button>
-
-  </div>
-
-</div>
 
   <!-- Messages -->
   <div *ngIf="errorMessage" class="alert alert-danger">
@@ -51,17 +51,22 @@
     {{ successMessage }}
   </div>
 
-  <!-- Student Registration List -->
-  <div class="card border-0 shadow-sm rounded-4" *ngIf="!showExistingCourseForm">
+  <!-- Student List -->
+  <div
+    class="card border-0 shadow-sm rounded-4"
+    *ngIf="!showExistingCourseForm">
 
-    <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+    <div
+      class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+
       <h5 class="mb-0">Student Registrations</h5>
 
       <button
         type="button"
         class="btn btn-outline-primary"
-        (click)="loadRegistrations()"
+        (click)="loadStudentDetails()"
         [disabled]="loading">
+
         <i class="bi bi-arrow-clockwise me-1"></i>
         Refresh
       </button>
@@ -69,10 +74,10 @@
 
     <div class="card-body">
 
-      <!-- Search and Filter -->
+      <!-- Student Search -->
       <div class="row g-3 mb-3">
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <label for="searchStudent" class="form-label">
             Search Student
           </label>
@@ -82,100 +87,101 @@
             type="text"
             class="form-control"
             [(ngModel)]="searchText"
-            placeholder="Name, mobile, email or registration code">
+            placeholder="Search by name, student code, student ID ,mobile, email or qualification">
         </div>
 
-        <div class="col-md-4">
-          <label for="courseSearch" class="form-label">
-            Filter by Registered Course
-          </label>
-
-          <input
-            id="courseSearch"
-            type="text"
-            class="form-control"
-            [(ngModel)]="courseSearch"
-            placeholder="Enter course name">
-        </div>
-
-        <!-- <div class="col-md-2 d-flex align-items-end">
+        <div class="col-md-3 d-flex align-items-end">
           <button
             type="button"
-            class="btn btn-outline-secondary"
-            (click)="searchText = ''; courseSearch = ''">
+            class="btn btn-outline-secondary w-100"
+            (click)="clearSearch()">
             Clear Search
           </button>
-        </div> -->
+        </div>
 
-        <button
-  type="button"
-  class="btn btn-outline-secondary"
-  (click)="clearSearch()">
-  Clear Search
-</button>
+        <div class="col-md-3 d-flex align-items-end">
+          <div class="text-muted small">
+            Total Students: {{ studentDetails.length }}
+          </div>
+        </div>
 
       </div>
 
       <!-- Loading -->
       <div *ngIf="loading" class="text-center py-4">
-        <div class="spinner-border text-success" role="status"></div>
-        <p class="text-muted mt-2 mb-0">Loading student registrations...</p>
+        <div
+          class="spinner-border text-primary"
+          role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+
+        <p class="text-muted mt-2 mb-0">
+          Loading student details...
+        </p>
       </div>
 
-      <!-- Registration Table -->
+      <!-- Student Details Table -->
       <div class="table-responsive" *ngIf="!loading">
 
         <table class="table table-bordered table-hover align-middle mb-0">
 
           <thead class="table-success">
             <tr>
-              <th>Sr.</th>
-              <th>Student ID</th>
-              <th>Registration Code</th>
+              <th>Sr. No.</th>
               <th>Student Name</th>
-              <th>Email</th>
+              <th>Student Code</th>
               <th>Mobile</th>
-              <th>Course</th>
+              <th>Email</th>
+              <th>Qualification</th>
               <th>Action</th>
             </tr>
           </thead>
 
           <tbody>
 
-            <tr *ngFor="let registration of filteredRegistrations; let i = index">
+            <tr
+              *ngFor="let student of filteredStudents; let i = index; trackBy: trackByStudentId"
+              [ngClass]="{
+                'table-success': highlightedStudentId === student.studentId
+              }">
 
               <td>{{ i + 1 }}</td>
 
-              <td>{{ registration.studentId }}</td>
-
-              <td>{{ registration.registrationCode }}</td>
-
               <td>
-                {{ registration.studentName }}
-                {{ registration.lastName }}
+                {{ student.studentName }}
+                {{ student.lastName }}
               </td>
 
-              <td>{{ registration.emailAddress }}</td>
+              <td>{{ student.studentCode }}</td>
 
-              <td>{{ registration.mobileNumber }}</td>
+              <td>{{ student.mobileNumber || 'N/A' }}</td>
 
-              <td>{{ registration.courseName }}</td>
+              <td>{{ student.emailAddress || 'N/A' }}</td>
 
-<td>
-  <button
-    type="button"
-    class="btn btn-primary btn-sm"
-    (click)="openStudentDetails(registration)">
-    <i class="bi bi-person-vcard me-1"></i>
-    Student Details
-  </button>
-</td>
+              <td>{{ student.qualification || 'N/A' }}</td>
+
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  (click)="openStudentDetails(student)">
+
+                  <i class="bi bi-person-vcard me-1"></i>
+                  Student Details
+                </button>
+              </td>
 
             </tr>
 
-            <tr *ngIf="filteredRegistrations.length === 0">
-              <td colspan="9" class="text-center py-4 text-muted">
-                No student registrations found.
+            <!-- No Results -->
+            <tr *ngIf="filteredStudents.length === 0">
+              <td
+                colspan="7"
+                class="text-center py-4 text-muted">
+
+                {{ studentDetails.length === 0
+                  ? 'No student details available.'
+                  : 'No students match your search.' }}
               </td>
             </tr>
 
@@ -186,16 +192,31 @@
     </div>
   </div>
 
-  <!-- Existing Student Registration: full page-style form, not a modal -->
-  <section *ngIf="showExistingCourseForm" class="existing-registration-page card border-0 shadow-sm rounded-4 p-3 p-md-4">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <!-- Existing Student Registration Form -->
+  <section
+    *ngIf="showExistingCourseForm"
+    class="existing-registration-page card border-0 shadow-sm rounded-4 p-3 p-md-4">
+
+    <div
+      class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
       <div>
         <h4 class="mb-1">Existing Student Registration</h4>
-        <p class="text-muted mb-0">Review student details, choose a new course, and enter payment information.</p>
+
+        <p class="text-muted mb-0">
+          Review student details, choose a new course, and enter payment information.
+        </p>
       </div>
-      <button type="button" class="btn btn-outline-secondary" (click)="closeExistingCourseForm()">
-        <i class="bi bi-arrow-left me-1"></i> Back to Student List
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="closeExistingCourseForm()">
+
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to Student List
       </button>
+
     </div>
 
     <app-existing-student-registration
@@ -204,5 +225,7 @@
       (closed)="closeExistingCourseForm()"
       (saved)="onExistingStudentSaved()">
     </app-existing-student-registration>
+
   </section>
+
 </div>

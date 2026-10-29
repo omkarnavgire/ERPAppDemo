@@ -34,7 +34,7 @@
     </button>
   </div>
 
-  <!-- Loading -->
+  <!-- Loading students -->
   <div class="info-message" *ngIf="loadingStudents">
     <span class="loading-spinner"></span>
     Loading students, registrations and payment details...
@@ -177,18 +177,34 @@
           </div>
         </div>
 
+        <!-- Course Registration -->
         <div class="form-group">
+
           <label for="registration">
             Course Registration <span class="required">*</span>
           </label>
 
+          <!-- Loading course fees -->
+          <div
+            class="info-message"
+            *ngIf="selectedStudentId && loadingSelectedFee">
+
+            <span class="loading-spinner"></span>
+            Loading course fee details...
+          </div>
+
+          <!-- Show dropdown only when multiple eligible courses exist -->
           <select
+            *ngIf="
+              !loadingSelectedFee &&
+              studentRegistrations.length > 1
+            "
             id="registration"
             class="form-control"
             name="registration"
             [(ngModel)]="selectedRegistrationId"
             (ngModelChange)="onRegistrationChange()"
-            [disabled]="!selectedStudentId || loadingStudents"
+            [disabled]="savingPayment"
             required>
 
             <option [ngValue]="null">
@@ -197,48 +213,62 @@
 
             <option
               *ngFor="let registration of studentRegistrations"
-              [ngValue]="registration.registrationId"
-              [disabled]="
-                registration.feeError ||
-                (
-                  registration.feeLoaded &&
-                  (
-                    registration.fullyPaid ||
-                    registration.remainingBalance <= 0
-                  )
-                )
-              ">
+              [ngValue]="registration.registrationId">
 
-              {{ registration.courseName || 'Course' }} —
-
-              <ng-container
-                *ngIf="registration.feeLoaded && !registration.feeError">
-
-                {{
-                  registration.fullyPaid
-                    ? 'Fully Paid'
-                    : 'Balance: ₹' + registration.remainingBalance
-                }}
-              </ng-container>
-
-              <ng-container
-                *ngIf="registration.feeError || !registration.feeLoaded">
-
-                Fee details unavailable
-              </ng-container>
+              {{ registration.courseName || 'Course' }}
+              — Balance: ₹{{ registration.remainingBalance | number:'1.2-2' }}
 
             </option>
           </select>
 
+          <!-- Show the course directly when only one eligible course exists -->
+          <div
+            *ngIf="
+              !loadingSelectedFee &&
+              studentRegistrations.length === 1
+            "
+            class="form-control bg-light">
+
+            {{ studentRegistrations[0].courseName || 'Course' }}
+            — Balance: ₹{{ studentRegistrations[0].remainingBalance | number:'1.2-2' }}
+          </div>
+
+          <!-- No student selected -->
+          <small
+            class="field-hint"
+            *ngIf="
+              !selectedStudentId &&
+              !loadingStudents
+            ">
+
+            Select a student to view eligible courses.
+          </small>
+
+          <!-- No registrations -->
           <small
             class="error-text"
             *ngIf="
               selectedStudentId &&
-              studentRegistrations.length === 0
+              !loadingSelectedFee &&
+              selectedStudent?.registrations?.length === 0
             ">
 
             No course registrations found for this student.
           </small>
+
+          <!-- No course with pending balance -->
+          <div
+            class="error-message"
+            *ngIf="
+              selectedStudentId &&
+              !loadingSelectedFee &&
+              studentRegistrations.length === 0 &&
+              selectedStudent?.registrations?.length > 0
+            ">
+
+            No course with an outstanding balance is available for payment.
+          </div>
+
         </div>
 
         <!-- Fee Summary -->
@@ -249,6 +279,7 @@
           <div class="fee-summary-header">
             <div>
               <span class="summary-caption">Selected Course</span>
+
               <h4>
                 {{ registration.courseName || 'Course Fee Summary' }}
               </h4>
@@ -276,12 +307,14 @@
             </span>
           </div>
 
+          <!-- Fee values -->
           <div
             class="fee-summary-content"
             *ngIf="registration.feeLoaded && !registration.feeError">
 
             <div class="summary-row">
               <span>Course Fee</span>
+
               <strong>
                 ₹{{ registration.courseFees | number:'1.2-2' }}
               </strong>
@@ -289,6 +322,7 @@
 
             <div class="summary-row discount-row">
               <span>Discount</span>
+
               <strong>
                 − ₹{{ registration.discount | number:'1.2-2' }}
               </strong>
@@ -296,6 +330,7 @@
 
             <div class="summary-row">
               <span>Final Fee After Discount</span>
+
               <strong>
                 ₹{{ registration.finalFees | number:'1.2-2' }}
               </strong>
@@ -303,6 +338,7 @@
 
             <div class="summary-row">
               <span>Previously Received</span>
+
               <strong>
                 ₹{{ registration.totalPaid | number:'1.2-2' }}
               </strong>
@@ -310,6 +346,7 @@
 
             <div class="summary-row balance-row">
               <span>Remaining Balance</span>
+
               <strong>
                 ₹{{ registration.remainingBalance | number:'1.2-2' }}
               </strong>
@@ -317,6 +354,7 @@
 
           </div>
 
+          <!-- Fee loading error -->
           <div
             class="error-message"
             *ngIf="registration.feeError || !registration.feeLoaded">
@@ -325,6 +363,7 @@
             Please reload the page and try again.
           </div>
 
+          <!-- Fully paid message -->
           <div
             class="success-inline"
             *ngIf="registration.fullyPaid && registration.feeLoaded">
@@ -381,14 +420,16 @@
             class="form-control"
             name="paymentAmount"
             [(ngModel)]="paymentAmount"
-            min="1"
+            min="0.01"
             step="0.01"
             [max]="selectedRegistration?.remainingBalance ?? null"
             [disabled]="
               !selectedRegistration ||
               !selectedRegistration.feeLoaded ||
               selectedRegistration.feeError ||
-              selectedRegistration.fullyPaid
+              selectedRegistration.fullyPaid ||
+              loadingSelectedFee ||
+              savingPayment
             "
             placeholder="Enter amount"
             required>
@@ -405,6 +446,7 @@
             }}
           </small>
 
+          <!-- Amount exceeds balance -->
           <small
             class="error-text"
             *ngIf="
@@ -416,9 +458,13 @@
             Payment cannot exceed the remaining balance.
           </small>
 
+          <!-- Invalid amount -->
           <small
             class="error-text"
-            *ngIf="paymentAmount != null && paymentAmount <= 0">
+            *ngIf="
+              paymentAmount != null &&
+              paymentAmount <= 0
+            ">
 
             Payment amount must be greater than zero.
           </small>
@@ -503,14 +549,14 @@
           paymentForm.invalid ||
           savingPayment ||
           loadingStudents ||
+          loadingSelectedFee ||
           !selectedRegistration ||
           !selectedRegistration.feeLoaded ||
           selectedRegistration.feeError ||
           selectedRegistration.fullyPaid ||
-          (
-            paymentAmount != null &&
-            paymentAmount > selectedRegistration.remainingBalance
-          )
+          paymentAmount == null ||
+          paymentAmount <= 0 ||
+          paymentAmount > selectedRegistration.remainingBalance
         ">
 
         <span

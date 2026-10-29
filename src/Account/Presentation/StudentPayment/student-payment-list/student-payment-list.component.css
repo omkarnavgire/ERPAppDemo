@@ -305,8 +305,8 @@ table {
   margin-top: 22px;
 
   h3 {
-    margin: 0 0 12px;
-    padding-bottom: 8px;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
     border-bottom: 1px solid var(--border-color, #e2e8f0);
     font-size: 15px;
   }
@@ -443,4 +443,77 @@ table {
     height: 62vh;
     min-height: 320px;
   }
+}
+
+
+/* Compact receipt table */
+.student-receipts-modal .table-wrapper {
+  max-height: 55vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.student-receipts-modal .table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.student-receipts-modal .table-wrapper th,
+.student-receipts-modal .table-wrapper td {
+  padding: 9px 12px;
+  height: auto;
+  line-height: 1.4;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.student-receipts-modal .table-wrapper thead th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.student-receipts-modal .table-wrapper tbody tr {
+  height: auto;
+}
+
+.student-receipts-modal .receipt-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.student-receipts-modal .receipt-actions .action-btn {
+  padding: 7px 12px;
+  min-height: 32px;
+  line-height: 1.2;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Highlight the student row containing the newly created payment */
+tr.new-payment-highlight,
+tr.new-payment-highlight td {
+  background-color: #fff3cd !important;
+}
+
+tr.new-payment-highlight {
+  outline: 2px solid #e0a800;
+  outline-offset: -2px;
+}
+
+tr.new-payment-highlight td {
+  font-weight: 600;
+}
+
+.new-payment-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: #e0a800;
+  color: #212529;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
 }

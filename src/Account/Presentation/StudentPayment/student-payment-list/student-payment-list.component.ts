@@ -33,6 +33,11 @@ export class StudentPaymentListComponent implements OnInit {
   loading = false;
   errorMessage = '';
 
+  // Highlight the newly created payment until the user performs another action.
+  highlightedPaymentId: number | null = null;
+  private paymentIdsBeforeSave = new Set<number>();
+  private detectNewPaymentAfterSave = false;
+
   selectedPayment: StudentPayment | null = null;
   receiptLoading = false;
   downloadingReceipt = false;
@@ -43,6 +48,60 @@ export class StudentPaymentListComponent implements OnInit {
   receiptCourses: Array<{ courseId: number; courseName: string; payments: StudentPayment[] }> = [];
   selectedReceiptCourse: { courseId: number; courseName: string; payments: StudentPayment[] } | null = null;
   receiptListStudent: StudentPayment | null = null;
+
+
+/**
+ * Displays one row per student while retaining
+ * every payment record in the original payments array.
+ */
+get uniqueStudents(): Array<StudentPayment & { totalPaidForList: number }> {
+  const uniqueMap = new Map<
+    string,
+    StudentPayment & { totalPaidForList: number }
+  >();
+
+  for (const payment of this.filteredPayments) {
+    const studentId = Number(payment.studentId || 0);
+    const registrationId = Number(payment.registrationId || 0);
+
+    // Prefer Student ID. Use Registration ID only when Student ID is missing.
+    const key = studentId > 0
+      ? `student:${studentId}`
+      : registrationId > 0
+        ? `registration:${registrationId}`
+        : `payment:${payment.paymentId}`;
+
+    // Keep only one row for each student.
+    if (uniqueMap.has(key)) {
+      continue;
+    }
+
+    // Calculate total received from all payment records for this student.
+    const totalPaidForList = this.payments.reduce((total, item) => {
+      const itemStudentId = Number(item.studentId || 0);
+      const itemRegistrationId = Number(item.registrationId || 0);
+
+      const matchesStudent = studentId > 0
+        ? itemStudentId === studentId
+        : registrationId > 0
+          ? itemStudentId <= 0 &&
+            itemRegistrationId === registrationId
+          : item.paymentId === payment.paymentId;
+
+      return matchesStudent
+        ? total + this.toNumber(item.paymentAmount)
+        : total;
+    }, 0);
+
+    uniqueMap.set(key, {
+      ...payment,
+      totalPaidForList
+    });
+  }
+
+  return Array.from(uniqueMap.values());
+}
+
 
   // Create Payment Modal
   showCreatePayment = false;
@@ -87,14 +146,67 @@ export class StudentPaymentListComponent implements OnInit {
     this.payments = [...this.payments].sort((a, b) => {
       const dateA = new Date(a.paymentDate).getTime() || 0;
       const dateB = new Date(b.paymentDate).getTime() || 0;
-      return dateB - dateA;
+
+      if (dateA !== dateB) {
+        return dateB - dateA;
+      }
+
+      // Payment IDs break ties when several payments share the same date.
+      return Number(b.paymentId || 0) - Number(a.paymentId || 0);
     });
   }
 
-  // Called after payment is successfully saved
+  // Called after payment is successfully saved from the create-payment modal.
   onPaymentSaved(): void {
     this.showCreatePayment = false;
+
+    // Capture existing IDs so the refreshed response can identify the new record.
+    this.paymentIdsBeforeSave = new Set(
+      this.payments.map(payment => Number(payment.paymentId || 0))
+        .filter(id => id > 0)
+    );
+
+    this.detectNewPaymentAfterSave = true;
     this.loadPayments();
+  }
+
+  private identifyNewPayment(): void {
+    if (!this.detectNewPaymentAfterSave) {
+      return;
+    }
+
+    const newPayments = this.payments
+      .filter(payment => {
+        const id = Number(payment.paymentId || 0);
+        return id > 0 && !this.paymentIdsBeforeSave.has(id);
+      })
+      .sort((a, b) => {
+        const dateA = new Date(a.paymentDate).getTime() || 0;
+        const dateB = new Date(b.paymentDate).getTime() || 0;
+
+        if (dateA !== dateB) {
+          return dateB - dateA;
+        }
+
+        return Number(b.paymentId || 0) - Number(a.paymentId || 0);
+      });
+
+    if (newPayments.length > 0) {
+      this.highlightedPaymentId = Number(newPayments[0].paymentId);
+    }
+
+    this.detectNewPaymentAfterSave = false;
+    this.paymentIdsBeforeSave.clear();
+  }
+
+  isHighlightedPayment(payment: StudentPayment): boolean {
+    return this.highlightedPaymentId !== null &&
+      Number(payment.paymentId) === this.highlightedPaymentId;
+  }
+
+  // Call this from the list template when the user performs another action.
+  clearNewPaymentHighlight(): void {
+    this.highlightedPaymentId = null;
   }
 
   // Load All Payments
@@ -128,6 +240,8 @@ export class StudentPaymentListComponent implements OnInit {
 
         this.payments = data.map((item: any) => this.normalizePayment(item));
         this.sortPaymentsLatestFirst();
+        this.identifyNewPayment();
+
         try {
           localStorage.setItem(this.paymentsCacheKey, JSON.stringify(this.payments));
         } catch {
@@ -203,6 +317,7 @@ export class StudentPaymentListComponent implements OnInit {
 
   // Clear Filters
   clearFilters(): void {
+    this.clearNewPaymentHighlight();
     this.searchText = '';
     this.fromDate = '';
     this.toDate = '';
