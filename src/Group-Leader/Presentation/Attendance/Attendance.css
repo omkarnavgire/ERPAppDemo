@@ -1,0 +1,405 @@
+
+/* =========================================
+   ATTENDANCE PAGE
+========================================= */
+
+.attendance-page {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding: 24px;
+  color: #1e293b;
+}
+
+/* Page Header */
+
+.attendance-page h3 {
+  color: #0f172a;
+  font-size: 25px;
+  letter-spacing: -0.4px;
+}
+
+.attendance-page h5 {
+  color: #0f172a;
+}
+
+.attendance-page p {
+  font-size: 14px;
+}
+
+/* =========================================
+   SUMMARY CARDS
+========================================= */
+
+.summary-card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(15, 23, 42, 0.09);
+}
+
+.summary-card .card-body {
+  padding: 22px;
+}
+
+.summary-label {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-card h3 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 23px;
+}
+
+.total-card {
+  background: #ffffff;
+  border-left: 4px solid #3b82f6;
+}
+
+.total-card .summary-icon {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.present-card {
+  background: #ffffff;
+  border-left: 4px solid #16a34a;
+}
+
+.present-card .summary-icon {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.absent-card {
+  background: #ffffff;
+  border-left: 4px solid #ef4444;
+}
+
+.absent-card .summary-icon {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* =========================================
+   COMMON CARDS
+========================================= */
+
+.attendance-page .card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.attendance-page .card-header {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.attendance-page .card-footer {
+  border-top: 1px solid #e2e8f0;
+}
+
+/* =========================================
+   FORM CONTROLS
+========================================= */
+
+.attendance-page .form-label {
+  font-size: 13px;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.attendance-page .form-control,
+.attendance-page .form-select {
+  min-height: 43px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #334155;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.attendance-page .form-control:focus,
+.attendance-page .form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.attendance-page .form-control:disabled,
+.attendance-page .form-select:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.attendance-page .table {
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.attendance-page .table thead th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 16px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.attendance-page .table tbody td {
+  padding: 15px 14px;
+  font-size: 13px;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.attendance-page .table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.attendance-page .table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.attendance-page .table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =========================================
+   PRESENT / ABSENT BUTTONS
+========================================= */
+
+.attendance-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.attendance-options .btn {
+  min-width: 95px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 12px;
+  transition: all 0.2s ease;
+}
+
+.attendance-options .btn-success {
+  background-color: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+}
+
+.attendance-options .btn-outline-success {
+  color: #16a34a;
+  border-color: #16a34a;
+}
+
+.attendance-options .btn-outline-success:hover {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.attendance-options .btn-danger {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+}
+
+.attendance-options .btn-outline-danger {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.attendance-options .btn-outline-danger:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* =========================================
+   ALL PRESENT / ALL ABSENT BUTTONS
+========================================= */
+
+.attendance-page .btn-outline-success,
+.attendance-page .btn-outline-danger {
+  font-weight: 600;
+  border-radius: 7px;
+}
+
+.attendance-page .btn-outline-success:disabled,
+.attendance-page .btn-outline-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   SAVE BUTTON
+========================================= */
+
+.attendance-page .btn-primary {
+  background-color: #0f172a;
+  border-color: #0f172a;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 42px;
+  transition: all 0.2s ease;
+}
+
+.attendance-page .btn-primary:hover:not(:disabled) {
+  background-color: #1e293b;
+  border-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.attendance-page .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   ALERT MESSAGES
+========================================= */
+
+.attendance-page .alert {
+  border: none;
+  border-radius: 9px;
+  font-size: 13px;
+  padding: 14px 18px;
+}
+
+.attendance-page .alert-success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.attendance-page .alert-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================================
+   EMPTY / LOADING STATES
+========================================= */
+
+.attendance-page .spinner-border {
+  width: 28px;
+  height: 28px;
+}
+
+.attendance-page .text-muted {
+  color: #64748b !important;
+}
+
+/* =========================================
+   RESET BUTTON
+========================================= */
+
+.attendance-page .btn-outline-secondary {
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 15px;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 991px) {
+  .attendance-page {
+    padding: 18px;
+  }
+
+  .attendance-options .btn {
+    min-width: 85px;
+  }
+}
+
+@media (max-width: 767px) {
+  .attendance-page {
+    padding: 12px;
+  }
+
+  .attendance-page h3 {
+    font-size: 21px;
+  }
+
+  .summary-card .card-body {
+    padding: 16px;
+  }
+
+  .summary-card h3 {
+    font-size: 24px;
+  }
+
+  .summary-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+
+  .attendance-page .table thead th,
+  .attendance-page .table tbody td {
+    padding: 12px 10px;
+  }
+
+  .attendance-options {
+    min-width: 190px;
+  }
+
+  .attendance-page .card-footer .d-flex {
+    align-items: flex-start !important;
+  }
+
+  .attendance-page .card-footer .btn-primary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .attendance-page {
+    padding: 10px;
+  }
+
+  .attendance-page h3 {
+    font-size: 19px;
+  }
+
+  .attendance-page .summary-card h3 {
+    font-size: 22px;
+  }
+
+  .attendance-page .btn-outline-secondary {
+    padding: 7px 10px;
+  }
+}

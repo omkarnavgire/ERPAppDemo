@@ -1,0 +1,917 @@
+
+<section class="gl-page">
+  <header class="gl-header">
+    <div>
+      <div class="eyebrow">GROUP LEADER / BATCH MANAGEMENT</div>
+      <h1>Batch Management</h1>
+      <p>Manage active batches, students and class schedules.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-outline" type="button"
+        (click)="refreshBatches()" [disabled]="loading">
+        ↻ Refresh
+      </button>
+
+      <button class="btn-primary" type="button"
+        (click)="openCreateBatch()">
+        ＋ New Batch
+      </button>
+    </div>
+  </header>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <!-- BATCH LIST -->
+  <ng-container *ngIf="!selectedBatch; else batchDetails">
+
+    <div class="tabs-bar">
+      <button type="button"
+        [class.active]="activeTab === 'active'"
+        (click)="activeTab = 'active'">
+        Active Batches <span>{{ activeBatches.length }}</span>
+      </button>
+
+      <button type="button"
+        [class.active]="activeTab === 'deleted'"
+        (click)="activeTab = 'deleted'">
+        Deleted Batches <span>{{ deletedBatches.length }}</span>
+      </button>
+    </div>
+
+    <div class="table-card">
+
+      <div class="table-heading">
+        <div>
+          <h2>
+            {{ activeTab === 'active' ? 'Active Batches' : 'Deleted Batches' }}
+          </h2>
+          <p>Batch overview and quick actions</p>
+        </div>
+
+        <span class="count-label">
+          {{ displayedBatches.length }} records
+        </span>
+      </div>
+
+      <div class="table-scroll"
+        *ngIf="!loading && displayedBatches.length">
+
+        <table class="batch-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Batch Name</th>
+              <th>Topic Name</th>
+              <th>Trainer Name</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Batch Time</th>
+              <th># Students</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let batch of displayedBatches; let i = index">
+
+              <td>{{ i + 1 }}</td>
+
+              <td>
+                <strong>{{ batch.batch_name }}</strong>
+                <small class="sub-id">
+                  ID: {{ batch.batch_id }}
+                </small>
+              </td>
+
+              <td>
+                {{ batch.topic_name || ('Topic #' + batch.topic_id) }}
+              </td>
+
+              <td>
+                {{ batch.employee_name || ('Employee #' + batch.employee_id) }}
+              </td>
+
+              <td>{{ batch.start_date | date:'dd/MM/yyyy' }}</td>
+
+              <td>{{ batch.end_date | date:'dd/MM/yyyy' }}</td>
+
+              <td>{{ batch.batch_time }}</td>
+
+              <td>
+                <span class="student-count">
+                  {{ studentCounts[batch.batch_id] ?? 0 }}
+                </span>
+              </td>
+
+              <td>
+                <div class="action-stack"
+                  *ngIf="activeTab === 'active'; else restoreAction">
+
+                  <div class="action-row">
+                    <button class="action-btn blue"
+                      type="button"
+                      (click)="viewSchedule(batch)">
+                      View Schedule
+                    </button>
+
+                    <button class="action-btn teal"
+                      type="button"
+                      (click)="openAddStudents(batch)">
+                      Add Students
+                    </button>
+
+                    <button class="action-btn cyan"
+                      type="button"
+                      (click)="generateSchedule(batch)">
+                      Generate Schedule
+                    </button>
+                  </div>
+
+                  <div class="action-row">
+                    <button class="action-btn red"
+                      type="button"
+                      (click)="removeBatch(batch)">
+                      Remove
+                    </button>
+                  </div>
+
+                </div>
+
+                <ng-template #restoreAction>
+                  <button class="action-btn green"
+                    type="button"
+                    (click)="restoreBatch(batch)">
+                    Restore
+                  </button>
+                </ng-template>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="loading-panel" *ngIf="loading">
+        Loading batches...
+      </div>
+
+      <div class="empty-panel"
+        *ngIf="!loading && !displayedBatches.length">
+
+        <div class="empty-symbol">▤</div>
+
+        <h3>
+          {{ activeTab === 'active'
+            ? 'No active batches found'
+            : 'No deleted batches found' }}
+        </h3>
+
+        <p>
+          {{ activeTab === 'active'
+            ? 'Create a new batch to get started.'
+            : 'Deleted batches will appear here if the API returns their deleted status.' }}
+        </p>
+
+        <button *ngIf="activeTab === 'active'"
+          class="btn-primary"
+          type="button"
+          (click)="openCreateBatch()">
+          Create New Batch
+        </button>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- BATCH DETAILS -->
+  <ng-template #batchDetails>
+
+    <div class="details-toolbar">
+      <button class="btn-outline"
+        type="button"
+        (click)="closeDetails()">
+        ← Back to Batches
+      </button>
+
+      <div>
+        <span class="eyebrow">BATCH DETAILS</span>
+        <h2>{{ selectedBatch?.batch_name }}</h2>
+      </div>
+    </div>
+
+    <div class="details-grid">
+
+      <!-- BATCH INFORMATION -->
+      <section class="detail-card">
+
+        <h3>Batch Detail</h3>
+
+        <dl class="detail-list">
+          <div>
+            <dt>Batch Name</dt>
+            <dd>{{ selectedBatch?.batch_name }}</dd>
+          </div>
+
+          <div>
+            <dt>Topic</dt>
+            <dd>
+              {{ selectedBatch?.topic_name || ('Topic #' + selectedBatch?.topic_id) }}
+            </dd>
+          </div>
+
+          <div>
+            <dt>Trainer</dt>
+            <dd>
+              {{ selectedBatch?.employee_name || ('Employee #' + selectedBatch?.employee_id) }}
+            </dd>
+          </div>
+
+          <div>
+            <dt>Start Date</dt>
+            <dd>{{ selectedBatch?.start_date | date:'dd/MM/yyyy' }}</dd>
+          </div>
+
+          <div>
+            <dt>End Date</dt>
+            <dd>{{ selectedBatch?.end_date | date:'dd/MM/yyyy' }}</dd>
+          </div>
+
+          <div>
+            <dt>Timing</dt>
+            <dd>{{ selectedBatch?.batch_time }}</dd>
+          </div>
+
+          <div>
+            <dt>Playlist</dt>
+            <dd>{{ selectedBatch?.playlist_title || 'Not set' }}</dd>
+          </div>
+        </dl>
+
+      </section>
+
+      <!-- BATCH STUDENTS -->
+      <section class="detail-card batch-students-card">
+
+        <div class="section-title students-section-title">
+          <h3>Students</h3>
+
+          <div class="students-header-actions">
+            <button class="action-btn teal"
+              type="button"
+              (click)="openAddStudents(selectedBatch!)">
+              Add Students
+            </button>
+
+            <button class="action-btn blue"
+              type="button"
+              (click)="openAttendance(selectedBatch!)">
+              Attendance
+            </button>
+          </div>
+        </div>
+
+        <div class="loading-panel" *ngIf="loadingDetailStudents">
+          Loading students...
+        </div>
+
+        <div class="table-scroll batch-students-table-wrap"
+          *ngIf="!loadingDetailStudents && detailStudents.length">
+
+          <table class="batch-table batch-students-table">
+
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                <th>Course Name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let student of detailStudents; let i = index">
+
+                <td>{{ i + 1 }}</td>
+
+                <td>
+                  {{ student.studentName }} {{ student.lastName }}
+                </td>
+
+                <td>{{ student.courseName || '—' }}</td>
+
+                <td>
+                  <button class="action-btn red"
+                    type="button"
+                    (click)="removeBatchStudent(student)">
+                    Remove
+                  </button>
+                </td>
+
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+
+        <p class="muted"
+          *ngIf="!loadingDetailStudents && !detailStudents.length">
+          No students assigned to this batch yet.
+        </p>
+
+      </section>
+
+    </div>
+
+    <!-- BATCH SCHEDULE -->
+    <section class="detail-card schedule-card">
+
+      <div class="section-title">
+        <div>
+          <h3>Batch Schedule</h3>
+          <p class="muted">
+            Lecture-wise planned and actual dates
+          </p>
+        </div>
+
+        <button class="action-btn cyan"
+          type="button"
+          (click)="generateSchedule(selectedBatch!)">
+          Generate Schedule
+        </button>
+      </div>
+
+      <div class="table-scroll"
+        *ngIf="!loadingSchedules && schedules.length">
+
+        <table class="batch-table schedule-table">
+
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Content Name</th>
+              <th>Expected Date</th>
+              <th>Expected Day</th>
+              <th>Actual Date</th>
+              <th>Actual Day</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of schedules; let i = index">
+
+              <td>{{ i + 1 }}</td>
+
+              <td>
+                {{ item.content_name || ('Content #' + item.content_id) }}
+              </td>
+
+              <td>{{ item.expected_date | date:'dd/MM/yyyy' }}</td>
+
+              <td>{{ item.expected_day || '—' }}</td>
+
+              <td>
+                {{ item.actual_date
+                  ? (item.actual_date | date:'dd/MM/yyyy')
+                  : '—' }}
+              </td>
+
+              <td>{{ item.actual_day || '—' }}</td>
+
+              <td>
+                <span class="status-pill">
+                  {{ item.status || 'Pending' }}
+                </span>
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+      <div class="loading-panel" *ngIf="loadingSchedules">
+        Loading schedule...
+      </div>
+
+      <div class="empty-panel compact"
+        *ngIf="!loadingSchedules && !schedules.length">
+        <p>
+          No schedule found. Use Generate Schedule to create the lecture plan.
+        </p>
+      </div>
+
+    </section>
+
+  </ng-template>
+
+</section>
+
+<!-- =========================================
+     CREATE BATCH MODAL
+========================================= -->
+
+<div class="modal-backdrop" *ngIf="showCreateBatch">
+
+  <div class="batch-modal">
+
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">BATCH MANAGEMENT</span>
+        <h2>Create New Batch</h2>
+        <p>Fill in the batch details below.</p>
+      </div>
+
+      <button class="close-btn"
+        type="button"
+        (click)="closeCreateBatch()"
+        [disabled]="savingBatch">
+        ×
+      </button>
+    </div>
+
+    <form #batchNgForm="ngForm"
+      (ngSubmit)="createBatch(batchNgForm)">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="batch_name">Batch Name *</label>
+
+          <input id="batch_name"
+            name="batch_name"
+            [(ngModel)]="batchForm.batch_name"
+            required
+            placeholder="Enter batch name">
+        </div>
+
+        <div class="form-group">
+          <label for="topic_id">Topic ID *</label>
+
+          <input id="topic_id"
+            name="topic_id"
+            type="number"
+            min="1"
+            [(ngModel)]="batchForm.topic_id"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="employee_id">Trainer / Employee *</label>
+
+          <select id="employee_id"
+            name="employee_id"
+            [(ngModel)]="batchForm.employee_id"
+            required
+            [disabled]="loadingEmployees">
+
+            <option [ngValue]="0" disabled>
+              {{ loadingEmployees
+                ? 'Loading employees...'
+                : 'Select Trainer' }}
+            </option>
+
+            <option *ngFor="let employee of employees"
+              [ngValue]="employee.employee_id">
+              {{ employee.employee_name }} ({{ employee.employee_id }})
+            </option>
+
+          </select>
+
+          <small *ngIf="!loadingEmployees && !employees.length"
+            class="field-error">
+            No employees returned. Check Employee dropdown API.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="branch_id">Branch *</label>
+
+          <select id="branch_id"
+            name="branch_id"
+            [(ngModel)]="batchForm.branch_id"
+            required
+            [disabled]="loadingBranches">
+
+            <option [ngValue]="0" disabled>
+              {{ loadingBranches
+                ? 'Loading branches...'
+                : 'Select Branch' }}
+            </option>
+
+            <option *ngFor="let branch of branches"
+              [ngValue]="branch.branch_id">
+              {{ branch.branch_name }}
+            </option>
+
+          </select>
+
+          <small *ngIf="!loadingBranches && !branches.length"
+            class="field-error">
+            No branches returned. Check Branch API.
+          </small>
+        </div>
+
+        <!-- START DATE -->
+        <div class="form-group">
+          <label for="start_date">Start Date *</label>
+
+          <input id="start_date"
+            name="start_date"
+            type="date"
+            [(ngModel)]="batchForm.start_date"
+            required>
+        </div>
+
+        <!-- END DATE -->
+        <div class="form-group">
+          <label for="end_date">End Date *</label>
+
+          <input id="end_date"
+            name="end_date"
+            type="date"
+            [(ngModel)]="batchForm.end_date"
+            [min]="batchForm.start_date || null"
+            required>
+        </div>
+
+        <!-- START TIME -->
+        <div class="form-group">
+          <label for="start_time">Start Time *</label>
+
+          <input id="start_time"
+            name="start_time"
+            type="time"
+            step="300"
+            [(ngModel)]="startTime"
+            required>
+
+          <small class="field-help">
+            Select batch starting time.
+          </small>
+        </div>
+
+        <!-- END TIME -->
+        <div class="form-group">
+          <label for="end_time">End Time *</label>
+
+          <input id="end_time"
+            name="end_time"
+            type="time"
+            step="300"
+            [(ngModel)]="endTime"
+            required>
+
+          <small class="field-help">
+            Select batch ending time.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="playlist_title">Playlist Title</label>
+
+          <input id="playlist_title"
+            name="playlist_title"
+            [(ngModel)]="batchForm.playlist_title"
+            placeholder="Enter playlist title">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="playlist_key">Playlist Key</label>
+
+          <input id="playlist_key"
+            name="playlist_key"
+            [(ngModel)]="batchForm.playlist_key"
+            placeholder="Enter playlist key">
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button type="button"
+          class="btn-outline"
+          (click)="closeCreateBatch()"
+          [disabled]="savingBatch">
+          Cancel
+        </button>
+
+        <button type="submit"
+          class="btn-primary"
+          [disabled]="batchNgForm.invalid ||
+            savingBatch ||
+            loadingEmployees ||
+            loadingBranches ||
+            !employees.length ||
+            !branches.length">
+
+          {{ savingBatch ? 'Saving...' : 'Save Batch' }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<!-- =========================================
+     ADD STUDENTS MODAL
+========================================= -->
+
+<div class="modal-backdrop" *ngIf="showAddStudents">
+
+  <div class="batch-modal student-modal">
+
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">BATCH STUDENTS</span>
+        <h2>Add Students</h2>
+        <p>
+          Select registrations for
+          <strong>{{ selectedBatch?.batch_name }}</strong>.
+        </p>
+      </div>
+
+      <button class="close-btn"
+        type="button"
+        (click)="closeAddStudents()"
+        [disabled]="savingStudents">
+        ×
+      </button>
+    </div>
+
+    <div class="student-toolbar">
+
+      <input type="search"
+        [(ngModel)]="studentSearch"
+        [ngModelOptions]="{standalone:true}"
+        placeholder="Search student, registration, course or mobile">
+
+      <span>{{ selectedStudentCount }} selected</span>
+
+    </div>
+
+    <div class="loading-panel" *ngIf="loadingStudents">
+      Loading eligible registrations...
+    </div>
+
+    <div class="student-list student-list--grid"
+      *ngIf="!loadingStudents && filteredStudents.length">
+
+      <label class="student-select-all">
+        <input type="checkbox"
+          (change)="toggleAllStudents($any($event.target).checked)">
+        Select all visible students
+      </label>
+
+      <label class="student-row"
+        *ngFor="let student of filteredStudents">
+
+        <input type="checkbox"
+          [(ngModel)]="student.selected"
+          [ngModelOptions]="{standalone:true}">
+
+        <span class="student-avatar">
+          {{ (student.studentName || 'S').charAt(0) | uppercase }}
+        </span>
+
+        <span class="student-details">
+
+          <strong>
+            {{ student.studentName }} {{ student.lastName }}
+          </strong>
+
+          <small>
+            {{ student.registrationCode ||
+              ('Registration #' + student.registrationId) }}
+            · {{ student.courseName || 'Course not specified' }}
+          </small>
+
+          <small>
+            {{ student.emailAddress }}
+            {{ student.mobileNumber
+              ? ' · ' + student.mobileNumber
+              : '' }}
+          </small>
+
+        </span>
+
+      </label>
+
+    </div>
+
+    <div class="empty-panel compact"
+      *ngIf="!loadingStudents && !filteredStudents.length">
+      <p>No eligible students found for this batch.</p>
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn-outline"
+        type="button"
+        (click)="closeAddStudents()"
+        [disabled]="savingStudents">
+        Cancel
+      </button>
+
+      <button class="btn-primary"
+        type="button"
+        (click)="addSelectedStudents()"
+        [disabled]="loadingStudents ||
+          savingStudents ||
+          !selectedStudentCount">
+
+        {{ savingStudents
+          ? 'Adding...'
+          : 'Add ' + selectedStudentCount + ' Student(s)' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =========================================
+     ATTENDANCE MODAL
+========================================= -->
+
+<div class="modal-backdrop" *ngIf="showAttendance">
+
+  <div class="batch-modal student-modal attendance-modal">
+
+    <div class="modal-header">
+
+      <div>
+        <span class="eyebrow">BATCH STUDENTS</span>
+        <h2>Student Attendance</h2>
+        <p>{{ selectedBatch?.batch_name }}</p>
+      </div>
+
+      <button class="close-btn"
+        type="button"
+        (click)="showAttendance = false"
+        [disabled]="savingAttendance">
+        ×
+      </button>
+
+    </div>
+
+    <!-- ATTENDANCE DETAILS -->
+    <div class="form-grid attendance-filter">
+
+      <div class="form-group">
+        <label for="attendance_schedule">Batch Schedule *</label>
+
+        <select id="attendance_schedule"
+          name="attendance_schedule"
+          [(ngModel)]="selectedAttendanceScheduleId"
+          [ngModelOptions]="{standalone:true}"
+          [disabled]="loadingAttendanceOptions">
+
+          <option [ngValue]="0">
+            {{ loadingAttendanceOptions
+              ? 'Loading schedules...'
+              : 'Select Schedule' }}
+          </option>
+
+          <option *ngFor="let schedule of attendanceScheduleOptions"
+            [ngValue]="schedule.batch_schedule_id">
+
+            {{ schedule.content_name ||
+              ('Schedule #' + schedule.batch_schedule_id) }}
+
+            {{ schedule.expected_date
+              ? ' - ' + (schedule.expected_date | date:'dd/MM/yyyy')
+              : '' }}
+
+          </option>
+
+        </select>
+
+        <small *ngIf="!loadingAttendanceOptions &&
+          !attendanceScheduleOptions.length"
+          class="field-error">
+          No schedules available for this batch.
+        </small>
+
+      </div>
+
+      <div class="form-group">
+        <label for="attendance_date">Attendance Date *</label>
+
+        <input id="attendance_date"
+          name="attendance_date"
+          type="date"
+          [(ngModel)]="attendanceDate"
+          [ngModelOptions]="{standalone:true}">
+      </div>
+
+    </div>
+
+    <!-- ATTENDANCE SUMMARY -->
+    <div class="attendance-summary"
+      *ngIf="attendanceStudents.length">
+
+      <span>
+        <strong>{{ attendanceStudents.length }}</strong>
+        Total Students
+      </span>
+
+      <span class="present-summary">
+        <strong>
+          {{ attendanceStudents.filter(s => s.isPresent).length }}
+        </strong>
+        Present
+      </span>
+
+      <span class="absent-summary">
+        <strong>
+          {{ attendanceStudents.filter(s => !s.isPresent).length }}
+        </strong>
+        Absent
+      </span>
+
+    </div>
+
+    <!-- TWO STUDENTS PER ROW -->
+    <div class="student-list attendance-student-grid"
+      *ngIf="attendanceStudents.length">
+
+      <div class="student-row attendance-student-row"
+        *ngFor="let student of attendanceStudents">
+
+        <span class="student-avatar">
+          {{ (student.studentName || 'S').charAt(0) | uppercase }}
+        </span>
+
+        <span class="student-details">
+          <strong>
+            {{ student.studentName }} {{ student.lastName }}
+          </strong>
+
+          <small>
+            {{ student.registrationCode ||
+              ('Registration #' + student.registrationId) }}
+          </small>
+        </span>
+
+        <label class="attendance-toggle">
+          <input type="checkbox"
+            [(ngModel)]="student.isPresent"
+            [ngModelOptions]="{standalone:true}">
+
+          <span>
+            {{ student.isPresent ? 'Present' : 'Absent' }}
+          </span>
+        </label>
+
+      </div>
+
+    </div>
+
+    <div class="empty-panel compact"
+      *ngIf="!attendanceStudents.length">
+      <p>No students are assigned to this batch yet.</p>
+    </div>
+
+    <!-- ATTENDANCE ACTIONS -->
+    <div class="modal-actions attendance-modal-actions">
+
+      <button class="btn-outline"
+        type="button"
+        (click)="showAttendance = false"
+        [disabled]="savingAttendance">
+        Close
+      </button>
+
+      <button class="btn-primary"
+        type="button"
+        (click)="saveAttendance()"
+        [disabled]="loadingAttendanceOptions ||
+          savingAttendance ||
+          !selectedAttendanceScheduleId ||
+          !attendanceStudents.length">
+
+        {{ savingAttendance
+          ? 'Saving Attendance...'
+          : 'Save Attendance' }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

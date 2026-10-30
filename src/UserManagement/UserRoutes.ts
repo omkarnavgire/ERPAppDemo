@@ -32,7 +32,7 @@ import { StudentDetails } from "../Account/Presentation/StudentDetails/StudentDe
 import { StudentPaymentListComponent } from "../Account/Presentation/StudentPayment/student-payment-list/student-payment-list.component";
 import { CreatePaymentComponent } from "../Account/Presentation/StudentPayment/create-payment/create-payment";
 
-import { BatchComponent } from "src/Group-Leader/Presentation/BatchComponent";
+import { BatchComponent } from "src/Group-Leader/Presentation/Batch/Batch";
 import { EmployeeComponent } from "./Presentation/Employee/Employee";
 
 export const routes: Routes = [
