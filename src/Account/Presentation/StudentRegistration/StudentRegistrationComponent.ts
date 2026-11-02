@@ -1,21 +1,17 @@
-import { Component, OnInit, inject } from "@angular/core";
+
+import { Component, OnInit, inject, ChangeDetectorRef } from "@angular/core";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { finalize, timeout } from "rxjs";
-
 import { StudentRegistrationApi } from "../../Infrastructure/Api/StudentRegistrationApi";
-
 import { StudentDetailsDto } from "../../Domain/DTOs/StudentDetailsResponse";
-
 import {
   ExistingStudentRegistration,
   ExistingStudentRegistrationData
 } from "./ExistingStudent/ExistingStudentRegistration";
 import { StudentDetailsService } from "src/Account/Application/StudentDetails/StudentDetails";
 
-// Registration API model.
-// Used to preserve the existing-student registration functionality.
 interface RegistrationRow {
   registrationId: number;
   studentId: number;
@@ -56,11 +52,10 @@ export class StudentRegistrationComponent implements OnInit {
   private readonly registrationApi = inject(StudentRegistrationApi);
   private readonly studentDetailsService: any = inject(StudentDetailsService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  // Data used by the Student Details API table.
   studentDetails: StudentDetailsDto[] = [];
 
-  // Keep this name if the HTML table uses filteredStudents.
   get filteredStudents(): StudentDetailsDto[] {
     const search = this.searchText.trim().toLowerCase();
 
@@ -86,7 +81,6 @@ export class StudentRegistrationComponent implements OnInit {
     });
   }
 
-  // Registration data is retained for existing-course registration.
   registrations: RegistrationRow[] = [];
   students: ExistingStudent[] = [];
 
@@ -113,10 +107,7 @@ export class StudentRegistrationComponent implements OnInit {
     "ciit-account-student-registrations-v1";
 
   ngOnInit(): void {
-    // Load the personal details for the main table.
     this.loadStudentDetails();
-
-    // Retain registration data for existing-student registration.
     this.loadRegistrations();
   }
 
@@ -125,6 +116,7 @@ export class StudentRegistrationComponent implements OnInit {
   // -----------------------------------------
 
   loadStudentDetails(highlightNewStudent = false): void {
+
     if (this.loading) {
       return;
     }
@@ -132,21 +124,24 @@ export class StudentRegistrationComponent implements OnInit {
     this.loading = this.studentDetails.length === 0;
     this.errorMessage = "";
 
+    this.cdr.markForCheck();
+
     this.studentDetailsService
       .getAllStudentDetails()
       .pipe(
         timeout(20000),
         finalize(() => {
           this.loading = false;
+          this.cdr.markForCheck();
         })
       )
       .subscribe({
         next: (response: { data?: StudentDetailsDto[] | null } | null) => {
+
           const apiStudents = Array.isArray(response?.data)
             ? response.data
             : [];
 
-          // Keep only valid Student IDs and avoid duplicate IDs.
           const uniqueStudents = new Map<number, StudentDetailsDto>();
 
           for (const student of apiStudents) {
@@ -159,19 +154,16 @@ export class StudentRegistrationComponent implements OnInit {
 
           this.studentDetails = Array.from(uniqueStudents.values());
 
-          // Highlight a newly registered student if the API now returns
-          // a Student ID that was not present before registration.
           if (highlightNewStudent) {
+
             const newStudent = this.studentDetails.find(
-              student => !this.previousStudentIds.has(
-                Number(student.studentId)
-              )
+              student =>
+                !this.previousStudentIds.has(Number(student.studentId))
             );
 
             if (newStudent) {
               this.highlightStudent(Number(newStudent.studentId));
-              this.successMessage =
-                "Student registered successfully.";
+              this.successMessage = "Student registered successfully.";
             } else {
               this.successMessage =
                 "Registration saved. The student list has been refreshed.";
@@ -185,13 +177,18 @@ export class StudentRegistrationComponent implements OnInit {
           console.log(
             `Loaded ${this.studentDetails.length} unique students`
           );
+
+          this.cdr.markForCheck();
         },
 
         error: (error: unknown) => {
+
           console.error("Student Details API Error:", error);
 
           this.errorMessage =
             "Unable to load student details. Please try again.";
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -201,25 +198,31 @@ export class StudentRegistrationComponent implements OnInit {
   // -----------------------------------------
 
   private highlightStudent(studentId: number): void {
+
     if (this.highlightTimeout) {
       clearTimeout(this.highlightTimeout);
     }
 
     this.highlightedStudentId = studentId;
 
-    // Highlight the new row for 10 seconds.
+    this.cdr.markForCheck();
+
     this.highlightTimeout = setTimeout(() => {
+
       this.highlightedStudentId = null;
       this.highlightTimeout = null;
+
+      this.cdr.markForCheck();
+
     }, 10000);
   }
 
   // -----------------------------------------
   // REGISTRATION API
-  // Retained for existing-student registration.
   // -----------------------------------------
 
   private readCache<T>(key: string): T | null {
+
     try {
       const raw = localStorage.getItem(key);
       return raw ? JSON.parse(raw) as T : null;
@@ -229,27 +232,33 @@ export class StudentRegistrationComponent implements OnInit {
   }
 
   private writeCache<T>(key: string, value: T): void {
+
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch {
-      // Cache is optional; the API remains the source of truth.
+      // Cache is optional; API remains the source of truth.
     }
   }
 
   loadRegistrations(): void {
+
     if (this.loadingRegistrations) {
       return;
     }
 
     this.loadingRegistrations = true;
+    this.cdr.markForCheck();
 
     const cached = this.readCache<RegistrationRow[]>(
       this.registrationsCacheKey
     );
 
     if (cached?.length && !this.registrations.length) {
+
       this.registrations = cached;
       this.buildUniqueStudents();
+
+      this.cdr.markForCheck();
     }
 
     const startTime = performance.now();
@@ -259,6 +268,7 @@ export class StudentRegistrationComponent implements OnInit {
       .pipe(
         timeout(20000),
         finalize(() => {
+
           this.loadingRegistrations = false;
 
           console.log(
@@ -266,13 +276,18 @@ export class StudentRegistrationComponent implements OnInit {
               (performance.now() - startTime).toFixed(0)
             } ms`
           );
+
+          this.cdr.markForCheck();
         })
       )
       .subscribe({
+
         next: (response: any) => {
+
           const rows: any[] = this.getRows(response);
 
           this.registrations = rows.map((item: any) => ({
+
             registrationId: Number(
               item.registration_Id ??
               item.registrationId ??
@@ -351,21 +366,26 @@ export class StudentRegistrationComponent implements OnInit {
             `Loaded ${this.registrations.length} registrations and ` +
             `${this.students.length} unique registration students`
           );
+
+          this.cdr.markForCheck();
         },
 
         error: (error: unknown) => {
+
           console.error("Load Registrations Error:", error);
 
-          // Keep cached registration data if refresh fails.
           if (!this.registrations.length) {
             this.registrations = [];
             this.students = [];
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
 
   private getRows(response: any): any[] {
+
     if (Array.isArray(response)) {
       return response;
     }
@@ -385,10 +405,12 @@ export class StudentRegistrationComponent implements OnInit {
   }
 
   buildUniqueStudents(): void {
+
     const studentMap = new Map<number, ExistingStudent>();
     const courseNames = new Map<number, Set<string>>();
 
     for (const registration of this.registrations) {
+
       const studentId = Number(registration.studentId);
 
       if (studentId <= 0) {
@@ -398,6 +420,7 @@ export class StudentRegistrationComponent implements OnInit {
       let student = studentMap.get(studentId);
 
       if (!student) {
+
         student = {
           studentId,
           studentName: registration.studentName,
@@ -420,17 +443,23 @@ export class StudentRegistrationComponent implements OnInit {
     }
 
     for (const [studentId, student] of studentMap) {
+
       student.registeredCourses = Array.from(
         courseNames.get(studentId) ?? new Set<string>()
       ).join(", ");
     }
 
     this.students = Array.from(studentMap.values());
+
+    this.cdr.markForCheck();
   }
 
-  
+  // -----------------------------------------
+  // REFRESH STUDENT DETAILS
+  // -----------------------------------------
+
   refreshStudentDetails(highlightNewStudent = false): void {
-    // Keep existing IDs so a newly registered student can be highlighted.
+
     if (highlightNewStudent) {
       this.previousStudentIds = new Set(
         this.studentDetails.map(student => Number(student.studentId))
@@ -441,16 +470,23 @@ export class StudentRegistrationComponent implements OnInit {
     this.successMessage = "";
     this.loading = true;
 
+    this.cdr.markForCheck();
+
     this.studentDetailsService
       .refreshStudentDetails()
       .pipe(
         timeout(20000),
         finalize(() => {
+
           this.loading = false;
+
+          this.cdr.markForCheck();
         })
       )
       .subscribe({
+
         next: (response: { data?: StudentDetailsDto[] | null }) => {
+
           const apiStudents = Array.isArray(response?.data)
             ? response.data
             : [];
@@ -458,6 +494,7 @@ export class StudentRegistrationComponent implements OnInit {
           const uniqueStudents = new Map<number, StudentDetailsDto>();
 
           for (const student of apiStudents) {
+
             const studentId = Number(student.studentId);
 
             if (studentId > 0 && !uniqueStudents.has(studentId)) {
@@ -468,8 +505,10 @@ export class StudentRegistrationComponent implements OnInit {
           this.studentDetails = Array.from(uniqueStudents.values());
 
           if (highlightNewStudent) {
+
             const newStudent = this.studentDetails.find(
-              student => !this.previousStudentIds.has(Number(student.studentId))
+              student =>
+                !this.previousStudentIds.has(Number(student.studentId))
             );
 
             if (newStudent) {
@@ -488,23 +527,32 @@ export class StudentRegistrationComponent implements OnInit {
           console.log(
             `Refreshed ${this.studentDetails.length} unique students`
           );
+
+          this.cdr.markForCheck();
         },
+
         error: (error: unknown) => {
+
           console.error("Refresh Student Details Error:", error);
+
           this.errorMessage =
             "Unable to refresh student details. Please try again.";
+
+          this.cdr.markForCheck();
         }
       });
   }
-
 
   // -----------------------------------------
   // SEARCH
   // -----------------------------------------
 
   clearSearch(): void {
+
     this.searchText = "";
     this.courseSearch = "";
+
+    this.cdr.markForCheck();
   }
 
   // -----------------------------------------
@@ -512,7 +560,7 @@ export class StudentRegistrationComponent implements OnInit {
   // -----------------------------------------
 
   openNewStudentForm(): void {
-    // Save existing IDs before opening the new registration page.
+
     this.previousStudentIds = new Set(
       this.studentDetails.map(student => Number(student.studentId))
     );
@@ -530,11 +578,11 @@ export class StudentRegistrationComponent implements OnInit {
   }
 
   onNewStudentSaved(): void {
+
     this.showForm = false;
     this.errorMessage = "";
     this.successMessage = "";
 
-    // Force a fresh API request and highlight the newly added student.
     this.refreshStudentDetails(true);
     this.loadRegistrations();
   }
@@ -544,6 +592,7 @@ export class StudentRegistrationComponent implements OnInit {
   // -----------------------------------------
 
   registerExistingStudent(student: ExistingStudent): void {
+
     this.showForm = false;
     this.errorMessage = "";
     this.successMessage = "";
@@ -559,30 +608,42 @@ export class StudentRegistrationComponent implements OnInit {
     };
 
     this.showExistingCourseForm = true;
+
+    this.cdr.markForCheck();
   }
 
   closeExistingCourseForm(): void {
+
     this.showExistingCourseForm = false;
     this.selectedStudent = null;
+
+    this.cdr.markForCheck();
   }
 
   openExistingStudentForm(): void {
+
     this.showForm = false;
     this.errorMessage = "";
     this.successMessage = "";
     this.selectedStudent = null;
     this.showExistingCourseForm = true;
+
+    this.cdr.markForCheck();
   }
 
   onExistingStudentSaved(): void {
+
     this.showExistingCourseForm = false;
     this.selectedStudent = null;
     this.errorMessage = "";
+
     this.successMessage =
       "Existing student registered for the new course successfully.";
 
     this.refreshStudentDetails();
     this.loadRegistrations();
+
+    this.cdr.markForCheck();
   }
 
   // -----------------------------------------
@@ -590,10 +651,12 @@ export class StudentRegistrationComponent implements OnInit {
   // -----------------------------------------
 
   openStudentDetails(student: StudentDetailsDto): void {
+
     const studentId = Number(student.studentId);
 
     if (studentId <= 0) {
       this.errorMessage = "Invalid Student ID.";
+      this.cdr.markForCheck();
       return;
     }
 
@@ -610,6 +673,7 @@ export class StudentRegistrationComponent implements OnInit {
     index: number,
     student: StudentDetailsDto
   ): number {
+
     return Number(student.studentId) || index;
   }
 
@@ -617,6 +681,7 @@ export class StudentRegistrationComponent implements OnInit {
     index: number,
     registration: RegistrationRow
   ): number {
+
     return registration.registrationId || index;
   }
 }

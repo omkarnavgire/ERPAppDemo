@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {LoginRequest} from "../../Domain/Entities/Auths/LoginRequest";
@@ -8,7 +9,7 @@ import {LoginResponse} from "../../Domain/Entities/Auths/LoginResponse";
     providedIn:'root'
 })
 export class AuthApi{
-    private baseurl='https://superuser.ciitstudent.com/api/Auth';
+    private baseurl=API_ENDPOINTS.auth;
 
     constructor(private http:HttpClient){}
 

@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable,shareReplay} from "rxjs";
@@ -6,7 +7,7 @@ import {Observable,shareReplay} from "rxjs";
     providedIn:"root"
 })
 export class BranchApi {
-    private baseUrl="https://superuser.ciitstudent.com/api/branch/get-all";
+    private baseUrl=`${API_ENDPOINTS.branch}/get-all`;
 
     private branchesCache$:Observable<any>|null=null;
 

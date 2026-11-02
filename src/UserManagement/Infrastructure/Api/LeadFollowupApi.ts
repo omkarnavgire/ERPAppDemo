@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpClient} from '@angular/common/http';
 import {inject,Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
@@ -8,7 +9,7 @@ import {LeadFollowup} from '../../Domain/Entities/LeadFollowup';
 })
 export class LeadFollowupApi{
     private http=inject(HttpClient);
-    private readonly baseUrl='/lead-api/LeadFollowup';
+    private readonly baseUrl=`${API_ENDPOINTS.lead}/LeadFollowup`;
 
     getFollowups():Observable<LeadFollowup[]>{
         console.log('Lead Followup API: Get all');

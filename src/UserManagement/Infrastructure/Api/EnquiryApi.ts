@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpClient} from "@angular/common/http";
 import {Injectable,inject} from "@angular/core";
 import {Observable} from "rxjs";
@@ -9,7 +10,7 @@ import {EnquiryRepository} from "../../Domain/Repositories/Enquiryrepositories";
 })
 export class EnquiryApi implements EnquiryRepository {
     private http=inject(HttpClient);
-    private readonly baseUrl="/lead-api/Enquiry";
+    private readonly baseUrl=`${API_ENDPOINTS.lead}/Enquiry`;
 
     getEnquiries():Observable<Enquiry[]> {
         console.log("Enquiry API: Get all enquiries");

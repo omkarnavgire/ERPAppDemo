@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
@@ -10,7 +11,7 @@ import { ResetPasswordRequest } from "../../Domain/Entities/Account/ResetPasswor
 })
 export class AccountApi {
     
-    private baseurl = 'https://superuser.ciitstudent.com/api/account';
+    private baseurl = API_ENDPOINTS.account;
 
     constructor(private http: HttpClient) {}
 

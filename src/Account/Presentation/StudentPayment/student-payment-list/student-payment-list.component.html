@@ -207,10 +207,7 @@
             type="button"
             class="secondary-btn receipt-course-option"
             *ngFor="let course of receiptCourses"
-            [class.active]="
-              selectedReceiptCourse?.courseId === course.courseId &&
-              selectedReceiptCourse?.courseName === course.courseName
-            "
+          [class.active]="isSelectedReceiptCourse(course)"
             (click)="selectReceiptCourse(course)">
 
             <strong>{{ course.courseName }}</strong>

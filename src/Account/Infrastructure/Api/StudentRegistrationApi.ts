@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
@@ -17,7 +18,7 @@ export class StudentRegistrationApi {
     private http = inject(HttpClient);
 
     private readonly apiUrl =
-        "https://student.ciitstudent.com/api/StudentRegistration";
+        API_ENDPOINTS.studentRegistration;
 
     // 1. Register a new student
     registerStudent(

@@ -1,0 +1,290 @@
+
+<section class="trainer-page">
+
+  <!-- Page Heading -->
+  <header class="page-heading">
+
+    <div>
+      <p class="eyebrow">TRAINER WORKSPACE / BATCH</p>
+
+      <h1>
+        {{ displayValue('batchName', 'batch_name', 'name') }}
+      </h1>
+
+      <p class="subtitle">
+        Batch information, assigned students and topic-wise attendance.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="loadBatch()"
+      [disabled]="loading">
+
+      <i class="bi bi-arrow-clockwise"></i>
+      {{ loading ? 'Loading...' : 'Refresh' }}
+
+    </button>
+
+  </header>
+
+  <!-- Loading -->
+  <div class="state-card" *ngIf="loading">
+    Loading batch details...
+  </div>
+
+  <!-- Error -->
+  <div
+    class="state-card error"
+    *ngIf="!loading && errorMessage"
+    role="alert">
+
+    {{ errorMessage }}
+
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-danger ms-2"
+      (click)="loadBatch()">
+
+      Retry
+
+    </button>
+  </div>
+
+  <!-- Batch Information -->
+  <ng-container *ngIf="!loading && !errorMessage">
+
+    <div class="details-grid">
+
+      <article class="info-card">
+        <span>Batch</span>
+        <strong>
+          {{ displayValue('batchName', 'batch_name', 'name') }}
+        </strong>
+      </article>
+
+      <article class="info-card">
+        <span>Course</span>
+        <strong>
+          {{ displayValue('courseName', 'course_name', 'course') }}
+        </strong>
+      </article>
+
+      <article class="info-card">
+        <span>Students</span>
+        <strong>{{ students.length }}</strong>
+      </article>
+
+      <article class="info-card">
+        <span>Topics / Sessions</span>
+        <strong>{{ schedules.length }}</strong>
+      </article>
+
+    </div>
+
+    <!-- Students -->
+    <section class="content-card">
+
+      <div class="section-heading">
+        <div>
+          <h2>Students</h2>
+          <p>Students assigned to this batch</p>
+        </div>
+
+        <span class="count-badge">{{ students.length }}</span>
+      </div>
+
+      <div class="table-responsive" *ngIf="students.length; else noStudents">
+
+        <table class="table align-middle">
+
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student Name</th>
+              <th>Registration ID</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let student of students; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ student.studentName }}</td>
+              <td>{{ student.registrationId }}</td>
+              <td>{{ student.email || '—' }}</td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <ng-template #noStudents>
+        <p class="empty-message">
+          No students are assigned to this batch.
+        </p>
+      </ng-template>
+
+    </section>
+
+    <!-- Topic-wise Schedule -->
+    <section class="content-card">
+
+      <div class="section-heading">
+        <div>
+          <h2>Topic-wise Schedule</h2>
+          <p>Select a session to view and mark attendance.</p>
+        </div>
+
+        <span class="count-badge">{{ schedules.length }}</span>
+      </div>
+
+      <div class="schedule-list" *ngIf="schedules.length; else noSchedules">
+
+        <article
+          class="schedule-row"
+          *ngFor="let schedule of schedules">
+
+          <div class="schedule-symbol">
+            <i class="bi bi-calendar2-check"></i>
+          </div>
+
+          <div class="schedule-info">
+
+            <strong>{{ schedule.topicName }}</strong>
+
+            <span>
+              {{
+                schedule.expectedDate
+                  ? (schedule.expectedDate | date:'mediumDate')
+                  : 'Date not set'
+              }}
+
+              <ng-container *ngIf="schedule.status">
+                · {{ schedule.status }}
+              </ng-container>
+            </span>
+
+          </div>
+
+          <button
+            type="button"
+            class="view-button"
+            (click)="openAttendance(schedule)"
+            *ngIf="canViewAttendance">
+
+            Take Attendance
+
+          </button>
+
+        </article>
+
+      </div>
+
+      <ng-template #noSchedules>
+        <p class="empty-message">
+          No schedules are available for this batch.
+        </p>
+      </ng-template>
+
+    </section>
+
+  </ng-container>
+
+  <!-- Attendance -->
+  <section class="content-card attendance-card" *ngIf="selectedSchedule">
+
+    <div class="section-heading">
+
+      <div>
+        <h2>Attendance</h2>
+        <p>{{ selectedSchedule.topicName }}</p>
+      </div>
+
+      <button
+        type="button"
+        class="close-button"
+        (click)="selectedSchedule = null">
+
+        Close
+
+      </button>
+
+    </div>
+
+    <div *ngIf="attendanceLoading" class="empty-message">
+      Loading attendance list...
+    </div>
+
+    <div
+      class="table-responsive"
+      *ngIf="!attendanceLoading && attendanceStudents.length">
+
+      <table class="table align-middle">
+
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Registration ID</th>
+            <th>Present</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let student of attendanceStudents">
+
+            <td>{{ student.studentName }}</td>
+
+            <td>{{ student.registrationId }}</td>
+
+            <td>
+              <label class="attendance-toggle">
+
+                <input
+                  type="checkbox"
+                  [(ngModel)]="student.isPresent">
+
+                <span>
+                  {{ student.isPresent ? 'Present' : 'Absent' }}
+                </span>
+
+              </label>
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+      <button
+        type="button"
+        class="save-button"
+        (click)="saveAttendance()"
+        [disabled]="savingAttendance || !canSubmitAttendance"
+        *ngIf="canSubmitAttendance">
+
+        {{ savingAttendance ? 'Saving...' : 'Save Attendance' }}
+
+      </button>
+
+    </div>
+
+    <p
+      class="empty-message"
+      *ngIf="!attendanceLoading && !attendanceStudents.length">
+
+      No students returned for this schedule.
+
+    </p>
+
+    <p class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </p>
+
+  </section>
+
+</section>

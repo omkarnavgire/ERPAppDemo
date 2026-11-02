@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +13,7 @@ import { StudentPaymentRequest } from '../../Domain/DTOs/StudentPaymentRequest';
 export class StudentPaymentApi {
 
   private readonly apiUrl =
-    'https://student.ciitstudent.com/api/StudentPayment';
+    API_ENDPOINTS.studentPayment;
 
   constructor(private http: HttpClient) {}
 

@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -71,7 +72,7 @@ export class BatchComponent implements OnInit {
   private readonly branchApi = inject(BranchApi);
 
   private readonly batchApiBase =
-    'https://batchmanagement.ciitstudent.com/api';
+    API_ENDPOINTS.batchManagement;
 
   loading = false;
   savingBatch = false;
@@ -112,8 +113,8 @@ export class BatchComponent implements OnInit {
 
   detailStudents: StudentOption[] = [];
   loadingDetailStudents = false;
-
-  studentCounts: Record<number, number> = {};
+  
+studentCounts: Partial<Record<number, number>> = {};
 
   // Cached data loaded automatically when the Batch page opens.
   private batchStudentRows: any[] = [];

@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("../node_modules/bootstrap/dist/css/bootstrap.min.css");
-
+@import "@ng-select/ng-select/themes/default.theme.css";
 /* ================================
    CIIT GLOBAL THEME VARIABLES
    ================================ */
@@ -710,4 +710,123 @@ html[data-theme="dark"] .enquiry-form-page input[type="radio"] {
 html[data-theme="dark"] .enquiry-form-page .form-group label,
 html[data-theme="dark"] .enquiry-form-page .check-grid label {
     color: #e6eefb !important;
+}
+
+
+/* ==========================================================
+   SHARED CIIT THEME LAYER
+   Applied consistently to Account, User Management,
+   Group Leader, Trainer and other feature sections.
+   This layer styles presentation only; it does not alter
+   component behavior, routing, forms or API workflows.
+   ========================================================== */
+
+:root {
+  --ciit-control-bg: #ffffff;
+  --ciit-control-text: #25364d;
+  --ciit-control-border: #d5e0ed;
+  --ciit-table-head: #edf3fa;
+  --ciit-hover: #e8f1ff;
+}
+
+html[data-theme="dark"] {
+  --ciit-control-bg: #0e1929;
+  --ciit-control-text: #e6eefb;
+  --ciit-control-border: #273950;
+  --ciit-table-head: #16263b;
+  --ciit-hover: #1b3453;
+}
+
+/* Consistent surfaces across feature modules */
+.ciit-content .card,
+.ciit-content .modal-content,
+.ciit-content .dropdown-menu,
+.ciit-content .list-group-item,
+.ciit-content .accordion-item,
+.ciit-content .nav-tabs,
+.ciit-content .tab-content,
+.ciit-content .table-responsive {
+  border-color: var(--ciit-border);
+}
+
+.ciit-content .card,
+.ciit-content .modal-content,
+.ciit-content .accordion-item {
+  background-color: var(--ciit-surface);
+  color: var(--ciit-text);
+}
+
+/* Consistent form controls */
+.ciit-content input:not([type="checkbox"]):not([type="radio"]),
+.ciit-content select,
+.ciit-content textarea,
+.ciit-content .form-control,
+.ciit-content .form-select {
+  color: var(--ciit-control-text);
+  background-color: var(--ciit-control-bg);
+  border-color: var(--ciit-control-border);
+}
+
+.ciit-content input:focus,
+.ciit-content select:focus,
+.ciit-content textarea:focus,
+.ciit-content .form-control:focus,
+.ciit-content .form-select:focus {
+  border-color: var(--ciit-primary);
+  box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--ciit-primary) 18%, transparent);
+}
+
+/* Consistent table appearance */
+.ciit-content table thead th,
+.ciit-content .table thead th {
+  background-color: var(--ciit-table-head);
+  color: var(--ciit-text);
+  border-color: var(--ciit-border);
+}
+
+.ciit-content table tbody td,
+.ciit-content .table tbody td {
+  color: var(--ciit-text);
+  border-color: var(--ciit-border);
+}
+
+/* Consistent tabs and navigation */
+.ciit-content .nav-tabs .nav-link {
+  color: var(--ciit-muted);
+}
+.ciit-content .nav-tabs .nav-link.active {
+  color: var(--ciit-primary);
+  background-color: var(--ciit-surface);
+  border-color: var(--ciit-border) var(--ciit-border) var(--ciit-surface);
+}
+
+/* Sidebar menu: same active and hover treatment for every role */
+.ciit-sidebar-list a {
+  color: var(--ciit-text);
+}
+.ciit-sidebar-list a:hover {
+  background-color: var(--ciit-primary-hover);
+  color: var(--ciit-primary);
+}
+.ciit-sidebar-list a.active-link {
+  background-color: var(--ciit-primary);
+  color: #ffffff;
+}
+
+/* Dark theme text utilities used by legacy feature templates */
+html[data-theme="dark"] .ciit-content .text-dark,
+html[data-theme="dark"] .ciit-content label,
+html[data-theme="dark"] .ciit-content .form-label,
+html[data-theme="dark"] .ciit-content .card-title {
+  color: var(--ciit-text) !important;
+}
+html[data-theme="dark"] .ciit-content .bg-white,
+html[data-theme="dark"] .ciit-content .bg-light {
+  background-color: var(--ciit-surface) !important;
+  color: var(--ciit-text) !important;
+}
+html[data-theme="dark"] .ciit-content .border,
+html[data-theme="dark"] .ciit-content .border-bottom,
+html[data-theme="dark"] .ciit-content .border-top {
+  border-color: var(--ciit-border) !important;
 }

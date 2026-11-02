@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable,map,shareReplay,startWith,tap} from "rxjs";
@@ -5,7 +6,7 @@ import {User} from "../../Domain/Entities/User";
 
 @Injectable({providedIn:"root"})
 export class UserApi{
-    private baseUrl="https://superuser.ciitstudent.com/api/User";
+    private baseUrl=API_ENDPOINTS.user;
     private readonly cacheKey="erp-users-cache";
     private usersCache$:Observable<User[]>|null=null;
 

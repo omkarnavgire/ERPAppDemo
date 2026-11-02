@@ -1187,3 +1187,38 @@
   background: #2563eb !important;
   border-color: #3b82f6 !important;
 }
+
+/* Match ng-select font with Bootstrap form controls */
+:host ::ng-deep ng-select,
+:host ::ng-deep ng-select .ng-select-container,
+:host ::ng-deep ng-select .ng-value,
+:host ::ng-deep ng-select .ng-placeholder,
+:host ::ng-deep ng-select input {
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: #212529;
+}
+
+:host ::ng-deep ng-select .ng-select-container {
+    min-height: 46px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+}
+
+:host ::ng-deep ng-select .ng-value-container {
+    padding-left: 12px;
+}
+
+:host ::ng-deep ng-select .ng-dropdown-panel .ng-option {
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    padding: 9px 12px;
+}
+
+/* Search input inside dropdown */
+:host ::ng-deep ng-select .ng-input > input {
+    font-family: inherit !important;
+    font-size: 14px !important;
+}

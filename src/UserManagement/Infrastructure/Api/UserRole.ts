@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
@@ -6,7 +7,7 @@ import { Observable } from "rxjs";
     providedIn:"root"
 })
 export class UserRole {
-    private baseUrl="https://superuser.ciitstudent.com/api/UserRole";
+    private baseUrl=API_ENDPOINTS.userRole;
 
     constructor(private http:HttpClient){}
 

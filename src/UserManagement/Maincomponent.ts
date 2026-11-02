@@ -32,6 +32,8 @@ export class MainClass implements OnInit {
 
     employeeName = "";
     roleName = "";
+    roleNames: string[] = [];
+
     visibleMenus: SidebarMenu[] = [];
     isDarkTheme = false;
     showProfileMenu = false;
@@ -44,11 +46,9 @@ export class MainClass implements OnInit {
         { label: "Course", route: "/main/course", icon: "📚", permission: PERMISSIONS.COURSE_VIEW, roles: ["Super User", "Admin", "Counsellor"] },
         { label: "Student Registration", route: "/main/student-registration", icon: "🎓", roles: ["Accountant", "Admin", "Super User"] },
         { label: "Student Payments", route: "/main/student-payments", icon: "₹", roles: ["Accountant", "Admin", "Super User"] },
-        // {label: "Batch",route: "/main/batch", icon: "📅", permission: PERMISSIONS.BATCH_VIEW, roles: ["Super User", "Admin", "Group Leader"]},
-        {label: "Batch",route: "/main/batch", icon: "📅",  roles: ["Super User", "Admin", "Group Leader"]},
-        // { label: "Function Management", route: "/main/function-management", icon: "⚙", permission: PERMISSIONS.FUNCTION_MANAGEMENT_VIEW, roles: ["Admin", "Super User"] },
-        { label: "Reports", route: "/main/reports", icon: "▤", permission: PERMISSIONS.REPORTS_VIEW, roles: ["Admin", "Super User", "Accountant"] },
-        // { label: "Settings", route: "/main/settings", icon: "⚙" }
+        { label: "Manage Batch", route: "/main/batch", icon: "📅", roles: ["Super User", "Admin", "Group Leader"], permission: PERMISSIONS.GROUP_LEADER_BATCH_VIEW },
+        { label: "Batch", route: "/main/trainer", icon: "📘", roles: ["Trainer"], permission: PERMISSIONS.TRAINER_BATCH_VIEW },
+        { label: "Reports", route: "/main/reports", icon: "▤", permission: PERMISSIONS.REPORTS_VIEW, roles: ["Admin", "Super User", "Accountant"] }
     ];
 
     ngOnInit(): void {
@@ -91,6 +91,7 @@ export class MainClass implements OnInit {
         }
 
         const username = localStorage.getItem("username");
+
         if (!username) {
             this.router.navigate(["/login"]);
             return;
@@ -98,8 +99,12 @@ export class MainClass implements OnInit {
 
         this.getAllUsersUsecase.execute().subscribe({
             next: (response: any) => {
-                const users: User[] = Array.isArray(response) ? response : response?.data ?? [];
+                const users: User[] = Array.isArray(response)
+                    ? response
+                    : response?.data ?? [];
+
                 const u = username.trim().toLowerCase();
+
                 const current = users.find(x =>
                     x.employeeCode?.trim().toLowerCase() === u ||
                     x.userName?.trim().toLowerCase() === u ||
@@ -119,8 +124,16 @@ export class MainClass implements OnInit {
     private refreshUserSessionInBackground(): void {
         this.getAllUsersUsecase.execute().subscribe({
             next: (response: any) => {
-                const users: User[] = Array.isArray(response) ? response : response?.data ?? [];
-                const username = (this.session.username || localStorage.getItem("username") || "").trim().toLowerCase();
+                const users: User[] = Array.isArray(response)
+                    ? response
+                    : response?.data ?? [];
+
+                const username = (
+                    this.session.username ||
+                    localStorage.getItem("username") ||
+                    ""
+                ).trim().toLowerCase();
+
                 const current = users.find(x =>
                     x.employeeCode?.trim().toLowerCase() === username ||
                     x.userName?.trim().toLowerCase() === username ||
@@ -140,23 +153,32 @@ export class MainClass implements OnInit {
     private setUserData(): void {
         this.employeeName = this.session.employeeName;
 
-        this.roleName =
-            this.session.roleName ||
-            this.session.roles.find(role => role?.trim()) ||
-            this.session.currentUser?.roleName ||
-            this.session.currentUser?.role ||
-            "";
+        // Get all roles assigned to the current user
+        this.roleNames = [
+            ...new Set(
+                (this.session.roles || [])
+                    .filter(role => !!role?.trim())
+                    .map(role => role.trim())
+            )
+        ];
+
+        // Keep first role for existing code compatibility
+        this.roleName = this.roleNames[0] || "";
     }
 
     private setVisibleMenus(): void {
         this.visibleMenus = this.menus.filter(menu => {
-            if (menu.roles?.length && !this.session.hasAnyRole(menu.roles)) return false;
-            if (!menu.permission) return true;
-            return this.permissions.hasPermission(menu.permission);
+            const roleAllowed =
+                !menu.roles?.length ||
+                this.session.hasAnyRole(menu.roles);
+
+            const permissionAllowed =
+                !menu.permission ||
+                this.permissions.hasPermission(menu.permission);
+
+            return roleAllowed && permissionAllowed;
         });
     }
-
-
 
     logout(): void {
         this.logoutUsecase.execute();

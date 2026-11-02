@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpClient} from '@angular/common/http';
 import {inject,Injectable} from '@angular/core';
 import {map,Observable} from 'rxjs';
@@ -8,7 +9,7 @@ import {EnquiryFollowup} from '../../Domain/Entities/Eneuiryfollowup';
 })
 export class EnquiryFollowupApi{
     private http=inject(HttpClient);
-    private readonly baseUrl='/lead-api/EnquiryFollowup';
+    private readonly baseUrl=`${API_ENDPOINTS.lead}/EnquiryFollowup`;
 
     private mapFollowup(item:any):EnquiryFollowup{
         return {

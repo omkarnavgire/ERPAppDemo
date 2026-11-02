@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpErrorResponse,HttpInterceptorFn} from "@angular/common/http";
 import {inject} from "@angular/core";
 import {Router} from "@angular/router";
@@ -26,7 +27,7 @@ export const authInterceptor:HttpInterceptorFn=(req,next)=>{
         return next(req);
     }
 
-    if(req.url.startsWith("https://leadapis.ciitstudent.com/")){
+    if(req.url.startsWith(`${API_ENDPOINTS.leadDirectHost}/`)){
         console.log("Lead API request without JWT:",req.url);
         return next(req);
     }

@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
@@ -7,7 +8,7 @@ import { RegisterEmployeeRequest } from "../../Domain/Entities/Employee";
     providedIn:"root"
 })
 export class EmployeeApi {
-    private baseUrl="https://superuser.ciitstudent.com/api/Auth/register-employee";
+    private baseUrl=`${API_ENDPOINTS.auth}/register-employee`;
 
     constructor(private http:HttpClient){}
 

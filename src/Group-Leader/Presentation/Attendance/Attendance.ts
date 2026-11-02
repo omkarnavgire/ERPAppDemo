@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -39,7 +40,7 @@ export class AttendanceComponent implements OnInit {
   private readonly http = inject(HttpClient);
 
   private readonly baseUrl =
-    'https://batchmanagement.ciitstudent.com/api';
+    API_ENDPOINTS.batchManagement;
 
   // Dropdown data
   batches: BatchOption[] = [];

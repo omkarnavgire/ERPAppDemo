@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable,map,shareReplay} from "rxjs";
@@ -7,7 +8,7 @@ import {Role} from "../../Domain/Entities/Role";
     providedIn:"root"
 })
 export class RoleApi {
-    private baseUrl="https://superuser.ciitstudent.com/api/roles/get-roles";
+    private baseUrl=`${API_ENDPOINTS.roles}/get-roles`;
 
     private rolesCache$:Observable<Role[]>|null=null;
 

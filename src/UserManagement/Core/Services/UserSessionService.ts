@@ -94,57 +94,72 @@ export class UserSessionService{
         this.permissionService.setPermissions([...new Set(all)]);
     }
 
-    private getPermissionsForRole(role:string):Permission[]{
-        const r=role.trim().toLowerCase();
+   
+private getPermissionsForRole(role: string): Permission[] {
+    const r = role.trim().toLowerCase().replace(/[\s_-]+/g, "");
 
-        if(r==="super user"){
-            return Object.values(PERMISSIONS) as Permission[];
-        }
-
-        if(r==="admin"){
-            return Object.values(PERMISSIONS).filter(
-                p=>p!==PERMISSIONS.FUNCTION_MANAGEMENT_VIEW
-            ) as Permission[];
-        }
-
-        if(r==="counsellor"){
-            return [
-                PERMISSIONS.DASHBOARD_VIEW,
-                PERMISSIONS.LEAD_VIEW,
-                PERMISSIONS.LEAD_CREATE,
-                PERMISSIONS.LEAD_FOLLOWUP,
-                PERMISSIONS.ENQUIRY_VIEW,
-                PERMISSIONS.ENQUIRY_CREATE,
-                PERMISSIONS.ENQUIRY_FOLLOWUP,
-                PERMISSIONS.LEAD_SOURCE_VIEW,
-                PERMISSIONS.QUALIFICATION_VIEW
-            ];
-        }
-
-        if(r==="developer"){
-            return [
-                PERMISSIONS.DASHBOARD_VIEW,
-                PERMISSIONS.COURSE_VIEW,
-                PERMISSIONS.COURSE_CREATE,
-                PERMISSIONS.COURSE_UPDATE,
-                PERMISSIONS.COURSE_DELETE,
-                PERMISSIONS.COURSE_RESTORE
-            ];
-        }
-
-        if(r==="accountant"){
-            return [
-                PERMISSIONS.DASHBOARD_VIEW
-              
-            ];
-        }
-
-        if(r==="group leader"||r==="trainer"||r==="student"){
-            return [PERMISSIONS.DASHBOARD_VIEW];
-        }
-
-        return [];
+    if (r === "superuser") {
+        return Object.values(PERMISSIONS) as Permission[];
     }
+
+    if (r === "admin") {
+        return Object.values(PERMISSIONS).filter(
+            p => p !== PERMISSIONS.FUNCTION_MANAGEMENT_VIEW
+        ) as Permission[];
+    }
+
+    if (r === "counsellor") {
+        return [
+            PERMISSIONS.DASHBOARD_VIEW,
+            PERMISSIONS.LEAD_VIEW,
+            PERMISSIONS.LEAD_CREATE,
+            PERMISSIONS.LEAD_FOLLOWUP,
+            PERMISSIONS.ENQUIRY_VIEW,
+            PERMISSIONS.ENQUIRY_CREATE,
+            PERMISSIONS.ENQUIRY_FOLLOWUP,
+            PERMISSIONS.LEAD_SOURCE_VIEW,
+            PERMISSIONS.QUALIFICATION_VIEW
+        ];
+    }
+
+    if (r === "developer") {
+        return [
+            PERMISSIONS.DASHBOARD_VIEW,
+            PERMISSIONS.COURSE_VIEW,
+            PERMISSIONS.COURSE_CREATE,
+            PERMISSIONS.COURSE_UPDATE,
+            PERMISSIONS.COURSE_DELETE,
+            PERMISSIONS.COURSE_RESTORE
+        ];
+    }
+
+    if (r === "accountant") {
+        return [PERMISSIONS.DASHBOARD_VIEW];
+    }
+
+    if (r === "groupleader") {
+        return [
+            PERMISSIONS.DASHBOARD_VIEW,
+            PERMISSIONS.GROUP_LEADER_BATCH_VIEW
+        ];
+    }
+
+    if (r === "trainer") {
+        return [
+            PERMISSIONS.DASHBOARD_VIEW,
+            PERMISSIONS.TRAINER_BATCH_VIEW,
+            PERMISSIONS.TRAINER_ATTENDANCE_VIEW,
+            PERMISSIONS.TRAINER_ATTENDANCE_SUBMIT
+        ];
+    }
+
+    if (r === "student") {
+        return [PERMISSIONS.DASHBOARD_VIEW];
+    }
+
+    return [];
+}
+
 
     hasPermission(p:Permission):boolean{
         return this.permissionService.hasPermission(p);
@@ -163,9 +178,10 @@ export class UserSessionService{
     }
 
     hasRole(role:string):boolean{
-        return this.roles.some(
-            r=>r.trim().toLowerCase()===role.trim().toLowerCase()
-        );
+        const normalize = (value: string): string =>
+            value.trim().toLowerCase().replace(/[\s_-]+/g, "");
+        const expected = normalize(role);
+        return this.roles.some(r => normalize(r) === expected);
     }
 
     hasAnyRole(required:string[]):boolean{

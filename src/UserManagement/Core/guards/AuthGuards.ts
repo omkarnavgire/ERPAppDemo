@@ -1,24 +1,53 @@
-import {inject} from "@angular/core";
-import {ActivatedRouteSnapshot,Router} from "@angular/router";
-import {TokenService} from "../Services/TokenService";
-import {UserSessionService} from "../Services/UserSessionService";
-import {PERMISSIONS,PermissionService,Permission} from "../Services/PermissionService";
+import { inject } from "@angular/core";
+import { ActivatedRouteSnapshot, Router } from "@angular/router";
+import { TokenService } from "../Services/TokenService";
+import { UserSessionService } from "../Services/UserSessionService";
+import { PERMISSIONS, Permission, PermissionService } from "../Services/PermissionService";
 
-export const authGuard=(route:ActivatedRouteSnapshot)=>{
-    const token=inject(TokenService),router=inject(Router),session=inject(UserSessionService),permissions=inject(PermissionService);
-    if(!token.isLoggedIn()){router.navigate(["/login"]);return false;}
-    const requiredPermission=route.data["permission"] as Permission|undefined;
-    const requiredPermissions=route.data["permissions"] as Permission[]|undefined;
-    const requiredRoles=route.data["roles"] as string[]|undefined;
-    if(requiredPermission){
-        if(requiredPermission===PERMISSIONS.LEAD_FOLLOWUP&&session.isSuperUser())return true;
-        if(requiredPermission===PERMISSIONS.LEAD_FOLLOWUP&&session.isAdmin()){
-            if(permissions.isAdminFunctionEnabled(requiredPermission))return true;
-            router.navigate(["/main/lead"]);return false;
-        }
-        if(!permissions.hasPermission(requiredPermission)){router.navigate(["/main/dashboard"]);return false;}
+export const authGuard = (route: ActivatedRouteSnapshot) => {
+    const tokenService = inject(TokenService);
+    const router = inject(Router);
+    const session = inject(UserSessionService);
+    const permissionService = inject(PermissionService);
+
+    if (!tokenService.isLoggedIn()) {
+        return router.createUrlTree(["/login"]);
     }
-    if(requiredPermissions?.length&&!permissions.hasAnyPermission(requiredPermissions)){router.navigate(["/main/dashboard"]);return false;}
-    if(!requiredPermission&&!requiredPermissions?.length&&requiredRoles?.length&&!session.hasAnyRole(requiredRoles)){router.navigate(["/main/dashboard"]);return false;}
+
+    const requiredPermission = route.data["permission"] as Permission | undefined;
+    const requiredPermissions = route.data["permissions"] as Permission[] | undefined;
+    const requiredRoles = route.data["roles"] as string[] | undefined;
+
+    const accessDenied = () => router.createUrlTree(
+        session.hasPermission(PERMISSIONS.DASHBOARD_VIEW)
+            ? ["/main/dashboard"]
+            : ["/login"]
+    );
+
+    // If both role and permission are configured, BOTH must pass.
+    if (requiredRoles?.length && !session.hasAnyRole(requiredRoles)) {
+        return accessDenied();
+    }
+
+    if (requiredPermission) {
+        const superUserLeadFollowup =
+            requiredPermission === PERMISSIONS.LEAD_FOLLOWUP && session.isSuperUser();
+        const enabledAdminLeadFollowup =
+            requiredPermission === PERMISSIONS.LEAD_FOLLOWUP &&
+            session.isAdmin() && permissionService.isAdminFunctionEnabled(requiredPermission);
+
+        if (
+            !superUserLeadFollowup &&
+            !enabledAdminLeadFollowup &&
+            !permissionService.hasPermission(requiredPermission)
+        ) {
+            return accessDenied();
+        }
+    }
+
+    if (requiredPermissions?.length && !permissionService.hasAnyPermission(requiredPermissions)) {
+        return accessDenied();
+    }
+
     return true;
 };

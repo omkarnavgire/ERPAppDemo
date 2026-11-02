@@ -1,3 +1,4 @@
+
 <!-- Header -->
 <nav class="navbar navbar-expand-lg ciit-navbar">
     <div class="container-fluid">
@@ -17,21 +18,32 @@
                     [title]="isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'">
                 <i class="bi" [ngClass]="isDarkTheme ? 'bi-moon-stars-fill' : 'bi-sun-fill'"></i>
                 <span>{{ isDarkTheme ? 'Dark' : 'Light' }}</span>
-                <span class="theme-switch-track" [class.is-dark]="isDarkTheme"><span></span></span>
+                <span class="theme-switch-track" [class.is-dark]="isDarkTheme">
+                    <span></span>
+                </span>
             </button>
 
             <div class="profile-menu-wrap">
                 <button type="button" class="profile-menu-trigger" (click)="toggleProfileMenu()"
                         [attr.aria-expanded]="showProfileMenu">
-                    <span class="top-profile-avatar"><i class="bi bi-person-fill"></i></span>
+                    <span class="top-profile-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </span>
                     <span class="top-profile-name">{{ employeeName || 'User' }}</span>
                     <i class="bi bi-chevron-down profile-chevron"></i>
                 </button>
+
                 <div class="profile-dropdown" *ngIf="showProfileMenu">
-                    <button type="button" (click)="goToProfile()"><i class="bi bi-person-circle"></i> Profile</button>
-                    <button type="button" (click)="goToChangePassword()"><i class="bi bi-lock"></i> Change Password</button>
+                    <button type="button" (click)="goToProfile()">
+                        <i class="bi bi-person-circle"></i> Profile
+                    </button>
+                    <button type="button" (click)="goToChangePassword()">
+                        <i class="bi bi-lock"></i> Change Password
+                    </button>
                     <div class="profile-dropdown-divider"></div>
-                    <button type="button" class="dropdown-logout" (click)="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                    <button type="button" class="dropdown-logout" (click)="logout()">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
                 </div>
             </div>
         </div>
@@ -47,7 +59,6 @@
         <div class="col-lg-2 col-md-3">
             <div class="ciit-sidebar">
 
-
                 <!-- Professional User Profile -->
                 <div class="sidebar-user-profile">
                     <div class="profile-avatar">
@@ -55,42 +66,42 @@
                     </div>
 
                     <div class="profile-info">
-                        <!-- <div class="profile-name" [title]="employeeName">
-                            {{ employeeName || 'User' }}
-                        </div> -->
 
-                        <div class="profile-role">
-                            <i class="bi bi-shield-check"></i>
-                            <span>{{ roleName || 'User' }}</span>
+                        <!-- Display All Assigned Roles -->
+                        <div class="profile-roles">
+                            @for (role of roleNames; track role) {
+                                <div class="profile-role">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span>{{ role }}</span>
+                                </div>
+                            }
+
+                            @if (roleNames.length === 0) {
+                                <div class="profile-role">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span>User</span>
+                                </div>
+                            }
                         </div>
+
                     </div>
                 </div>
-
-
-                <!-- Sidebar Heading -->
-                <!-- <div class="ciit-sidebar-header">
-                    <div class="sidebar-heading">
-                        <i class="bi bi-grid me-2"></i>
-                        NAVIGATION
-                    </div>
-                    <small>Institute Management</small>
-                </div> -->
 
                 <!-- Navigation Menu -->
                 <ul class="list-group ciit-sidebar-list">
                     @for (menu of visibleMenus; track menu.route) {
-                    <li class="list-group-item">
-                        <a [routerLink]="menu.route" routerLinkActive="active-link">
+                        <li class="list-group-item">
+                            <a [routerLink]="menu.route" routerLinkActive="active-link">
 
-                            <span class="ciit-sidebar-icon">
-                                {{ menu.icon }}
-                            </span>
+                                <span class="ciit-sidebar-icon">
+                                    {{ menu.icon }}
+                                </span>
 
-                            <span class="ciit-menu-label">
-                                {{ menu.label }}
-                            </span>
-                        </a>
-                    </li>
+                                <span class="ciit-menu-label">
+                                    {{ menu.label }}
+                                </span>
+                            </a>
+                        </li>
                     }
                 </ul>
 

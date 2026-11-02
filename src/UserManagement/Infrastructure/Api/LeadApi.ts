@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import {HttpClient} from '@angular/common/http';
 import {inject,Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
@@ -8,7 +9,7 @@ import {Lead} from '../../Domain/Entities/Lead';
 })
 export class LeadApi{
     private http=inject(HttpClient);
-    private readonly baseUrl='/lead-api/Lead';
+    private readonly baseUrl=`${API_ENDPOINTS.lead}/Lead`;
 
     getLeads():Observable<Lead[]>{
         console.log('Lead API: Get all');

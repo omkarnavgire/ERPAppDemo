@@ -34,6 +34,8 @@ import { CreatePaymentComponent } from "../Account/Presentation/StudentPayment/c
 
 import { BatchComponent } from "src/Group-Leader/Presentation/Batch/Batch";
 import { EmployeeComponent } from "./Presentation/Employee/Employee";
+import { TrainerDashboardComponent } from "../Trainer/Presentation/TrainerDashboard/TrainerDashboard";
+import { TrainerBatchDetailsComponent } from "../Trainer/Presentation/BatchDetails/BatchDetails";
 
 export const routes: Routes = [
     // Authentication Routes
@@ -98,7 +100,31 @@ export const routes: Routes = [
                 component: BatchComponent,
                 canActivate: [authGuard],
                 data: {
-                    roles: ["Admin", "Super User", "Group Leader"]
+                    roles: ["Admin", "Super User", "Group Leader"],
+                    permission: PERMISSIONS.GROUP_LEADER_BATCH_VIEW
+                }
+            },
+
+            // Trainer - Assigned Batches Only
+            {
+                path: "trainer",
+                component: TrainerDashboardComponent,
+                canActivate: [authGuard],
+                data: {
+                    roles: ["Trainer"],
+                    permission: PERMISSIONS.TRAINER_BATCH_VIEW
+                }
+            },
+            {
+                path: "trainer/batches/:batchId",
+                component: TrainerBatchDetailsComponent,
+                canActivate: [authGuard],
+                data: {
+                    roles: ["Trainer"],
+                    permissions: [
+                        PERMISSIONS.TRAINER_BATCH_VIEW,
+                        PERMISSIONS.TRAINER_ATTENDANCE_VIEW
+                    ]
                 }
             },
 

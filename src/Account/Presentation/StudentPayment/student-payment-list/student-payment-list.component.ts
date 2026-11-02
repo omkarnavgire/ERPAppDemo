@@ -366,6 +366,18 @@ get uniqueStudents(): Array<StudentPayment & { totalPaidForList: number }> {
     this.selectedReceiptCourse = course;
   }
 
+  isSelectedReceiptCourse(course: {
+  courseId: number;
+  courseName: string;
+  payments: StudentPayment[];
+}): boolean {
+  const selected = this.selectedReceiptCourse;
+
+  return selected !== null &&
+    selected.courseId === course.courseId &&
+    selected.courseName === course.courseName;
+}
+
   closeStudentReceipts(): void {
     this.showStudentReceipts = false;
     this.receiptCourses = [];

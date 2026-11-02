@@ -357,9 +357,7 @@
               <th>#</th>
               <th>Content Name</th>
               <th>Expected Date</th>
-              <th>Expected Day</th>
               <th>Actual Date</th>
-              <th>Actual Day</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -375,7 +373,6 @@
 
               <td>{{ item.expected_date | date:'dd/MM/yyyy' }}</td>
 
-              <td>{{ item.expected_day || '—' }}</td>
 
               <td>
                 {{ item.actual_date
@@ -383,7 +380,7 @@
                   : '—' }}
               </td>
 
-              <td>{{ item.actual_day || '—' }}</td>
+              <!-- <td>{{ item.actual_day || '—' }}</td> -->
 
               <td>
                 <span class="status-pill">

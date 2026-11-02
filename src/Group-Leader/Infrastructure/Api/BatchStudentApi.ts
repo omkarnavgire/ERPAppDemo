@@ -1,10 +1,11 @@
+import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AddBatchStudentRequest } from '../../Domain/DTOs/AddBatchStudentRequest';
 @Injectable({ providedIn: 'root' })
 export class BatchStudentApi {
   private http = inject(HttpClient);
-  private url = 'https://batchmanagement.ciitstudent.com/api/BatchStudent';
+  private readonly url = `${API_ENDPOINTS.batchManagement}/BatchStudent`;
   create(body: AddBatchStudentRequest) { return this.http.post(`${this.url}/create`, body); }
   getAll() { return this.http.get(`${this.url}/get-all`); }
   getById(id: number) { return this.http.get(`${this.url}/${id}`); }

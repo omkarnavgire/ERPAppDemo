@@ -1,3 +1,4 @@
+import { API_ENDPOINTS } from "../../Core/config/api-endpoints";
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
@@ -10,7 +11,7 @@ export interface ApiEnvelope<T> { statusCode?: number; message?: string; data?: 
 @Injectable({ providedIn: 'root' })
 export class BatchManagement {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://batchmanagement.ciitstudent.com/api';
+  private readonly baseUrl = API_ENDPOINTS.batchManagement;
 
   getAll(): Observable<Batch[]> {
     return this.http.get<ApiEnvelope<Batch[]> | Batch[]>(`${this.baseUrl}/Batch/get-all`).pipe(

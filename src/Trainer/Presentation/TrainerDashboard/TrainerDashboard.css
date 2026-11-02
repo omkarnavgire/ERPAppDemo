@@ -1,0 +1,16 @@
+.trainer-page{padding:clamp(16px,2.5vw,28px);color:var(--bs-body-color)}
+.page-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;color:#64748b;margin:0 0 6px}
+.page-heading h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:750;margin:0}
+.subtitle{color:var(--bs-secondary-color);margin:7px 0 0}
+.refresh-button{border:1px solid var(--bs-border-color);background:var(--bs-body-bg);color:var(--bs-body-color);border-radius:10px;padding:9px 14px}
+.batch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.batch-card{border:1px solid var(--bs-border-color);background:var(--bs-body-bg);border-radius:16px;padding:20px;box-shadow:0 5px 18px #0f172a0a;display:flex;flex-direction:column;min-height:230px}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.batch-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#eaf2ff;color:#2563eb;font-size:1.2rem}
+.status-pill{font-size:.72rem;padding:5px 9px;border-radius:20px;background:#e9f8ef;color:#168348;font-weight:650}
+.batch-card h2{font-size:1.12rem;font-weight:700;margin:0}.course-name{color:var(--bs-secondary-color);margin:5px 0 0}
+.batch-meta{display:flex;flex-wrap:wrap;gap:10px;margin:17px 0;color:var(--bs-secondary-color);font-size:.82rem}.batch-meta span{display:flex;align-items:center;gap:6px}
+.view-button{margin-top:auto;display:flex;justify-content:space-between;align-items:center;text-decoration:none;background:#245fce;color:#fff;border-radius:9px;padding:10px 13px;font-weight:650}.view-button:hover{background:#194da9;color:#fff}
+.state-card{padding:28px;border:1px dashed var(--bs-border-color);border-radius:14px;text-align:center;color:var(--bs-secondary-color)}.state-card.error{color:#b42318}.state-card button{margin-left:8px}.empty-icon{font-size:2rem}.state-card h3{font-size:1.1rem;color:var(--bs-body-color);margin:10px 0 5px}
+@media(max-width:600px){.page-heading{align-items:flex-start;flex-direction:column}.refresh-button{width:100%}}
