@@ -1,9 +1,10 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TrainerManagement } from '../../Application/TrainerManagement';
 import { TrainerBatch } from '../../Domain/Entities/TrainerBatch';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-trainer-dashboard',
@@ -15,6 +16,7 @@ import { TrainerBatch } from '../../Domain/Entities/TrainerBatch';
 export class TrainerDashboardComponent implements OnInit {
 
   private readonly trainer = inject(TrainerManagement);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   batches: TrainerBatch[] = [];
 
@@ -31,36 +33,46 @@ export class TrainerDashboardComponent implements OnInit {
     this.loadBatches();
   }
 
-  loadBatches(): void {
+ loadBatches(): void {
 
     if (this.loading) return;
 
     this.loading = true;
     this.errorMessage = '';
 
-    this.trainer.getMyBatches().subscribe({
+    this.trainer.getMyBatches()
+        .pipe(
+            finalize(() => {
+                this.loading = false;
 
-      next: (batches: TrainerBatch[]) => {
+                // Notify Angular to refresh the Trainer Dashboard.
+                this.cdr.markForCheck();
+            })
+        )
+        .subscribe({
 
-        this.batches = Array.isArray(batches) ? batches : [];
+            next: (batches: TrainerBatch[]) => {
 
-        this.loading = false;
+                this.batches = Array.isArray(batches)
+                    ? batches
+                    : [];
 
-      },
+            },
 
-      error: error => {
+            error: error => {
 
-        console.error('Unable to load assigned batches:', error);
+                console.error(
+                    'Unable to load assigned batches:',
+                    error
+                );
 
-        this.batches = [];
+                this.batches = [];
 
-        this.errorMessage =
-          'Unable to load your assigned batches. Please try again.';
+                this.errorMessage =
+                    'Unable to load your assigned batches. Please try again.';
 
-        this.loading = false;
+            }
 
-      }
-
-    });
-  }
+        });
+}
 }
