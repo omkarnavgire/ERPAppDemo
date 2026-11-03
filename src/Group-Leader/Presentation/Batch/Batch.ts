@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
@@ -10,6 +10,8 @@ import { BatchManagement } from 'src/Group-Leader/Application/BatchManagement';
 import { BranchApi } from 'src/UserManagement/Infrastructure/Api/BranchApi';
 import { Batch } from 'src/Group-Leader/Application/Batch';
 import { CreateBatchRequest } from 'src/Group-Leader/Domain/DTOs/CreateBatchRequest';
+import { GetBatchTopics } from "src/Group-Leader/Application/GetBatchTopics";
+import { BatchTopic } from "src/Group-Leader/Domain/Entities/BatchTopic";
 
 interface EmployeeOption {
   employee_id: number;
@@ -70,6 +72,19 @@ export class BatchComponent implements OnInit {
   private readonly api = inject(BatchManagement);
   private readonly http = inject(HttpClient);
   private readonly branchApi = inject(BranchApi);
+
+  // Topic Dropdown
+private readonly getBatchTopics = inject(GetBatchTopics);
+
+topics: BatchTopic[] = [];
+filteredTopics: BatchTopic[] = [];
+
+topicSearch = '';
+topicDropdownOpen = false;
+loadingTopics = false;
+
+@ViewChild('topicSearchInput')
+topicSearchInput?: ElementRef<HTMLInputElement>;
 
   private readonly batchApiBase =
     API_ENDPOINTS.batchManagement;
@@ -436,6 +451,75 @@ studentCounts: Partial<Record<number, number>> = {};
       this.loadBatches();
     }
   }
+
+  // =========================================
+// TOPIC DROPDOWN METHODS
+// =========================================
+
+loadTopics(): void {
+  if (this.loadingTopics) return;
+
+  this.loadingTopics = true;
+
+  this.getBatchTopics.execute()
+    .then((topics: BatchTopic[]) => {
+      this.topics = Array.isArray(topics) ? topics : [];
+      this.filteredTopics = [...this.topics];
+    })
+    .catch(error => {
+      console.error('Unable to load topics:', error);
+
+      this.errorMessage = this.getApiError(
+        error,
+        'Unable to load topics.'
+      );
+
+      this.topics = [];
+      this.filteredTopics = [];
+    })
+    .finally(() => {
+      this.loadingTopics = false;
+    });
+}
+
+get selectedTopicName(): string {
+  return this.topics.find(
+    topic => topic.topicId === Number(this.batchForm.topic_id)
+  )?.topicName ?? '';
+}
+
+toggleTopicDropdown(): void {
+  this.topicDropdownOpen = !this.topicDropdownOpen;
+
+  if (this.topicDropdownOpen) {
+    this.topicSearch = '';
+    this.filteredTopics = [...this.topics];
+
+    if (!this.topics.length && !this.loadingTopics) {
+      this.loadTopics();
+    }
+
+    setTimeout(() => {
+      this.topicSearchInput?.nativeElement.focus();
+    }, 0);
+  }
+}
+
+searchTopics(): void {
+  const search = this.topicSearch.trim().toLowerCase();
+
+  this.filteredTopics = this.topics.filter(topic =>
+    topic.topicName.toLowerCase().includes(search)
+  );
+}
+
+selectTopic(topic: BatchTopic): void {
+  this.batchForm.topic_id = topic.topicId;
+
+  this.topicDropdownOpen = false;
+  this.topicSearch = '';
+  this.filteredTopics = [...this.topics];
+}
 
   // =========================================
   // CREATE BATCH
