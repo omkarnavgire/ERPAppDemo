@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "../../../Core/config/api-endpoints";
 
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
@@ -85,6 +85,22 @@ loadingTopics = false;
 
 @ViewChild('topicSearchInput')
 topicSearchInput?: ElementRef<HTMLInputElement>;
+
+@ViewChild('topicDropdownContainer')
+topicDropdownContainer?: ElementRef<HTMLElement>;
+
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent): void {
+  const target = event.target as Node;
+
+  if (
+    this.topicDropdownOpen &&
+    this.topicDropdownContainer &&
+    !this.topicDropdownContainer.nativeElement.contains(target)
+  ) {
+    this.topicDropdownOpen = false;
+  }
+}
 
   private readonly batchApiBase =
     API_ENDPOINTS.batchManagement;
